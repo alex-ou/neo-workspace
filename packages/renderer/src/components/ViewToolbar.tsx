@@ -1,6 +1,6 @@
-import { Tab, Tabs, InputGroup, Button } from "@blueprintjs/core";
+import { Tab, Tabs, InputGroup, Button, IRefObject } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   getAndAssertNodeAtPathExists,
   MosaicContext,
@@ -26,6 +26,7 @@ function Toolbar(props: ToolbarProps) {
   const { mosaicActions } = useContext(MosaicContext);
   const { view, viewManager, dispatch } = props;
 
+  const inputRef = useRef<HTMLInputElement>();
   const onURLChange = (value: string) => {
     const url =
       value && validateUrl(value)
@@ -50,14 +51,18 @@ function Toolbar(props: ToolbarProps) {
         align-items: center;
       `}
     >
-      <Tabs
-        className={css`
-          margin: 1px;
-        `}
-        selectedTabId="2"
-      >
-        <Tab id="1">Window</Tab>
-      </Tabs>
+      {mosaicWindowActions.connectDragSource(
+        <div>
+          <Button
+            className={css`
+              cursor: move;
+            `}
+            title="Drag me to a docking location"
+            minimal
+            icon="drag-handle-horizontal"
+          ></Button>
+        </div>
+      )}
       <div
         className={css`
           margin-left: 2px;
@@ -69,7 +74,7 @@ function Toolbar(props: ToolbarProps) {
           disabled={!view?.canGoBack}
           minimal
           onClick={() => {
-            window.unity1.view.goBack(view!.viewId);
+            viewManager.goBack(view?.containerId || "");
           }}
         ></Button>
         <Button
@@ -78,7 +83,7 @@ function Toolbar(props: ToolbarProps) {
           disabled={!view?.canGoForward}
           minimal
           onClick={() => {
-            window.unity1.view.goForward(view!.viewId);
+            viewManager.goForward(view?.containerId || "");
           }}
         ></Button>
       </div>
@@ -94,6 +99,19 @@ function Toolbar(props: ToolbarProps) {
           className={css`
             width: 100%;
           `}
+          //@ts-ignore
+          inputRef={inputRef}
+          onFocus={() => {
+            inputRef.current?.select();
+          }}
+          onDrag={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onDragStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           value={props.view?.url || ""}
           onChange={(event) => {
             props.dispatch({

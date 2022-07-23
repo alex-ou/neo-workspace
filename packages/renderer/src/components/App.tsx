@@ -17,7 +17,7 @@ import View from "./View";
 import WindowToolbar from "./WindowToolbar";
 
 function App() {
-  const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
+  const [sidebarVisible, setSidebarVisible] = useState<boolean>(false);
 
   const [state, dispatch] = useReducer(reducer, { workspaces: [] });
 

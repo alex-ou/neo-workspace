@@ -36,6 +36,7 @@ function View(props: ViewProps) {
     // @ts-ignore
     <MosaicWindow<string>
       path={path}
+      draggable={false}
       createNode={() => crypto.randomUUID()}
       renderToolbar={() => (
         <div
