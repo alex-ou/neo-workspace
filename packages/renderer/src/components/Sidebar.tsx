@@ -66,7 +66,7 @@ function Sidebar(props: SidebarProps) {
             onChange={(e) => {
               setName(e.target.value);
             }}
-            placeholder="Workspace name"
+            placeholder="Type a workspace name"
           ></InputGroup>
           <Button
             className={css`

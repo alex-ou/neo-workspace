@@ -58,6 +58,22 @@ export class ViewManager {
     }
   };
 
+  goForward = (containerId: string) => {
+    console.log("view go forward :", containerId);
+    const view = this.views.find((view) => view.containerId === containerId);
+    if (view && view.viewId) {
+      unity1.view.goForward(view.viewId);
+    }
+  };
+
+  goBack = (containerId: string) => {
+    console.log("view go backward :", containerId);
+    const view = this.views.find((view) => view.containerId === containerId);
+    if (view && view.viewId) {
+      unity1.view.goBack(view.viewId);
+    }
+  };
+
   loadViewUrl = (containerId: string, url: string) => {
     console.log("load view url:", containerId);
     const view = this.views.find((view) => view.containerId === containerId);
