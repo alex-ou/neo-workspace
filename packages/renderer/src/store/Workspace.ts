@@ -2,7 +2,7 @@ import { NodeType } from "./../utils/mosaic-node";
 
 export interface WorkspaceView {
   containerId: string;
-  viewId: string;
+  viewId?: string;
 
   canGoBack?: boolean;
   canGoForward?: boolean;

@@ -41,8 +41,14 @@ export function viewReducer(state: ViewState, action: ViewAction): ViewState {
 }
 
 function loadViews(): ViewState {
+  const views: WorkspaceView[] = getViews().map((v) => ({
+    containerId: v.containerId,
+    viewId: undefined,
+    url: v.url,
+  }));
+  console.log("loaded views", views);
   return {
-    views: getViews(),
+    views: views,
   };
 }
 
@@ -50,14 +56,20 @@ function createWorkspaceView(
   state: ViewState,
   { payload }: CreateWorkspaceViewAction
 ): ViewState {
-  const views = state.views || [];
-  if (views.find((v) => v.containerId === payload.containerId)) {
+  let views = state.views || [];
+  const index = views.findIndex((v) => v.containerId === payload.containerId);
+  if (index !== -1 && views[index].viewId) {
     return state;
   }
-
+  views = [...views];
+  if (index === -1) {
+    views.push(payload);
+  } else {
+    views[index] = payload;
+  }
   return {
     ...state,
-    views: views.concat(payload),
+    views,
   };
 }
 

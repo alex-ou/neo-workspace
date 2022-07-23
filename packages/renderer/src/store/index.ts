@@ -77,6 +77,7 @@ function loadWorkspace(): AppState {
       isActive: true,
       layout: getTwoColumnNode(),
     };
+    workspaces.push(activeWorkspace);
   }
 
   console.log("loading workspace");
