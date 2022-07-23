@@ -6,14 +6,14 @@ import {
   MosaicContext,
   MosaicWindowContext,
 } from "react-mosaic-component";
-import { ViewAction } from "../store/view-state";
+import { AppAction } from "../store";
 import { WorkspaceView } from "../store/Workspace";
 import { ViewManager } from "../utils/view-manager";
 
 export interface ToolbarProps {
   view?: WorkspaceView;
   viewManager: ViewManager;
-  dispatch: React.Dispatch<ViewAction>;
+  dispatch: React.Dispatch<AppAction>;
 }
 
 function validateUrl(value: string) {

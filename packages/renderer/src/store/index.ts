@@ -1,6 +1,6 @@
 import { getTwoColumnNode } from "../utils/mosaic-node";
 import { getWorkspaces, saveWorkspaces } from "./app-storage";
-import { Workspace } from "./Workspace";
+import { Workspace, WorkspaceView } from "./Workspace";
 
 export interface AppState {
   workspaces: Workspace[];
@@ -32,7 +32,19 @@ interface UpdateActiveWorkspaceAction {
   payload: Workspace;
 }
 
+interface UpdateWorkspaceViewAction {
+  type: "update-workspace-view";
+  payload: Partial<WorkspaceView>;
+}
+
+interface CreateWorkspaceViewAction {
+  type: "create-workspace-view";
+  payload: WorkspaceView;
+}
+
 export type AppAction =
+  | UpdateWorkspaceViewAction
+  | CreateWorkspaceViewAction
   | LoadWorkspaceAction
   | AddWorkspaceAction
   | RemoveWorkspaceAction
@@ -57,10 +69,53 @@ export function reducer(state: AppState, action: AppAction): AppState {
     case "update-active-workspace":
       newState = updateActiveWorkspace(state, action);
       break;
+    case "create-workspace-view":
+      newState = createWorkspaceView(state, action);
+      break;
+    case "update-workspace-view":
+      newState = updateWorkspaceView(state, action);
+      break;
   }
 
   saveWorkspaces(newState.workspaces);
   return newState;
+}
+
+function createWorkspaceView(
+  state: AppState,
+  { payload }: CreateWorkspaceViewAction
+): AppState {
+  const views = state.activeWorkspace?.views || [];
+  if (views.find((v) => v.containerId === payload.containerId)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    activeWorkspace: {
+      ...state.activeWorkspace!,
+      views: views.concat(payload),
+    },
+  };
+}
+
+function updateWorkspaceView(
+  state: AppState,
+  { payload }: UpdateWorkspaceViewAction
+): AppState {
+  const views = state.activeWorkspace!.views.map((v) => {
+    if (v.containerId === payload.containerId || v.viewId === payload.viewId) {
+      return { ...v, ...payload };
+    }
+    return v;
+  });
+  return {
+    ...state,
+    activeWorkspace: {
+      ...state.activeWorkspace!,
+      views: views.concat(views),
+    },
+  };
 }
 
 function loadWorkspace(): AppState {
@@ -76,7 +131,9 @@ function loadWorkspace(): AppState {
       name: "Workspace 1",
       isActive: true,
       layout: getTwoColumnNode(),
+      views: [],
     };
+    workspaces.push(activeWorkspace);
   }
 
   console.log("loading workspace");
@@ -104,6 +161,7 @@ function createWorkspace(
     name: action.payload.name,
     isActive: true,
     layout: getTwoColumnNode(),
+    views: [],
   };
   workspaces.push(newWorkspace);
   return {

@@ -1,7 +1,6 @@
 import { Workspace, WorkspaceView } from "./Workspace";
 
 const WORKSPACE_KEY = "workspaces";
-const VIEW_KEY = "workspace-views";
 
 function getItem(key: string): any {
   const value = localStorage.getItem(key);
@@ -26,12 +25,4 @@ export function getWorkspaces(): Workspace[] {
 
 export function saveWorkspaces(values: Workspace[]) {
   return setItem(WORKSPACE_KEY, values || []);
-}
-
-export function getViews(): WorkspaceView[] {
-  return getItem(VIEW_KEY) || [];
-}
-
-export function saveViews(values: WorkspaceView[]) {
-  return setItem(VIEW_KEY, values || []);
 }

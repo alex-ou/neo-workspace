@@ -15,4 +15,5 @@ export interface Workspace {
   name: string;
   layout?: NodeType;
   isActive: boolean;
+  views: WorkspaceView[];
 }

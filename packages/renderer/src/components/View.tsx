@@ -2,7 +2,7 @@ import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import ViewToolbar from "./ViewToolbar";
 import { ViewManager } from "../utils/view-manager";
 import { css } from "@emotion/css";
-import { ViewAction } from "../store/view-state";
+import { AppAction } from "../store";
 import { WorkspaceView } from "../store/Workspace";
 
 interface ViewProps {
@@ -10,7 +10,7 @@ interface ViewProps {
   id: string;
   path: MosaicBranch[];
   views: WorkspaceView[];
-  dispatch: React.Dispatch<ViewAction>;
+  dispatch: React.Dispatch<AppAction>;
 }
 function View(props: ViewProps) {
   const viewManager = props.viewManager;
