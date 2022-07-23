@@ -1,5 +1,6 @@
 import { Button, ButtonGroup, Divider, Icon, Classes } from "@blueprintjs/core";
 import { css } from "@emotion/css";
+import { debounce } from "lodash";
 import { useEffect, useState } from "react";
 import { WindowState } from "../../../preload/renderer-api/types";
 import { ReactComponent as Logo } from "../assets/logo.svg";
@@ -21,9 +22,16 @@ function WindowToolbar(props: WindowToolbarProps) {
   }, [darkTheme]);
 
   useEffect(() => {
-    unity1.window.getState().then((state: WindowState) => {
-      setIsMaximized(state.maximized);
-    });
+    const setState = () =>
+      unity1.window.getState().then((state: WindowState) => {
+        setIsMaximized(state.maximized);
+      });
+    const resizeHandler = debounce(() => setState(), 500);
+
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
   }, []);
 
   return (
