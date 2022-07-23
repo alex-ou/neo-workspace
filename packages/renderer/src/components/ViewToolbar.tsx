@@ -51,11 +51,18 @@ function Toolbar(props: ToolbarProps) {
         align-items: center;
       `}
     >
-      <Button
-        title="Drag me to a docking location"
-        minimal
-        icon="drag-handle-horizontal"
-      ></Button>
+      {mosaicWindowActions.connectDragSource(
+        <div>
+          <Button
+            className={css`
+              cursor: move;
+            `}
+            title="Drag me to a docking location"
+            minimal
+            icon="drag-handle-horizontal"
+          ></Button>
+        </div>
+      )}
       <div
         className={css`
           margin-left: 2px;
