@@ -15,6 +15,7 @@ import { defaultViewManager } from "../utils/view-manager";
 import Sidebar from "./Sidebar";
 import View from "./View";
 import WindowToolbar from "./WindowToolbar";
+import ZeroState from "./ZeroState";
 
 function App() {
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(false);
@@ -38,7 +39,7 @@ function App() {
       <WindowToolbar onToggleSidebar={toggleSidebar} />
       <div id="u-layout">
         <MosaicWithoutDragDropContext<string>
-          zeroStateView={<MosaicZeroState createNode={createMosaicNode} />}
+          zeroStateView={<ZeroState createNode={createMosaicNode} />}
           renderTile={(id, path) => (
             <View
               views={activeWorkspace?.views || []}
