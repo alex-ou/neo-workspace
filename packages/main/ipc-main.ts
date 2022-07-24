@@ -1,4 +1,5 @@
-import { ipcMain, BrowserView, BrowserWindow } from "electron";
+import { join } from "path";
+import { ipcMain, BrowserView, BrowserWindow, nativeImage } from "electron";
 
 export function registerIpcMainHandlers() {
   ipcMain.handle("view:create", async (event, viewData) => {
@@ -18,7 +19,20 @@ export function registerIpcMainHandlers() {
         `view created, id: ${view2.webContents.id} for ${viewData.url}`
       );
 
+      const icon = nativeImage.createFromPath(join(__dirname, "./logo.png"));
+
       const webContents = view2.webContents;
+      webContents.setWindowOpenHandler(({ url }) => {
+        return {
+          action: "allow",
+          overrideBrowserWindowOptions: {
+            icon,
+            frames: false,
+            autoHideMenuBar: true,
+            webPreferences: {},
+          },
+        };
+      });
       webContents.on("did-navigate", (event, url) => {
         const viewInfo = {
           viewId: webContents.id,
