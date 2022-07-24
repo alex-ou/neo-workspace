@@ -10,7 +10,7 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null;
 
 async function createWindow() {
-  const icon = nativeImage.createFromPath(join(__dirname, "./logo.ico"));
+  const icon = nativeImage.createFromPath(join(__dirname, "./logo.png"));
 
   win = new BrowserWindow({
     title: "Main window",

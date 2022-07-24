@@ -48,6 +48,7 @@ function WindowToolbar(props: WindowToolbarProps) {
           display: flex;
           -webkit-app-region: drag;
           flex: 1;
+          align-items: center;
         `}
       >
         <Logo className={css``} />
