@@ -20,7 +20,7 @@ function ZeroState<T extends MosaicKey>(props: ZeroStateProps<T>) {
             mosaicActions.replaceWith([], node);
           }}
         >
-          Add a new window
+          Add new window
         </Button>
       }
     ></NonIdealState>

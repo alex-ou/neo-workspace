@@ -57,7 +57,7 @@ function Toolbar(props: ToolbarProps) {
             className={css`
               cursor: move;
             `}
-            title="Drag me to a docking location"
+            title="Drag window to a new location"
             minimal
             icon="drag-handle-horizontal"
           ></Button>
