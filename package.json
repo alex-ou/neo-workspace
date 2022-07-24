@@ -1,24 +1,29 @@
 {
-  "name": "unity1",
+  "name": "unity-workspace",
   "private": false,
   "version": "0.0.4",
   "files": [
     "dist"
   ],
+  "description": "A workspace manager for webapps",
+  "author": "Unity1",
   "main": "./dist/main/index.js",
   "module": "./dist/main/index.mjs",
   "types": "./dist/main/index.d.ts",
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
-    "main": "electron ."
+    "main": "electron .",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
     "@blueprintjs/core": "^4.6.0",
     "@blueprintjs/icons": "^4.3.1",
     "@emotion/css": "^11.9.0",
     "@types/lodash": "^4.14.182",
-    "electron": "^19.0.8",
+    "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dnd": "14.0.5",
@@ -30,15 +35,48 @@
     "unity1-core": "^0.0.1"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.64",
+    "@electron-forge/maker-deb": "^6.0.0-beta.64",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.64",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.64",
+    "@electron-forge/maker-zip": "^6.0.0-beta.64",
     "@types/react": "^18.0.15",
     "@types/react-dnd-multi-backend": "6.0.1",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.0",
+    "electron": "^19.0.8",
     "less": "^4.1.3",
     "prettier": "^2.7.1",
     "typescript": "^4.6.4",
     "vite": "^3.0.0",
     "vite-plugin-dts": "^1.3.0",
     "vite-plugin-svgr": "^2.2.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "UnityWorkspace"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }
