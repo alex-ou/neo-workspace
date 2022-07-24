@@ -4,7 +4,6 @@ import { Workspace, WorkspaceView } from "./Workspace";
 
 export interface AppState {
   workspaces: Workspace[];
-  activeWorkspace?: Workspace;
 }
 
 interface LoadWorkspaceAction {
@@ -29,7 +28,7 @@ interface SwitchWorkspaceAction {
 
 interface UpdateActiveWorkspaceAction {
   type: "update-active-workspace";
-  payload: Workspace;
+  payload: Partial<Workspace>;
 }
 
 interface UpdateWorkspaceViewAction {
@@ -81,21 +80,51 @@ export function reducer(state: AppState, action: AppAction): AppState {
   return newState;
 }
 
+const getActiveViews = (state: AppState) =>
+  state.workspaces.find((w) => w.isActive)?.views || [];
+
+const _updateActiveWorkspace = (
+  workspaces: Workspace[],
+  payload: Partial<Workspace>
+): Workspace[] => {
+  return workspaces.map((w) => {
+    if (w.isActive) {
+      return {
+        ...w,
+        ...payload,
+      };
+    }
+
+    return w;
+  });
+};
+
 function createWorkspaceView(
   state: AppState,
   { payload }: CreateWorkspaceViewAction
 ): AppState {
-  const views = state.activeWorkspace?.views || [];
-  if (views.find((v) => v.containerId === payload.containerId)) {
+  console.log(
+    "creating workspace view",
+    payload,
+    JSON.stringify(state.workspaces)
+  );
+  let views = getActiveViews(state);
+
+  const index = views.findIndex((v) => v.containerId === payload.containerId);
+  if (index !== -1 && views[index].viewId !== undefined) {
     return state;
+  }
+
+  views = [...views];
+  if (index === -1) {
+    views.push(payload);
+  } else {
+    views[index] = payload;
   }
 
   return {
     ...state,
-    activeWorkspace: {
-      ...state.activeWorkspace!,
-      views: views.concat(payload),
-    },
+    workspaces: _updateActiveWorkspace(state.workspaces, { views }),
   };
 }
 
@@ -103,7 +132,7 @@ function updateWorkspaceView(
   state: AppState,
   { payload }: UpdateWorkspaceViewAction
 ): AppState {
-  const views = state.activeWorkspace!.views.map((v) => {
+  const views = getActiveViews(state).map((v) => {
     if (v.containerId === payload.containerId || v.viewId === payload.viewId) {
       return { ...v, ...payload };
     }
@@ -111,36 +140,39 @@ function updateWorkspaceView(
   });
   return {
     ...state,
-    activeWorkspace: {
-      ...state.activeWorkspace!,
-      views: views.concat(views),
-    },
+    workspaces: _updateActiveWorkspace(state.workspaces, { views }),
   };
 }
 
 function loadWorkspace(): AppState {
   const workspaces = getWorkspaces();
 
-  const activeOnes = workspaces.filter((w) => w.isActive);
-  let activeWorkspace;
-  if (activeOnes.length > 0) {
-    activeWorkspace = activeOnes[0];
-  } else {
-    activeWorkspace = {
+  if (workspaces.length === 0) {
+    workspaces.push({
       id: crypto.randomUUID(),
       name: "Workspace 1",
       isActive: true,
       layout: getTwoColumnNode(),
       views: [],
-    };
-    workspaces.push(activeWorkspace);
+    });
   }
+
+  workspaces.forEach((w) => {
+    if (!w.views) {
+      w.views = [];
+      return;
+    }
+    w.views = w.views.map((v) => ({
+      containerId: v.containerId,
+      viewId: undefined,
+      url: v.url,
+    }));
+  });
 
   console.log("loading workspace");
 
   return {
     workspaces,
-    activeWorkspace,
   };
 }
 
@@ -167,7 +199,6 @@ function createWorkspace(
   return {
     ...state,
     workspaces,
-    activeWorkspace: newWorkspace,
   };
 }
 
@@ -185,8 +216,6 @@ function switchWorkspace(
   state: AppState,
   { payload }: SwitchWorkspaceAction
 ): AppState {
-  let activeWorkspace: Workspace = state.activeWorkspace!;
-
   let workspaces = state.workspaces.map((w) => {
     if (w.isActive) {
       return {
@@ -196,11 +225,10 @@ function switchWorkspace(
     }
 
     if (w.id === payload.workspaceId) {
-      activeWorkspace = {
+      return {
         ...w,
         isActive: true,
       };
-      return activeWorkspace;
     }
 
     return w;
@@ -209,7 +237,6 @@ function switchWorkspace(
   return {
     ...state,
     workspaces,
-    activeWorkspace,
   };
 }
 
@@ -217,13 +244,12 @@ function updateActiveWorkspace(
   state: AppState,
   { payload }: UpdateActiveWorkspaceAction
 ): AppState {
-  let activeWorkspace: Workspace = {
-    ...payload,
-  };
-
   let workspaces = state.workspaces.map((w) => {
-    if (w.id === payload.id) {
-      return activeWorkspace;
+    if (w.isActive) {
+      return {
+        ...w,
+        ...payload,
+      };
     }
 
     return w;
@@ -232,6 +258,5 @@ function updateActiveWorkspace(
   return {
     ...state,
     workspaces,
-    activeWorkspace,
   };
 }

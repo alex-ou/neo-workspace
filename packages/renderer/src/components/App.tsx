@@ -21,6 +21,8 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, { workspaces: [] });
 
+  const activeWorkspace = state.workspaces.find((w) => w.isActive);
+
   useEffect(() => {
     dispatch({ type: "load-workspace" });
 
@@ -39,19 +41,18 @@ function App() {
           zeroStateView={<MosaicZeroState createNode={createMosaicNode} />}
           renderTile={(id, path) => (
             <View
-              views={state.activeWorkspace?.views || []}
+              views={activeWorkspace?.views || []}
               dispatch={dispatch}
               viewManager={defaultViewManager}
               id={id}
               path={path}
             />
           )}
-          value={state.activeWorkspace?.layout || null}
+          value={activeWorkspace?.layout || null}
           onChange={(node) => {
             dispatch({
               type: "update-active-workspace",
               payload: {
-                ...state.activeWorkspace!,
                 layout: node,
               },
             });
@@ -60,7 +61,6 @@ function App() {
         {sidebarVisible && (
           <Sidebar
             workspaces={state.workspaces}
-            activeWorkspace={state.activeWorkspace!}
             dispatch={dispatch}
             onClose={toggleSidebar}
           />

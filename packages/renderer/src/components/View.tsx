@@ -4,6 +4,7 @@ import { ViewManager } from "../utils/view-manager";
 import { css } from "@emotion/css";
 import { AppAction } from "../store";
 import { WorkspaceView } from "../store/Workspace";
+import { debounce } from "lodash";
 
 interface ViewProps {
   viewManager: ViewManager;
@@ -18,7 +19,7 @@ function View(props: ViewProps) {
   const { id, path } = props;
   const currentView = props.views.find((v) => v.containerId === id);
 
-  const setContainerRef = (elem: HTMLDivElement) => {
+  const debouncedFunc = debounce((elem: HTMLDivElement) => {
     if (elem) {
       viewManager.createView(id, elem, currentView?.url).then((viewInfo) => {
         props.dispatch({
@@ -30,6 +31,9 @@ function View(props: ViewProps) {
         });
       });
     }
+  }, 200);
+  const setContainerRef = (elem: HTMLDivElement) => {
+    debouncedFunc(elem);
   };
 
   return (
@@ -42,6 +46,7 @@ function View(props: ViewProps) {
         <div
           className={css`
             width: 100%;
+            min-width: 270px;
           `}
         >
           <ViewToolbar

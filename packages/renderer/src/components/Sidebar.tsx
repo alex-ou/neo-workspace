@@ -15,7 +15,6 @@ import { Workspace } from "../store/Workspace";
 
 interface SidebarProps {
   workspaces: Workspace[];
-  activeWorkspace: Workspace;
   dispatch: React.Dispatch<AppAction>;
   onClose: () => void;
 }
@@ -23,7 +22,9 @@ interface SidebarProps {
 function Sidebar(props: SidebarProps) {
   const [name, setName] = useState<string>("");
 
-  const { workspaces, activeWorkspace, dispatch } = props;
+  const { workspaces, dispatch } = props;
+
+  const activeWorkspace = workspaces.find((w) => w.isActive);
 
   return (
     <div
