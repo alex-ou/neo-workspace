@@ -12,13 +12,15 @@ function WindowToolbar(props: WindowToolbarProps) {
   const { unity1 } = window;
   const [isMaximized, setIsMaximized] = useState<boolean>(false);
 
-  const [darkTheme, setDarkTheme] = useState(false);
+  const [darkTheme, setDarkTheme] = useState(
+    document.getElementById("root")!.classList.contains(Classes.DARK)
+  );
 
   useEffect(() => {
-    document.getElementById("root")!.classList.toggle(Classes.DARK);
+    document.getElementById("root")!.classList.toggle(Classes.DARK, darkTheme);
     document
       .querySelector(".mosaic-blueprint-theme")!
-      .classList.toggle(Classes.DARK);
+      .classList.toggle(Classes.DARK, darkTheme);
   }, [darkTheme]);
 
   useEffect(() => {

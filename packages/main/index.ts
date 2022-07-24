@@ -23,7 +23,7 @@ async function createWindow() {
     frame: false,
   });
 
-  if (app.isPackaged) {
+  if (import.meta.env.PROD) {
     win.loadFile(join(__dirname, "../renderer/index.html"));
   } else {
     // 🚧 Use ['ENV_NAME'] avoid vite:define plugin
