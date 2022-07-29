@@ -181,6 +181,7 @@ function Toolbar(props: ToolbarProps) {
           icon="cross"
           minimal
           onClick={() => {
+            viewManager.destroyView(view?.containerId || "");
             mosaicActions.remove(mosaicWindowActions.getPath());
           }}
         ></Button>

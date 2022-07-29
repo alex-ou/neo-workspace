@@ -1,12 +1,12 @@
 {
-  "name": "unity-workspace",
+  "name": "neo-workspace",
   "private": false,
-  "version": "0.0.4",
+  "version": "1.0.0",
   "files": [
     "dist"
   ],
   "description": "A workspace manager for webapps",
-  "author": "Unity1",
+  "author": "NeoNav",
   "main": "./dist/main/index.js",
   "module": "./dist/main/index.mjs",
   "types": "./dist/main/index.d.ts",
@@ -14,6 +14,7 @@
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
     "main": "electron .",
+    "appx": "node scripts/appx.mjs",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
@@ -22,7 +23,6 @@
     "@blueprintjs/core": "^4.6.0",
     "@blueprintjs/icons": "^4.3.1",
     "@emotion/css": "^11.9.0",
-    "@types/lodash": "^4.14.182",
     "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -32,7 +32,7 @@
     "react-dnd-touch-backend": "14.1.1",
     "react-dom": "^18.2.0",
     "react-mosaic-component": "^5.1.0",
-    "unity1-core": "^0.0.1"
+    "unity1-core": "0.0.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.64",
@@ -40,11 +40,13 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.64",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.64",
     "@electron-forge/maker-zip": "^6.0.0-beta.64",
+    "@types/lodash": "^4.14.182",
     "@types/react": "^18.0.15",
     "@types/react-dnd-multi-backend": "6.0.1",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.0",
-    "electron": "^19.0.8",
+    "electron": "^19.0.9",
+    "electron-windows-store": "^2.1.0",
     "less": "^4.1.3",
     "prettier": "^2.7.1",
     "typescript": "^4.6.4",
@@ -54,12 +56,19 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "name": "NeoWorkspace",
+        "icon": "./packages/main/public/logo.ico"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "UnityWorkspace"
+            "name": "neo-workspace",
+            "iconUrl": "https://www.unity1.co/assets/img/favicon.ico",
+            "setupIcon": "./packages/main/public/logo.ico",
+            "loadingGif": "./loading.gif",
+            "copyright": "NeoNav"
           }
         },
         {

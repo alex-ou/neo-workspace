@@ -3,10 +3,7 @@ import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { useEffect, useReducer, useState } from "react";
 import { DndProvider } from "react-dnd-multi-backend";
 import HTML5toTouch from "react-dnd-multi-backend/dist/esm/HTML5toTouch";
-import {
-  MosaicWithoutDragDropContext,
-  MosaicZeroState,
-} from "react-mosaic-component";
+import { MosaicWithoutDragDropContext } from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
 import { AppContext } from "../app-context";
 import { reducer } from "../store";

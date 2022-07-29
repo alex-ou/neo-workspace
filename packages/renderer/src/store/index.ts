@@ -1,4 +1,4 @@
-import { getTwoColumnNode } from "../utils/mosaic-node";
+import { getThreeWindowNode } from "../utils/mosaic-node";
 import { getWorkspaces, saveWorkspaces } from "./app-storage";
 import { Workspace, WorkspaceView } from "./Workspace";
 
@@ -103,11 +103,6 @@ function createWorkspaceView(
   state: AppState,
   { payload }: CreateWorkspaceViewAction
 ): AppState {
-  console.log(
-    "creating workspace view",
-    payload,
-    JSON.stringify(state.workspaces)
-  );
   let views = getActiveViews(state);
 
   const index = views.findIndex((v) => v.containerId === payload.containerId);
@@ -152,7 +147,7 @@ function loadWorkspace(): AppState {
       id: crypto.randomUUID(),
       name: "Workspace 1",
       isActive: true,
-      layout: getTwoColumnNode(),
+      layout: getThreeWindowNode(),
       views: [],
     });
   }
@@ -192,7 +187,7 @@ function createWorkspace(
     id: crypto.randomUUID(),
     name: action.payload.name,
     isActive: true,
-    layout: getTwoColumnNode(),
+    layout: getThreeWindowNode(),
     views: [],
   };
   workspaces.push(newWorkspace);

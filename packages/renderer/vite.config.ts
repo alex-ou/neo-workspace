@@ -8,10 +8,13 @@ export default defineConfig({
   mode: process.env.NODE_ENV,
   base: "./",
   plugins: [react(), svgr()],
+  esbuild: {
+    drop: process.env.NODE_ENV === "production" ? ["console", "debugger"] : [],
+  },
   build: {
     outDir: "../../dist/renderer",
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: false,
   },
   server: {
     host: "127.0.0.1",

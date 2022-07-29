@@ -11,7 +11,7 @@ function ZeroState<T extends MosaicKey>(props: ZeroStateProps<T>) {
     <NonIdealState
       className="mosaic-zero-state"
       icon="applications"
-      title="You workspace is empty"
+      title="Your workspace is empty"
       action={
         <Button
           icon="add"

@@ -3,7 +3,9 @@ import {
   Callout,
   Card,
   Classes,
+  Colors,
   Divider,
+  Icon,
   InputGroup,
   Radio,
   RadioGroup,
@@ -32,7 +34,7 @@ function Sidebar(props: SidebarProps) {
       className={css`
         width: 360px;
         height: 100%;
-
+        position: relative;
         margin: 0;
         padding: 6px 0px;
       `}
@@ -149,6 +151,17 @@ function Sidebar(props: SidebarProps) {
           ))}
         </RadioGroup>
       </Card>
+      <div
+        className={css`
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+        `}
+      >
+        <a href="mailto:support@neonav.co">
+          <Icon color={Colors.BLUE2} icon="envelope"></Icon> Email us
+        </a>
+      </div>
     </div>
   );
 }

@@ -2,12 +2,18 @@ import { join } from "path";
 import { app, BrowserWindow, nativeImage } from "electron";
 import { registerIpcMainHandlers } from "./ipc-main";
 
+if (require("electron-squirrel-startup")) {
+  app.quit();
+}
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
   process.exit(0);
 }
 
 let win: BrowserWindow | null = null;
+
+const devTools = !import.meta.env.PROD;
 
 async function createWindow() {
   const icon = nativeImage.createFromPath(join(__dirname, "./logo.png"));
@@ -19,6 +25,7 @@ async function createWindow() {
     height: 600,
     webPreferences: {
       preload: join(__dirname, "../preload/index.cjs"),
+      devTools,
     },
     frame: false,
   });
