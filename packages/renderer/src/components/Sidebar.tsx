@@ -4,16 +4,16 @@ import {
   Card,
   Classes,
   Colors,
+  Dialog,
   Divider,
   Icon,
   InputGroup,
-  Radio,
-  RadioGroup,
 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useState } from "react";
 import { AppAction } from "../store";
 import { Workspace } from "../store/Workspace";
+import { WorkspaceList } from "./WorkspaceList";
 
 interface SidebarProps {
   workspaces: Workspace[];
@@ -22,11 +22,12 @@ interface SidebarProps {
 }
 
 function Sidebar(props: SidebarProps) {
-  const [name, setName] = useState<string>("");
-
   const { workspaces, dispatch } = props;
-
   const activeWorkspace = workspaces.find((w) => w.isActive);
+
+  const [workspaceName, setWorkspaceName] = useState<string>("");
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [workspaceEditing, setWorkspaceEditing] = useState<Workspace>();
 
   return (
     <div
@@ -62,94 +63,102 @@ function Sidebar(props: SidebarProps) {
           <h4 className={Classes.HEADING}>Workspaces</h4>
           <Button minimal small icon="cross" onClick={props.onClose}></Button>
         </div>
-        <Divider />
+        <Divider
+          className={css`
+            margin: 0;
+          `}
+        />
         <Callout>
-          <InputGroup
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-            placeholder="Type a workspace name"
-          ></InputGroup>
           <Button
-            className={css`
-              margin-top: 8px;
-            `}
+            outlined
+            intent="primary"
             icon="add"
             onClick={() => {
-              if (!name) return;
-              dispatch({
-                type: "add-workspace",
-                payload: {
-                  name,
-                },
-              });
-              setName("");
+              setDialogOpen(true);
+              setWorkspaceEditing(undefined);
             }}
           >
             Create new workspace
           </Button>
         </Callout>
-        <RadioGroup
-          onChange={(event) => {
+        <Dialog
+          className={css`
+            margin: 8px;
+          `}
+          title={!workspaceEditing ? "Create new workspace" : "Edit workspace"}
+          isOpen={isDialogOpen}
+          canOutsideClickClose
+          usePortal={false}
+          onClose={() => {
+            setDialogOpen(false);
+          }}
+        >
+          <div className={Classes.DIALOG_BODY}>
+            <InputGroup
+              autoFocus
+              value={workspaceName}
+              onChange={(e) => {
+                setWorkspaceName(e.target.value);
+              }}
+              placeholder="Type a workspace name"
+            ></InputGroup>
+          </div>
+          <div className={Classes.DIALOG_FOOTER}>
+            <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+              <Button
+                intent="primary"
+                onClick={() => {
+                  if (!workspaceName) return;
+                  if (!workspaceEditing) {
+                    dispatch({
+                      type: "add-workspace",
+                      payload: {
+                        name: workspaceName,
+                      },
+                    });
+                  } else {
+                    dispatch({
+                      type: "update-workspace",
+                      payload: {
+                        ...workspaceEditing,
+                        name: workspaceName,
+                      },
+                    });
+                  }
+
+                  setWorkspaceName("");
+                  setDialogOpen(false);
+                }}
+              >
+                Save
+              </Button>
+              <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+            </div>
+          </div>
+        </Dialog>
+
+        <WorkspaceList
+          workspaces={props.workspaces}
+          onRename={(w: Workspace) => {
+            setDialogOpen(true);
+            setWorkspaceEditing(w);
+            setWorkspaceName(w.name);
+          }}
+          onSwitch={(workspaceId: string) => {
             dispatch({
               type: "switch-workspace",
-              payload: { workspaceId: event.currentTarget.value },
+              payload: { workspaceId },
             });
           }}
-          selectedValue={activeWorkspace?.id}
-          className={css`
-            margin-top: 8px;
-            padding: 0 8px;
-          `}
-        >
-          {workspaces.map((w) => (
-            <Radio
-              className={
-                Classes.CARD +
-                " " +
-                css`
-                  padding: 2px 0;
-                  min-height: 50px;
-                  display: flex;
-                  align-items: center;
-                  :not(.bp4-align-right) .bp4-control-indicator {
-                    margin-left: -20px;
-                  }
-                  background-color: ${w.isActive
-                    ? "rgba(45, 114, 210, 0.1)"
-                    : "transparent"};
-                `
-              }
-              key={w.id}
-              value={w.id}
-            >
-              <>
-                <span>{w.name}</span>
-                <span
-                  className={css`
-                    flex: 1;
-                  `}
-                />
-                {!w.isActive && (
-                  <Button
-                    minimal
-                    small
-                    icon="cross"
-                    onClick={() => {
-                      dispatch({
-                        type: "remove-workspace",
-                        payload: {
-                          workspaceId: w.id,
-                        },
-                      });
-                    }}
-                  ></Button>
-                )}
-              </>
-            </Radio>
-          ))}
-        </RadioGroup>
+          onRemove={(w: Workspace) => {
+            dispatch({
+              type: "remove-workspace",
+              payload: {
+                workspaceId: w.id,
+              },
+            });
+          }}
+        ></WorkspaceList>
       </Card>
       <div
         className={css`

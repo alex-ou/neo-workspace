@@ -31,6 +31,11 @@ interface UpdateActiveWorkspaceAction {
   payload: Partial<Workspace>;
 }
 
+interface UpdateWorkspaceAction {
+  type: "update-workspace";
+  payload: Partial<Workspace>;
+}
+
 interface UpdateWorkspaceViewAction {
   type: "update-workspace-view";
   payload: Partial<WorkspaceView>;
@@ -48,6 +53,7 @@ export type AppAction =
   | AddWorkspaceAction
   | RemoveWorkspaceAction
   | UpdateActiveWorkspaceAction
+  | UpdateWorkspaceAction
   | SwitchWorkspaceAction;
 
 export function reducer(state: AppState, action: AppAction): AppState {
@@ -67,6 +73,9 @@ export function reducer(state: AppState, action: AppAction): AppState {
       break;
     case "update-active-workspace":
       newState = updateActiveWorkspace(state, action);
+      break;
+    case "update-workspace":
+      newState = updateWorkspace(state, action);
       break;
     case "create-workspace-view":
       newState = createWorkspaceView(state, action);
@@ -241,6 +250,27 @@ function updateActiveWorkspace(
 ): AppState {
   let workspaces = state.workspaces.map((w) => {
     if (w.isActive) {
+      return {
+        ...w,
+        ...payload,
+      };
+    }
+
+    return w;
+  });
+
+  return {
+    ...state,
+    workspaces,
+  };
+}
+
+function updateWorkspace(
+  state: AppState,
+  { payload }: UpdateWorkspaceAction
+): AppState {
+  let workspaces = state.workspaces.map((w) => {
+    if (w.id === payload.id) {
       return {
         ...w,
         ...payload,
