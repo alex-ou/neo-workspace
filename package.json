@@ -67,7 +67,7 @@
             "name": "neo-workspace",
             "iconUrl": "https://www.unity1.co/assets/img/favicon.ico",
             "setupIcon": "./packages/main/public/logo.ico",
-            "loadingGif": "./loading.gif",
+            "loadingGif": "./build/loading.gif",
             "copyright": "NeoNav"
           }
         },
