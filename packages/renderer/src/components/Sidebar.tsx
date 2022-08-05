@@ -14,7 +14,7 @@ import { useState } from "react";
 import { AppAction } from "../store";
 import { Workspace } from "../store/Workspace";
 import { WorkspaceList } from "./WorkspaceList";
-
+import config from "../../../../package.json";
 interface SidebarProps {
   workspaces: Workspace[];
   dispatch: React.Dispatch<AppAction>;
@@ -37,7 +37,7 @@ function Sidebar(props: SidebarProps) {
         height: 100%;
         position: relative;
         margin: 0;
-        padding: 6px 0px;
+        padding: 6px 6px 6px 0px;
       `}
     >
       <Card
@@ -164,12 +164,16 @@ function Sidebar(props: SidebarProps) {
         className={css`
           position: absolute;
           bottom: 10px;
-          left: 10px;
+          left: 8px;
+          right: 8px;
+          display: flex;
+          justify-content: space-between;
         `}
       >
         <a href="mailto:support@neonav.co">
           <Icon color={Colors.BLUE2} icon="envelope"></Icon> Email us
         </a>
+        v{config.version}
       </div>
     </div>
   );

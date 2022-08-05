@@ -11,6 +11,11 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0);
 }
 
+require("update-electron-app")({
+  repo: "neonav-co/neonav-co.github.io",
+  logger: require("electron-log"),
+});
+
 let win: BrowserWindow | null = null;
 
 const devTools = !import.meta.env.PROD;
