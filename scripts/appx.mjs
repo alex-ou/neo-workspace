@@ -1,11 +1,13 @@
 import convertToWindowsStore from "electron-windows-store";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 convertToWindowsStore({
   inputDirectory:
     "C:\\Users\\alexo\\w\\neo-workspace\\out\\NeoWorkspace-win32-x64",
   outputDirectory: ".\\out\\windows-store",
   assets: ".\\build\\appx\\",
-  packageVersion: "1.0.0.0",
+  packageVersion: require("../package.json").version + ".0",
   packageName: "NeoWorkspace",
   packageDisplayName: "Neo Workspace",
   publisherDisplayName: "NeoNav",
