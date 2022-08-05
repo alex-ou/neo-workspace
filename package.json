@@ -1,7 +1,7 @@
 {
   "name": "neo-workspace",
   "private": false,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "files": [
     "dist"
   ],
@@ -20,12 +20,16 @@
     "make": "electron-forge make"
   },
   "dependencies": {
+    "electron-log": "^4.4.8",
+    "electron-squirrel-startup": "^1.0.0",
+    "unity1-core": "0.0.1",
+    "update-electron-app": "^2.0.1"
+  },
+  "devDependencies": {
     "@blueprintjs/core": "^4.6.0",
     "@blueprintjs/icons": "^4.3.1",
     "@blueprintjs/popover2": "^1.5.0",
     "@emotion/css": "^11.9.0",
-    "electron-log": "^4.4.8",
-    "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dnd": "14.0.5",
@@ -34,10 +38,6 @@
     "react-dnd-touch-backend": "14.1.1",
     "react-dom": "^18.2.0",
     "react-mosaic-component": "^5.1.0",
-    "unity1-core": "0.0.1",
-    "update-electron-app": "^2.0.1"
-  },
-  "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.64",
     "@electron-forge/maker-deb": "^6.0.0-beta.64",
     "@electron-forge/maker-rpm": "^6.0.0-beta.64",
