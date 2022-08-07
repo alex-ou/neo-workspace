@@ -1,10 +1,11 @@
-import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
-import ViewToolbar from "./ViewToolbar";
-import { ViewManager } from "../utils/view-manager";
 import { css } from "@emotion/css";
+import { debounce } from "lodash";
+import React from "react";
+import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
 import { WorkspaceView } from "../store/Workspace";
-import { debounce } from "lodash";
+import { ViewManager } from "../utils/view-manager";
+import ViewToolbar from "./ViewToolbar";
 
 interface ViewProps {
   viewManager: ViewManager;
@@ -20,21 +21,25 @@ function View(props: ViewProps) {
   const currentView = props.views.find((v) => v.containerId === id);
 
   const debouncedFunc = debounce((elem: HTMLDivElement) => {
-    if (elem) {
-      viewManager.createView(id, elem, currentView?.url).then((viewInfo) => {
-        props.dispatch({
-          type: "create-workspace-view",
-          payload: {
-            containerId: id,
-            viewId: viewInfo.viewId,
-          },
-        });
-      });
+    if (!elem) {
+      return;
     }
+    viewManager.createView(id, elem, currentView?.url).then((viewInfo) => {
+      props.dispatch({
+        type: "create-workspace-view",
+        payload: {
+          containerId: id,
+          viewId: viewInfo.viewId,
+        },
+      });
+    });
   }, 200);
-  const setContainerRef = (elem: HTMLDivElement) => {
-    debouncedFunc(elem);
-  };
+
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    debouncedFunc(containerRef.current!);
+  }, [containerRef]);
 
   return (
     // @ts-ignore
@@ -50,6 +55,7 @@ function View(props: ViewProps) {
           `}
         >
           <ViewToolbar
+            path={path}
             dispatch={props.dispatch}
             view={currentView}
             viewManager={viewManager}
@@ -59,10 +65,7 @@ function View(props: ViewProps) {
       onDragStart={() => viewManager.hideAllViews()}
       onDragEnd={() => viewManager.showAllViews()}
     >
-      <div
-        ref={setContainerRef}
-        style={{ width: "100%", height: "100%" }}
-      ></div>
+      <div ref={containerRef} style={{ width: "100%", height: "100%" }}></div>
     </MosaicWindow>
   );
 }

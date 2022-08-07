@@ -1,9 +1,13 @@
-import { Tab, Tabs, InputGroup, Button, IRefObject } from "@blueprintjs/core";
+import { Button, InputGroup } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import { useContext, useEffect, useRef, useState } from "react";
+import { dropRight } from "lodash";
+import { useContext, useRef } from "react";
 import {
   getAndAssertNodeAtPathExists,
+  getNodeAtPath,
+  MosaicBranch,
   MosaicContext,
+  MosaicParent,
   MosaicWindowContext,
 } from "react-mosaic-component";
 import { AppAction } from "../store";
@@ -13,6 +17,7 @@ import { ViewManager } from "../utils/view-manager";
 export interface ToolbarProps {
   view?: WorkspaceView;
   viewManager: ViewManager;
+  path: MosaicBranch[];
   dispatch: React.Dispatch<AppAction>;
 }
 
@@ -42,6 +47,13 @@ function Toolbar(props: ToolbarProps) {
     });
     props.viewManager.loadViewUrl(props.view!.containerId, url);
   };
+
+  const parentNode = getNodeAtPath(
+    mosaicActions.getRoot(),
+    dropRight(props.path)
+  ) as MosaicParent<string>;
+  const isMaximised =
+    parentNode.splitPercentage === 0 || parentNode.splitPercentage === 100;
   return (
     <div
       className={css`
@@ -169,11 +181,14 @@ function Toolbar(props: ToolbarProps) {
           }}
         ></Button>
         <Button
-          title="Expand"
-          icon="maximize"
+          title={isMaximised ? "Restore" : "Maximize"}
+          icon={isMaximised ? "minimize" : "maximize"}
           minimal
           onClick={() => {
-            mosaicActions.expand(mosaicWindowActions.getPath());
+            mosaicActions.expand(
+              mosaicWindowActions.getPath(),
+              isMaximised ? 50 : 100
+            );
           }}
         ></Button>
         <Button

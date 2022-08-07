@@ -37,15 +37,17 @@ function App() {
       <div id="u-layout">
         <MosaicWithoutDragDropContext<string>
           zeroStateView={<ZeroState createNode={createMosaicNode} />}
-          renderTile={(id, path) => (
-            <View
-              views={activeWorkspace?.views || []}
-              dispatch={dispatch}
-              viewManager={defaultViewManager}
-              id={id}
-              path={path}
-            />
-          )}
+          renderTile={(id, path) => {
+            return (
+              <View
+                views={activeWorkspace?.views || []}
+                dispatch={dispatch}
+                viewManager={defaultViewManager}
+                id={id}
+                path={path}
+              />
+            );
+          }}
           value={activeWorkspace?.layout || null}
           onChange={(node) => {
             dispatch({
