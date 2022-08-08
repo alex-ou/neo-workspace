@@ -3,25 +3,28 @@ import { ipcMain, BrowserView, BrowserWindow, nativeImage } from "electron";
 
 export function registerIpcMainHandlers() {
   ipcMain.handle("view:create", async (event, viewData) => {
-    const window = BrowserWindow.fromWebContents(event.sender)!;
+    const window: BrowserWindow = BrowserWindow.fromWebContents(event.sender)!;
 
     console.log("create-view", viewData);
-    let view2 = window
+    let targetView = window
       .getBrowserViews()
       .find((view) => view.webContents.id === viewData.id);
-    if (!view2) {
-      view2 = new BrowserView();
-      view2.setAutoResize({ width: false, height: false });
-      view2.setBounds(viewData.bounds);
-      if (viewData.url) view2.webContents.loadURL(viewData.url);
-      window.addBrowserView(view2);
+    if (!targetView) {
+      targetView = new BrowserView();
+      targetView.setAutoResize({ width: false, height: false });
+      targetView.setBounds(viewData.bounds);
+      if (viewData.url) {
+        targetView.webContents.loadURL(viewData.url);
+      }
+
+      window.addBrowserView(targetView);
       console.log(
-        `view created, id: ${view2.webContents.id} for ${viewData.url}`
+        `view created, id: ${targetView.webContents.id} for ${viewData.url}`
       );
 
       const icon = nativeImage.createFromPath(join(__dirname, "./logo.png"));
 
-      const webContents = view2.webContents;
+      const webContents = targetView.webContents;
       webContents.setWindowOpenHandler(({ url }) => {
         return {
           action: "allow",
@@ -46,22 +49,22 @@ export function registerIpcMainHandlers() {
       });
     }
 
-    return view2.webContents.id;
+    return targetView.webContents.id;
   });
 
   ipcMain.handle("view:update", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
     console.log("update-view:", viewData);
-    const view2 = window
+    const targetView = window
       .getBrowserViews()
       .find((view) => view.webContents.id === viewData.id);
-    if (view2) {
+    if (targetView) {
       if (viewData.url) {
-        view2.webContents.loadURL(viewData.url);
+        targetView.webContents.loadURL(viewData.url);
       }
       if (viewData.bounds) {
-        view2.setBounds(viewData.bounds);
-        window.setTopBrowserView(view2);
+        targetView.setBounds(viewData.bounds);
+        window.setTopBrowserView(targetView);
       }
     }
   });
@@ -69,32 +72,35 @@ export function registerIpcMainHandlers() {
   ipcMain.handle("view:go-back", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
     console.log("go-back:", viewData);
-    const view2 = window
+    const targetView = window
       .getBrowserViews()
       .find((view) => view.webContents.id === viewData.id);
-    if (view2) {
-      view2.webContents.goBack();
+    if (targetView) {
+      targetView.webContents.goBack();
     }
   });
 
   ipcMain.handle("view:go-forward", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
     console.log("go-forward:", viewData);
-    const view2 = window
+    const targetView = window
       .getBrowserViews()
       .find((view) => view.webContents.id === viewData.id);
-    if (view2) {
-      view2.webContents.goForward();
+    if (targetView) {
+      targetView.webContents.goForward();
     }
   });
 
   ipcMain.handle("view:destroy", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
     console.log("destroy-view:", viewData);
-    const view2 = window
+    const targetView = window
       .getBrowserViews()
       .find((view) => view.webContents.id === viewData.id);
-    if (view2) window.removeBrowserView(view2);
+    if (targetView) {
+      window.removeBrowserView(targetView);
+      (targetView.webContents as any).destroy();
+    }
   });
 
   let hiddenViews: BrowserView[] = [];

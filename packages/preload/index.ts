@@ -1,5 +1,5 @@
-import { exposeUnity1API } from "./renderer-api";
-exposeUnity1API();
+import { exposeNeoNavAPI } from "./renderer-api";
+exposeNeoNavAPI();
 
 function domReady(
   condition: DocumentReadyState[] = ["complete", "interactive"]

@@ -24,7 +24,7 @@ function App() {
   useEffect(() => {
     dispatch({ type: "load-workspace" });
 
-    window.unity1.view.onNavigate((viewInfo) => {
+    window.neonav.view.onNavigate((viewInfo) => {
       console.log("received onNavigate", viewInfo);
       dispatch({ type: "update-workspace-view", payload: { ...viewInfo } });
     });

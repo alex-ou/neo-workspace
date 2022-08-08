@@ -1,7 +1,7 @@
-import { Unity1API } from "../../preload/renderer-api/types";
+import { NeoNavAPI } from "../../preload/renderer-api/types";
 
 declare global {
   interface Window {
-    unity1: Unity1API;
+    neonav: NeoNavAPI;
   }
 }

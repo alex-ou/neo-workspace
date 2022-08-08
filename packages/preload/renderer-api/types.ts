@@ -13,7 +13,7 @@ export interface ViewInfo {
   url: string;
 }
 
-export interface UnityView {
+export interface NeoView {
   hideAllViews(): Promise<void>;
   showAllViews(): Promise<void>;
 
@@ -35,7 +35,7 @@ export interface WindowState {
   minimized: boolean;
   maximized: boolean;
 }
-export interface UnityWindow {
+export interface NeoWindow {
   maximize(): Promise<void>;
   unmaximize(): Promise<void>;
   minimize(): Promise<void>;
@@ -43,7 +43,7 @@ export interface UnityWindow {
   getState(): Promise<WindowState>;
 }
 
-export interface Unity1API {
-  view: UnityView;
-  window: UnityWindow;
+export interface NeoNavAPI {
+  view: NeoView;
+  window: NeoWindow;
 }

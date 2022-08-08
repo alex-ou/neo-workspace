@@ -9,7 +9,7 @@ export interface WindowToolbarProps {
   onToggleSidebar: () => void;
 }
 function WindowToolbar(props: WindowToolbarProps) {
-  const { unity1 } = window;
+  const { neonav } = window;
   const [isMaximized, setIsMaximized] = useState<boolean>(false);
 
   const [darkTheme, setDarkTheme] = useState(
@@ -25,7 +25,7 @@ function WindowToolbar(props: WindowToolbarProps) {
 
   useEffect(() => {
     const setState = () =>
-      unity1.window.getState().then((state: WindowState) => {
+      neonav.window.getState().then((state: WindowState) => {
         setIsMaximized(state.maximized);
       });
     const resizeHandler = debounce(() => setState(), 500);
@@ -87,7 +87,7 @@ function WindowToolbar(props: WindowToolbarProps) {
 
         <Button
           onClick={() => {
-            unity1.window.minimize();
+            neonav.window.minimize();
           }}
         >
           <Icon icon="minus" />
@@ -95,7 +95,7 @@ function WindowToolbar(props: WindowToolbarProps) {
 
         <Button
           onClick={() => {
-            isMaximized ? unity1.window.unmaximize() : unity1.window.maximize();
+            isMaximized ? neonav.window.unmaximize() : neonav.window.maximize();
             setIsMaximized(!isMaximized);
           }}
         >
@@ -111,7 +111,7 @@ function WindowToolbar(props: WindowToolbarProps) {
         </Button>
         <Button
           onClick={() => {
-            unity1.window.close();
+            neonav.window.close();
           }}
         >
           <Icon icon="cross" />

@@ -1,6 +1,6 @@
 import { getViewBounds } from "./dom-util";
 
-const { unity1 } = window;
+const { neonav } = window;
 
 interface ViewInfo {
   containerId: string;
@@ -33,12 +33,12 @@ export class ViewManager {
       container: elem,
       resizeObserver: new ResizeObserver(() => {
         console.log("resized", view?.viewId);
-        window.unity1.view.setViewBounds({
+        window.neonav.view.setViewBounds({
           id: view!.viewId,
           bounds: getViewBounds(view!.container),
         });
       }),
-      viewId: await unity1.view.createView({
+      viewId: await neonav.view.createView({
         url: url || "",
         bounds: getViewBounds(elem),
       }),
@@ -53,7 +53,7 @@ export class ViewManager {
     console.log("destroy view:", containerId);
     const view = this.views.find((view) => view.containerId === containerId);
     if (view && view.viewId) {
-      unity1.view.destroyView(view.viewId);
+      neonav.view.destroyView(view.viewId);
       view.viewId = "";
     }
   };
@@ -62,7 +62,7 @@ export class ViewManager {
     console.log("view go forward :", containerId);
     const view = this.views.find((view) => view.containerId === containerId);
     if (view && view.viewId) {
-      unity1.view.goForward(view.viewId);
+      neonav.view.goForward(view.viewId);
     }
   };
 
@@ -70,21 +70,21 @@ export class ViewManager {
     console.log("view go backward :", containerId);
     const view = this.views.find((view) => view.containerId === containerId);
     if (view && view.viewId) {
-      unity1.view.goBack(view.viewId);
+      neonav.view.goBack(view.viewId);
     }
   };
 
   loadViewUrl = (containerId: string, url: string) => {
     console.log("load view url:", containerId);
     const view = this.views.find((view) => view.containerId === containerId);
-    if (view) unity1.view.loadViewUrl({ id: view?.viewId, url });
+    if (view) neonav.view.loadViewUrl({ id: view?.viewId, url });
   };
 
   hideAllViews() {
-    unity1.view.hideAllViews();
+    neonav.view.hideAllViews();
   }
   showAllViews() {
-    unity1.view.showAllViews();
+    neonav.view.showAllViews();
   }
 }
 

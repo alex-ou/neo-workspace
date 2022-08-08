@@ -3,9 +3,9 @@ import ReactDOM from "react-dom/client";
 import App from "./components/App";
 import "./index.less";
 
-let { unity1 } = window;
-if (!unity1) {
-  window.unity1 = {
+let { neonav } = window;
+if (!neonav) {
+  window.neonav = {
     view: {
       hideAllViews: () => Promise.resolve(),
       showAllViews: () => Promise.resolve(),
