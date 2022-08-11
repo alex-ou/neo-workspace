@@ -1,7 +1,10 @@
 import { join } from "path";
 import { ipcMain, BrowserView, BrowserWindow, nativeImage } from "electron";
+import registerPasswordIpcHandlers from "./password-main";
 
 export function registerIpcMainHandlers() {
+  registerPasswordIpcHandlers();
+
   ipcMain.handle("view:create", async (event, viewData) => {
     const window: BrowserWindow = BrowserWindow.fromWebContents(event.sender)!;
 
@@ -10,12 +13,19 @@ export function registerIpcMainHandlers() {
       .getBrowserViews()
       .find((view) => view.webContents.id === viewData.id);
     if (!targetView) {
-      targetView = new BrowserView();
+      targetView = new BrowserView({
+        webPreferences: {
+          preload: join(__dirname, "../preload/index.cjs"),
+          devTools: true,
+          additionalArguments: ["--web-view"],
+        },
+      });
       targetView.setAutoResize({ width: false, height: false });
       targetView.setBounds(viewData.bounds);
       if (viewData.url) {
         targetView.webContents.loadURL(viewData.url);
       }
+      // targetView.webContents.openDevTools();
 
       window.addBrowserView(targetView);
       console.log(
@@ -44,8 +54,19 @@ export function registerIpcMainHandlers() {
           canGoForward: webContents.canGoForward(),
           url: webContents.getURL(),
         };
-        window.webContents.send("view-did-navigate", viewInfo);
+        window.webContents.send("view:did-navigate", viewInfo);
         console.log(viewInfo);
+      });
+
+      webContents.on("ipc-message", (e: any, channel, data) => {
+        console.log("ipc-message", channel, data);
+        window.webContents.send("view:ipc-message", {
+          id: webContents.id,
+          name: channel,
+          data: data,
+          frameId: e.frameId,
+          frameURL: e.senderFrame.url,
+        });
       });
     }
 

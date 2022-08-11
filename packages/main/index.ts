@@ -31,6 +31,7 @@ async function createWindow() {
     webPreferences: {
       preload: join(__dirname, "../preload/index.cjs"),
       devTools,
+      additionalArguments: ["--main-window"],
     },
     frame: false,
   });

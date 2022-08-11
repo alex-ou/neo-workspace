@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./components/App";
 import "./index.less";
+import { initialize } from "./password-manager";
 
 let { neonav } = window;
 if (!neonav) {
@@ -24,8 +25,18 @@ if (!neonav) {
       close: () => Promise.resolve(),
       getState: () => Promise.resolve({ minimized: false, maximized: false }),
     },
+    passwordService: {
+      autofillMatched: () => {},
+      onAutoFill: () => {},
+      onFormFilled: () => {},
+      getCredentials: () => Promise.resolve([]),
+      deleteCredential: () => Promise.resolve(),
+      saveCredential: () => Promise.resolve(),
+    },
   };
 }
+
+initialize();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

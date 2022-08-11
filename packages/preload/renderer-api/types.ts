@@ -42,8 +42,43 @@ export interface NeoWindow {
   close(): Promise<void>;
   getState(): Promise<WindowState>;
 }
+export interface DomainCredential {
+  username: string;
+  password: string;
+  domain: string;
+}
+
+export interface MatchingCredentials {
+  domain: string;
+  credentials: { username: string; password: string }[];
+}
+
+export interface PasswordService {
+  onAutoFill: (fn: IpcMessageListener) => void;
+  autofillMatched: (options: {
+    id: string;
+    frameId: string;
+    frameUrl: string;
+    data: MatchingCredentials;
+  }) => void;
+  onFormFilled: (fn: IpcMessageListener) => void;
+  getCredentials: () => Promise<DomainCredential[]>;
+  deleteCredential: (options: {
+    domain: string;
+    username: string;
+  }) => Promise<void>;
+  saveCredential: (d: DomainCredential) => Promise<void>;
+}
+
+export type IpcMessageListener = (
+  viewId: string,
+  data: any,
+  frameId: string,
+  frameUrl: string
+) => void;
 
 export interface NeoNavAPI {
   view: NeoView;
   window: NeoWindow;
+  passwordService: PasswordService;
 }

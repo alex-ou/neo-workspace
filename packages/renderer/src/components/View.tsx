@@ -1,10 +1,11 @@
 import { css } from "@emotion/css";
 import { debounce } from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
 import { WorkspaceView } from "../store/Workspace";
 import { ViewManager } from "../utils/view-manager";
+import SavePasswordBar from "./SavePasswordBar";
 import ViewToolbar from "./ViewToolbar";
 
 interface ViewProps {
@@ -19,6 +20,9 @@ function View(props: ViewProps) {
 
   const { id, path } = props;
   const currentView = props.views.find((v) => v.containerId === id);
+
+  const [isCapturingPassword, setIsCapturingPassword] = useState(false);
+  const passwordBarHeight = isCapturingPassword ? "44px" : "0px";
 
   const debouncedFunc = debounce((elem: HTMLDivElement) => {
     if (!elem) {
@@ -65,7 +69,35 @@ function View(props: ViewProps) {
       onDragStart={() => viewManager.hideAllViews()}
       onDragEnd={() => viewManager.showAllViews()}
     >
-      <div ref={containerRef} style={{ width: "100%", height: "100%" }}></div>
+      <div
+        className={css`
+          height: 100%;
+        `}
+      >
+        <div
+          className={css`
+            height: ${passwordBarHeight};
+            display: ${isCapturingPassword ? "block" : "none"};
+          `}
+        >
+          <SavePasswordBar
+            viewId={currentView?.viewId}
+            onClose={() => {
+              setIsCapturingPassword(false);
+            }}
+            onOpen={() => {
+              setIsCapturingPassword(true);
+            }}
+          />
+        </div>
+
+        <div
+          ref={containerRef}
+          className={css`
+            height: calc(100% - ${passwordBarHeight});
+          `}
+        ></div>
+      </div>
     </MosaicWindow>
   );
 }

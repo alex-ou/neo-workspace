@@ -61,8 +61,8 @@ export async function loadViewUrl(options: {
 export async function onNavigate(
   callback: (info: ViewInfo) => void
 ): Promise<void> {
-  ipcRenderer.removeAllListeners("view-did-navigate");
-  ipcRenderer.on("view-did-navigate", (event, info) => {
+  ipcRenderer.removeAllListeners("view:did-navigate");
+  ipcRenderer.on("view:did-navigate", (event, info) => {
     callback(info);
   });
 }
