@@ -9,6 +9,7 @@ import { AppContext } from "../app-context";
 import { reducer } from "../store";
 import { createMosaicNode } from "../utils/mosaic-node";
 import { defaultViewManager } from "../utils/view-manager";
+import Settings from "./Settings";
 import Sidebar from "./Sidebar";
 import View from "./View";
 import WindowToolbar from "./WindowToolbar";
@@ -35,6 +36,7 @@ function App() {
     <AppContext.Provider value={{}}>
       <WindowToolbar onToggleSidebar={toggleSidebar} />
       <div id="u-layout">
+        <Settings />
         <MosaicWithoutDragDropContext<string>
           zeroStateView={<ZeroState createNode={createMosaicNode} />}
           renderTile={(id, path) => {

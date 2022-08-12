@@ -1,10 +1,7 @@
 import { settings } from "./store/settings";
-export interface CapturePasswordDetail {
-  viewId: string;
-  data: { domain: string; username: string; password: string };
-}
+import { CapturePasswordDetail } from "./types";
 
-const passwordService = window.neonav.passwordService;
+const { passwordService } = window.neonav;
 
 export function formatedDomain(domain: string) {
   if (domain.startsWith("www.")) {
@@ -19,45 +16,55 @@ export function getDomainCredentials(domain: string) {
     .then((credentials) => credentials.filter((c) => c.domain === domain));
 }
 
-export function initialize() {
-  passwordService.onAutoFill((id, data, frameId, frameUrl) => {
-    const hostname = new URL(frameUrl).hostname;
+export function handleAutoFillRequest(
+  id: string,
+  data: any,
+  frameId: string,
+  frameUrl: string
+) {
+  const hostname = new URL(frameUrl).hostname;
 
-    const formattedHostname = formatedDomain(hostname);
+  const formattedHostname = formatedDomain(hostname);
 
-    console.log("onAutoFill", id, formattedHostname);
+  console.log("onAutoFill", id, formattedHostname);
 
-    getDomainCredentials(formattedHostname)
-      .then((credentials) => {
-        console.log("found credential count", credentials.length);
+  getDomainCredentials(formattedHostname)
+    .then((credentials) => {
+      console.log("found credential count", credentials.length);
 
-        if (credentials && credentials.length > 0) {
-          passwordService.autofillMatched({
-            id,
-            frameId: frameId,
-            frameUrl,
-            data: {
-              domain: hostname,
-              credentials,
-            },
-          });
-        }
+      if (credentials && credentials.length > 0) {
+        passwordService.autofillMatched({
+          id,
+          frameId: frameId,
+          frameUrl,
+          data: {
+            domain: hostname,
+            credentials,
+          },
+        });
+      }
+    })
+    .catch((e) => {
+      console.error("Failed to get password suggestions: " + e.message);
+    });
+}
+
+export function handleFormFilled(
+  id: string,
+  data: any,
+  frameId: string,
+  frameUrl: string
+) {
+  console.log("onFormFill", id, data, frameId, frameUrl);
+  if (
+    !settings
+      .getPasswordNeverSaveDomains()
+      .includes(formatedDomain(data.domain))
+  ) {
+    document.dispatchEvent(
+      new CustomEvent<CapturePasswordDetail>("capturepassword", {
+        detail: { viewId: id, data },
       })
-      .catch((e) => {
-        console.error("Failed to get password suggestions: " + e.message);
-      });
-  });
-  passwordService.onFormFilled((id, data, frameId, frameUrl) => {
-    console.log("onFormFill", id, data, frameId, frameUrl);
-    if (
-      !settings
-        .getPasswordNeverSaveDomains()
-        .includes(formatedDomain(data.domain))
-    )
-      document.dispatchEvent(
-        new CustomEvent<CapturePasswordDetail>("capturepassword", {
-          detail: { viewId: id, data },
-        })
-      );
-  });
+    );
+  }
 }

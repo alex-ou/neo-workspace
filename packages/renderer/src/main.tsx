@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./components/App";
 import "./index.less";
-import { initialize } from "./password-manager";
+import { registerEventHandlers } from "./utils/event-handler";
 
 let { neonav } = window;
 if (!neonav) {
@@ -33,10 +33,14 @@ if (!neonav) {
       deleteCredential: () => Promise.resolve(),
       saveCredential: () => Promise.resolve(),
     },
+    application: {
+      onContextMenuCommand: () => {},
+      showAppMenu: () => Promise.resolve(),
+    },
   };
 }
 
-initialize();
+registerEventHandlers();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

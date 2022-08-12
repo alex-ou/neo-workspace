@@ -29,9 +29,10 @@ export function saveWorkspaces(values: Workspace[]) {
 }
 
 export function setSettings(settings: any) {
-  setItem(SETTINGS_KEY, JSON.stringify(settings));
+  setItem(SETTINGS_KEY, settings);
 }
 
 export function getSettings() {
-  return getItem(SETTINGS_KEY);
+  const result = getItem(SETTINGS_KEY);
+  return result;
 }

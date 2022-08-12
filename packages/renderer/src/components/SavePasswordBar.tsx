@@ -1,12 +1,9 @@
 import { Button, InputGroup } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import React, { useState } from "react";
-import {
-  CapturePasswordDetail,
-  getDomainCredentials,
-  formatedDomain,
-} from "../password-manager";
+import { getDomainCredentials, formatedDomain } from "../password-manager";
 import { settings } from "../store/settings";
+import { CapturePasswordDetail } from "../types";
 const passwordService = window.neonav.passwordService;
 
 export default function SavePasswordBar({

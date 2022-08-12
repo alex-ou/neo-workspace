@@ -1,5 +1,14 @@
 import { join } from "path";
-import { ipcMain, BrowserView, BrowserWindow, nativeImage } from "electron";
+import {
+  ipcMain,
+  BrowserView,
+  BrowserWindow,
+  nativeImage,
+  Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
+  shell,
+} from "electron";
 import registerPasswordIpcHandlers from "./password-main";
 
 export function registerIpcMainHandlers() {
@@ -169,5 +178,26 @@ export function registerIpcMainHandlers() {
       maximized: window.isMaximized(),
       minimized: window.isMinimized(),
     };
+  });
+
+  ipcMain.on("app:show-app-menu", (event) => {
+    console.log("app:show-app-menu");
+    const template: MenuItemConstructorOptions[] = [
+      {
+        label: "Settings",
+        click: () => {
+          event.sender.send("app:menu-command", "Settings");
+        },
+      },
+      { type: "separator" },
+      {
+        label: "Contact Us",
+        click: async () => {
+          await shell.openExternal("https://www.neonav.co/#contacts");
+        },
+      },
+    ];
+    const menu = Menu.buildFromTemplate(template);
+    menu.popup();
   });
 }

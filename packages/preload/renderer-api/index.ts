@@ -11,6 +11,7 @@ import {
 import { NeoNavAPI } from "./types";
 import * as viewAPI from "./view";
 import * as windowAPI from "./window";
+import * as application from "./application";
 
 export function exposeNeoNavAPI() {
   initialize();
@@ -26,5 +27,6 @@ export function exposeNeoNavAPI() {
       deleteCredential,
       getCredentials,
     },
+    application,
   } as NeoNavAPI);
 }

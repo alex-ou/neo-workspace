@@ -1,6 +1,12 @@
 import { NeoNavAPI } from "../../preload/renderer-api/types";
-import { CapturePasswordDetail } from "./password-manager";
 
+export interface CapturePasswordDetail {
+  viewId: string;
+  data: { domain: string; username: string; password: string };
+}
+export interface MenuCommand {
+  command: string;
+}
 declare global {
   interface Window {
     neonav: NeoNavAPI;
@@ -9,7 +15,9 @@ declare global {
 
 interface CustomEventMap {
   capturepassword: CustomEvent<CapturePasswordDetail>;
+  menucommand: CustomEvent<MenuCommand>;
 }
+
 declare global {
   interface Document {
     addEventListener<K extends keyof CustomEventMap>(

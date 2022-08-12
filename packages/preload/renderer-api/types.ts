@@ -70,6 +70,10 @@ export interface PasswordService {
   saveCredential: (d: DomainCredential) => Promise<void>;
 }
 
+export interface Application {
+  showAppMenu: () => Promise<void>;
+  onContextMenuCommand: (callback: (e: any, command: any) => void) => void;
+}
 export type IpcMessageListener = (
   viewId: string,
   data: any,
@@ -81,4 +85,5 @@ export interface NeoNavAPI {
   view: NeoView;
   window: NeoWindow;
   passwordService: PasswordService;
+  application: Application;
 }

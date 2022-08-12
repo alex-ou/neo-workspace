@@ -41,11 +41,15 @@ function WindowToolbar(props: WindowToolbarProps) {
       id="u-toolbar"
       className={css`
         display: flex;
-        margin-left: 8px;
         align-items: center;
       `}
     >
-      <Button intent="primary" minimal icon="menu" />
+      <Button
+        intent="primary"
+        minimal
+        icon="menu"
+        onClick={() => window.neonav.application.showAppMenu()}
+      />
 
       <div
         className={css`
