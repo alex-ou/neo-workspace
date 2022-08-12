@@ -11,7 +11,7 @@ import {
   MosaicWindowContext,
 } from "react-mosaic-component";
 import { AppAction } from "../store";
-import { WorkspaceView } from "../store/Workspace";
+import { WorkspaceView } from "../store/workspace";
 import { ViewManager } from "../utils/view-manager";
 
 export interface ToolbarProps {
@@ -33,10 +33,15 @@ function Toolbar(props: ToolbarProps) {
 
   const inputRef = useRef<HTMLInputElement>();
   const onURLChange = (value: string) => {
-    const url =
-      value && validateUrl(value)
-        ? value
-        : `https://www.google.com/search?q=${encodeURI(value)}`;
+    if (!value) {
+      return;
+    }
+    const formatedUrl = (v: string) =>
+      v.indexOf("http") === 0 ? v : "https://" + v;
+    const formatedValue = formatedUrl(value);
+    const url = validateUrl(formatedValue)
+      ? formatedValue
+      : `https://www.google.com/search?q=${encodeURI(value)}`;
 
     props.dispatch({
       type: "update-workspace-view",

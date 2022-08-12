@@ -3,7 +3,7 @@ import { debounce } from "lodash";
 import React, { useState } from "react";
 import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
-import { WorkspaceView } from "../store/Workspace";
+import { WorkspaceView } from "../store/workspace";
 import { ViewManager } from "../utils/view-manager";
 import SavePasswordBar from "./SavePasswordBar";
 import ViewToolbar from "./ViewToolbar";

@@ -1,4 +1,3 @@
-import { Workspace } from "./store/Workspace";
 import React from "react";
 
 export interface AppContextType {

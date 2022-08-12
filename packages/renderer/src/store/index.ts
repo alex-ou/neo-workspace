@@ -1,6 +1,6 @@
 import { getThreeWindowNode } from "../utils/mosaic-node";
 import { getWorkspaces, saveWorkspaces } from "./app-storage";
-import { Workspace, WorkspaceView } from "./Workspace";
+import { Workspace, WorkspaceView } from "./workspace";
 
 export interface AppState {
   workspaces: Workspace[];

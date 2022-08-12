@@ -12,7 +12,7 @@ import {
 import { css } from "@emotion/css";
 import { useState } from "react";
 import { AppAction } from "../store";
-import { Workspace } from "../store/Workspace";
+import { Workspace } from "../store/workspace";
 import { WorkspaceList } from "./WorkspaceList";
 import config from "../../../../package.json";
 interface SidebarProps {

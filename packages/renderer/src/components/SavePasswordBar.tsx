@@ -6,6 +6,7 @@ import {
   getDomainCredentials,
   formatedDomain,
 } from "../password-manager";
+import { settings } from "../store/settings";
 const passwordService = window.neonav.passwordService;
 
 export default function SavePasswordBar({
@@ -98,6 +99,9 @@ export default function SavePasswordBar({
       </Button>
       <Button
         onClick={() => {
+          settings.setPasswordNeverSaveDomains(
+            settings.getPasswordNeverSaveDomains().concat(domain!)
+          );
           onClose();
         }}
       >

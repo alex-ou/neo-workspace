@@ -45,22 +45,31 @@ function WindowToolbar(props: WindowToolbarProps) {
         align-items: center;
       `}
     >
+      <Button intent="primary" minimal icon="menu" />
+
       <div
         className={css`
           display: flex;
           -webkit-app-region: drag;
           flex: 1;
-          align-items: center;
+          justify-content: space-around;
         `}
       >
-        <Logo className={css``} />
-        <span
+        <div
           className={css`
-            margin-left: 8px;
+            display: flex;
+            align-items: center;
           `}
         >
-          <span className="bp4-heading ">{document.title}</span>
-        </span>
+          <Logo className={css``} />
+          <span
+            className={css`
+              margin-left: 8px;
+            `}
+          >
+            <span className="bp4-heading ">{document.title}</span>
+          </span>
+        </div>
       </div>
 
       <ButtonGroup minimal alignText="center">

@@ -1,6 +1,7 @@
-import { Workspace, WorkspaceView } from "./Workspace";
+import { Workspace } from "./workspace";
 
 const WORKSPACE_KEY = "workspaces";
+const SETTINGS_KEY = "neo_settings";
 
 function getItem(key: string): any {
   const value = localStorage.getItem(key);
@@ -25,4 +26,12 @@ export function getWorkspaces(): Workspace[] {
 
 export function saveWorkspaces(values: Workspace[]) {
   return setItem(WORKSPACE_KEY, values || []);
+}
+
+export function setSettings(settings: any) {
+  setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+export function getSettings() {
+  return getItem(SETTINGS_KEY);
 }

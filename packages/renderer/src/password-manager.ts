@@ -1,3 +1,4 @@
+import { settings } from "./store/settings";
 export interface CapturePasswordDetail {
   viewId: string;
   data: { domain: string; username: string; password: string };
@@ -48,10 +49,15 @@ export function initialize() {
   });
   passwordService.onFormFilled((id, data, frameId, frameUrl) => {
     console.log("onFormFill", id, data, frameId, frameUrl);
-    document.dispatchEvent(
-      new CustomEvent<CapturePasswordDetail>("capturepassword", {
-        detail: { viewId: id, data },
-      })
-    );
+    if (
+      !settings
+        .getPasswordNeverSaveDomains()
+        .includes(formatedDomain(data.domain))
+    )
+      document.dispatchEvent(
+        new CustomEvent<CapturePasswordDetail>("capturepassword", {
+          detail: { viewId: id, data },
+        })
+      );
   });
 }

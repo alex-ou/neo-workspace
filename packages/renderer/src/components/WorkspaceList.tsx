@@ -1,7 +1,7 @@
 import { Button, Classes, Menu, Radio, RadioGroup } from "@blueprintjs/core";
 import { MenuItem2, Popover2 } from "@blueprintjs/popover2";
 import { css } from "@emotion/css";
-import { Workspace } from "../store/Workspace";
+import { Workspace } from "../store/workspace";
 
 interface WorkspaceListProps {
   workspaces: Workspace[];

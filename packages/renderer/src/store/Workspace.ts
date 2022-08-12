@@ -1,4 +1,4 @@
-import { NodeType } from "./../utils/mosaic-node";
+import { NodeType } from "../utils/mosaic-node";
 
 export interface WorkspaceView {
   containerId: string;
