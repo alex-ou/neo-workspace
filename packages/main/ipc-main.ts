@@ -8,8 +8,11 @@ import {
   MenuItem,
   MenuItemConstructorOptions,
   shell,
+  dialog,
 } from "electron";
 import registerPasswordIpcHandlers from "./password-main";
+
+import pkg from "../../package.json";
 
 export function registerIpcMainHandlers() {
   registerPasswordIpcHandlers();
@@ -197,6 +200,17 @@ export function registerIpcMainHandlers() {
         label: "Contact Us",
         click: async () => {
           await shell.openExternal("https://www.neonav.co/#contacts");
+        },
+      },
+      {
+        label: "About",
+        click: async () => {
+          dialog.showMessageBox({
+            title: "Neo Workspace",
+            //@ts-ignore
+            message: `Version ${pkg.version}\nWebsite: ${pkg.homepage}`,
+            icon: nativeImage.createFromPath(join(__dirname, "./logo.png")),
+          });
         },
       },
     ];

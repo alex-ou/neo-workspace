@@ -1,4 +1,12 @@
-import { Button, Card, Classes, Divider, InputGroup } from "@blueprintjs/core";
+import {
+  Button,
+  Callout,
+  Card,
+  Classes,
+  Divider,
+  H2,
+  InputGroup,
+} from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useEffect, useState } from "react";
 import { DomainCredential } from "../../../preload/renderer-api/types";
@@ -20,6 +28,7 @@ export default function Settings() {
         return;
       }
       setSettingsVisible(true);
+      window.neonav.view.hideAllViews();
     };
     document.addEventListener("menucommand", listener);
     return () => {
@@ -29,23 +38,19 @@ export default function Settings() {
 
   useEffect(() => {
     if (settingsVisible) {
-      window.neonav.view.hideAllViews();
-    } else {
-      window.neonav.view.showAllViews();
-    }
-    if (settingsVisible) {
       passwordService.getCredentials().then((creds) => setCredentials(creds));
       setNeverSavedDomains(settings.getPasswordNeverSaveDomains());
     }
   }, [settingsVisible]);
 
   return (
-    <div id="neo-settings">
+    <div>
       {settingsVisible && (
         <div
+          id="neo-settings"
           className={[
-            Classes.CARD,
             css`
+              padding: 8px 32px;
               position: fixed;
               top: 34px;
               left: 4px;
@@ -58,34 +63,50 @@ export default function Settings() {
           <div
             className={css`
               position: relative;
+              height: 100%;
             `}
           >
-            <Button
+            <div
               className={css`
-                position: absolute;
-                top: -16px;
-                right: -16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 48px;
               `}
-              minimal
-              icon="cross"
-              onClick={() => {
-                setSettingsVisible(false);
-                window.neonav.view.showAllViews();
-              }}
+            >
+              <H2>Settings</H2>
+              <Button
+                minimal
+                icon="cross"
+                onClick={() => {
+                  setSettingsVisible(false);
+                  window.neonav.view.showAllViews();
+                }}
+              />
+            </div>
+            <Divider
+              className={css`
+                margin-top: 0;
+                margin-bottom: 16px;
+              `}
             />
-            <div>
+            <div
+              className={css`
+                height: calc(100% - 48px);
+                overflow-x: auto;
+                overflow-y: auto;
+                width: 100%;
+                box-sizing: border-box;
+                padding: 2px;
+              `}
+            >
               <h3 className="bp4-heading">Passwords</h3>
-              <Card
-                className={css`
-                  padding: 0;
-                `}
-              >
+              <Card elevation={2}>
                 <div
                   className={css`
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    padding: 8px;
                   `}
                 >
                   <h4>
@@ -160,16 +181,12 @@ export default function Settings() {
                 </table>
               </Card>
               <Card
+                elevation={2}
                 className={css`
-                  padding: 0;
                   margin-top: 16px;
                 `}
               >
-                <div
-                  className={css`
-                    padding: 8px;
-                  `}
-                >
+                <div>
                   <h4>
                     {neverSavedDomains.length} never saved password{" "}
                     {neverSavedDomains.length > 1 ? "s" : ""}
