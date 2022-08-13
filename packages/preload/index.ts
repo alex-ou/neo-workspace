@@ -1,5 +1,5 @@
 import { exposeNeoNavAPI } from "./renderer-api";
-import fillPasswordForInitialFocus from "./password-fill";
+import initializePasswordFill from "./password-fill";
 
 exposeNeoNavAPI();
 
@@ -23,6 +23,6 @@ const isWebView = process.argv.includes("--web-view");
 
 domReady().then(() => {
   if (isWebView) {
-    fillPasswordForInitialFocus();
+    initializePasswordFill();
   }
 });

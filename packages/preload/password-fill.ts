@@ -6,8 +6,20 @@ interface Crediential {
 }
 
 // "carbon:password"
-const keyIcon =
-  '<svg width="22px" height="22px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="vertical-align: -0.125em;-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M21 2a9 9 0 0 0-9 9a8.87 8.87 0 0 0 .39 2.61L2 24v6h6l10.39-10.39A9 9 0 0 0 30 11.74a8.77 8.77 0 0 0-1.65-6A9 9 0 0 0 21 2zm0 16a7 7 0 0 1-2-.3l-1.15-.35l-.85.85l-3.18 3.18L12.41 20L11 21.41l1.38 1.38l-1.59 1.59L9.41 23L8 24.41l1.38 1.38L7.17 28H4v-3.17L13.8 15l.85-.85l-.29-.95a7.14 7.14 0 0 1 3.4-8.44a7 7 0 0 1 10.24 6a6.69 6.69 0 0 1-1.09 4A7 7 0 0 1 21 18z" fill="currentColor"/><circle cx="22" cy="10" r="2" fill="currentColor"/></svg>';
+const keyIcon = `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 16 16" fill="currentColor" enable-background="new 0 0 16 16" xml:space="preserve">
+<g id="key_1_">
+	<g>
+		<path fill-rule="evenodd" clip-rule="evenodd" d="M11,0C8.24,0,6,2.24,6,5c0,1.02,0.31,1.96,0.83,2.75l-6.54,6.54
+			C0.11,14.47,0,14.72,0,15c0,0.55,0.45,1,1,1c0.28,0,0.53-0.11,0.71-0.29L3,14.41l1.29,1.29C4.47,15.89,4.72,16,5,16
+			s0.53-0.11,0.71-0.29l2-2C7.89,13.53,8,13.28,8,13c0-0.28-0.11-0.53-0.29-0.71L6.41,11l1.83-1.83C9.04,9.69,9.98,10,11,10
+			c2.76,0,5-2.24,5-5S13.76,0,11,0z M11,8c-0.23,0-0.45-0.03-0.66-0.08c-0.01,0-0.02-0.01-0.03-0.01C10.1,7.86,9.9,7.79,9.71,7.7
+			C9.09,7.4,8.6,6.91,8.3,6.29C8.21,6.1,8.14,5.9,8.09,5.7c0-0.01-0.01-0.02-0.01-0.03C8.03,5.45,8,5.23,8,5c0-1.66,1.34-3,3-3
+			s3,1.34,3,3S12.66,8,11,8z"/>
+	</g>
+</g>
+</svg>
+`;
 
 // Ref to added unlock button.
 var currentUnlockButton: HTMLDivElement | null = null;
@@ -18,28 +30,34 @@ var currentAutocompleteList: HTMLDivElement | null = null;
 // - input: Input element to 'attach' unlock button to.
 function createUnlockButton(input: HTMLInputElement): HTMLDivElement {
   var inputRect = input.getBoundingClientRect();
+  var computedStyle = getComputedStyle(input);
 
   // Container.
   var unlockDiv = document.createElement("div");
 
   // Style.
-  unlockDiv.style.width = "20px";
-  unlockDiv.style.height = "20px";
+  unlockDiv.style.width = "16px";
+  unlockDiv.style.height = "16px";
   unlockDiv.style.zIndex = "999999999999999";
 
   // Position.
   unlockDiv.style.position = "absolute";
   unlockDiv.style.left =
-    window.scrollX + (inputRect.left + inputRect.width - 20 - 10) + "px";
+    window.scrollX +
+    (inputRect.left +
+      inputRect.width -
+      16 -
+      parseFloat(computedStyle.paddingRight)) +
+    "px";
   unlockDiv.style.top =
-    window.scrollY + (inputRect.top + (inputRect.height - 20) / 2.0) + "px";
+    window.scrollY + (inputRect.top + (inputRect.height - 16) / 2.0) + "px";
 
   // Button.
   var button = document.createElement("div");
 
   // Button style.
-  button.style.width = "20px";
-  button.style.height = "20px";
+  button.style.width = "16px";
+  button.style.height = "16px";
   button.style.opacity = "0.7";
   button.style.color = window.getComputedStyle(input).color;
   button.style.transition = "0.1s color";
@@ -83,17 +101,22 @@ function checkAttributes(
   return false;
 }
 
+function getAllInputsOfDocument() {
+  const allFields = [
+    ...(document.querySelectorAll("form input") || []),
+    ...(document.querySelectorAll("input") || []),
+  ] as HTMLInputElement[];
+  return allFields;
+}
 // Gets all input fields on a page that contain at least one of the provided
 // strings in their name attribute.
 function getBestInput(
   names: string[],
   exclusionNames: string[],
-  types: string[]
+  types: string[],
+  sourceFields?: HTMLInputElement[]
 ) {
-  const allFields = [
-    ...(document.querySelectorAll("form input") || []),
-    ...(document.querySelectorAll("input") || []),
-  ] as HTMLInputElement[];
+  const allFields = sourceFields || getAllInputsOfDocument();
   // this list includes duplicates, but we only use the first one we find that matches, so there's no need to dedupe
 
   for (const field of allFields) {
@@ -108,7 +131,7 @@ function getBestInput(
       names.length === 0 ||
       checkAttributes(
         field,
-        ["name", "formcontrolname", "id", "placholder", "aria-label"],
+        ["name", "formcontrolname", "id", "placeholder", "aria-label"],
         names
       )
     ) {
@@ -324,49 +347,50 @@ passwordService.onAutoFillMatch((data) => {
   }
 });
 
-// Add default focus event listeners.
-window.addEventListener("blur", handleBlur, true);
-window.addEventListener("focus", handleFocus, true);
+export default function initializePasswordFill() {
+  // Add default focus event listeners.
+  window.addEventListener("blur", handleBlur, true);
+  window.addEventListener("focus", handleFocus, true);
 
-// send passwords back to the main process so they can be saved to storage
-function handleFormSubmit() {
-  var usernameValue = getBestUsernameField()?.value;
-  var passwordValue = getBestPasswordField()?.value;
+  // send passwords back to the main process so they can be saved to storage
+  function handleFormSubmit() {
+    var usernameValue = getBestUsernameField()?.value;
+    var passwordValue = getBestPasswordField()?.value;
 
-  if (
-    usernameValue &&
-    usernameValue.length > 0 &&
-    passwordValue &&
-    passwordValue.length > 0
-  ) {
-    passwordService.formFilled({
-      domain: window.location.hostname,
-      username: usernameValue,
-      password: passwordValue,
-    });
+    if (
+      usernameValue &&
+      usernameValue.length > 0 &&
+      passwordValue &&
+      passwordValue.length > 0
+    ) {
+      passwordService.formFilled({
+        domain: window.location.hostname,
+        username: usernameValue,
+        password: passwordValue,
+      });
+    }
   }
-}
 
-window.addEventListener("submit", handleFormSubmit);
+  window.addEventListener("submit", handleFormSubmit);
 
-// watch for clicks on button[type=submit]
-window.addEventListener(
-  "click",
-  function (e: MouseEvent) {
-    e.composedPath().forEach(function (el: any) {
-      if (
-        el.tagName === "BUTTON" &&
-        el.getAttribute("type") === "submit" &&
-        !el.disabled
-      ) {
-        handleFormSubmit();
-      }
-    });
-  },
-  true
-);
+  // watch for clicks on button[type=submit]
+  window.addEventListener(
+    "click",
+    function (e: MouseEvent) {
+      e.composedPath().forEach(function (el: any) {
+        if (
+          el.tagName === "BUTTON" &&
+          el.getAttribute("type") === "submit" &&
+          !el.disabled
+        ) {
+          handleFormSubmit();
+        }
+      });
+    },
+    true
+  );
 
-webFrame.executeJavaScript(`
+  webFrame.executeJavaScript(`
 var origSubmit = HTMLFormElement.prototype.submit;
 HTMLFormElement.prototype.submit = function () {
   window.postMessage({message: 'formSubmit'})
@@ -374,13 +398,35 @@ HTMLFormElement.prototype.submit = function () {
 }
 `);
 
-window.addEventListener("message", function (e) {
-  if (e.data && e.data.message && e.data.message === "formSubmit") {
-    handleFormSubmit();
-  }
-});
+  window.addEventListener("message", function (e) {
+    if (e.data && e.data.message && e.data.message === "formSubmit") {
+      handleFormSubmit();
+    }
+  });
 
-export default function fillPasswordForInitialFocus() {
+  const observer = new MutationObserver((mutationList, observer) => {
+    for (const mutation of mutationList) {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+        mutation.addedNodes.forEach((node) => {
+          if (
+            node instanceof Element &&
+            node.querySelectorAll("input").length > 0
+          ) {
+            requestAutofill();
+            return;
+          }
+        });
+      }
+    }
+  });
+
+  // Start observing the target node for configured mutations
+  observer.observe(document.body, {
+    attributes: false,
+    childList: true,
+    subtree: false,
+  });
+
   maybeAddUnlockButton(document.activeElement);
   requestAutofill();
 }

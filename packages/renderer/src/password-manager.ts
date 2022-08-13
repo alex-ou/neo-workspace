@@ -10,10 +10,19 @@ export function formatedDomain(domain: string) {
   return domain;
 }
 
+function getDomainFromUrl(url: string) {
+  let domain = url;
+  try {
+    domain = new URL(url).hostname;
+  } catch (_) {}
+
+  return formatedDomain(domain);
+}
+
 export function getDomainCredentials(domain: string) {
-  return passwordService
-    .getCredentials()
-    .then((credentials) => credentials.filter((c) => c.domain === domain));
+  return passwordService.getCredentials().then((credentials) => {
+    return credentials.filter((c) => getDomainFromUrl(c.domain) === domain);
+  });
 }
 
 export function handleAutoFillRequest(

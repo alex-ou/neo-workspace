@@ -31,7 +31,7 @@ function Sidebar(props: SidebarProps) {
 
   return (
     <div
-      id="u-sidebar"
+      id="neo-sidebar"
       className={css`
         width: 360px;
         height: 100%;
@@ -167,12 +167,9 @@ function Sidebar(props: SidebarProps) {
           left: 8px;
           right: 8px;
           display: flex;
-          justify-content: space-between;
+          flex-direction: row-reverse;
         `}
       >
-        <a href="mailto:support@neonav.co">
-          <Icon color={Colors.BLUE2} icon="envelope"></Icon> Email us
-        </a>
         v{config.version}
       </div>
     </div>

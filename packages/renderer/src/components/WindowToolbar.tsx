@@ -38,7 +38,7 @@ function WindowToolbar(props: WindowToolbarProps) {
 
   return (
     <div
-      id="u-toolbar"
+      id="neo-toolbar"
       className={css`
         display: flex;
         align-items: center;

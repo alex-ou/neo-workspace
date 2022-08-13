@@ -1,5 +1,7 @@
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
+
 import { useEffect, useReducer, useState } from "react";
 import { DndProvider } from "react-dnd-multi-backend";
 import HTML5toTouch from "react-dnd-multi-backend/dist/esm/HTML5toTouch";
@@ -35,7 +37,7 @@ function App() {
   return (
     <AppContext.Provider value={{}}>
       <WindowToolbar onToggleSidebar={toggleSidebar} />
-      <div id="u-layout">
+      <div id="neo-layout">
         <Settings />
         <MosaicWithoutDragDropContext<string>
           zeroStateView={<ZeroState createNode={createMosaicNode} />}

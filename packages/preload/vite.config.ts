@@ -9,7 +9,7 @@ export default defineConfig({
     outDir: "../../dist/preload",
     emptyOutDir: true,
     minify: process.env.NODE_ENV === "production",
-    sourcemap: "inline",
+    sourcemap: false,
     rollupOptions: {
       input: {
         // multiple entry

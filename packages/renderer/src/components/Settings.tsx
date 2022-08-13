@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { DomainCredential } from "../../../preload/renderer-api/types";
 import { settings } from "../store/settings";
 import { MenuCommand } from "../types";
+import AddPassword from "./AddPassword";
 const passwordService = window.neonav.passwordService;
 
 export default function Settings() {
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
+  const [addingPassword, setAddingPassword] = useState<boolean>(false);
   const [credentials, setCredentials] = useState<DomainCredential[]>([]);
   const [neverSavedDomains, setNeverSavedDomains] = useState<string[]>([]);
 
@@ -38,7 +40,7 @@ export default function Settings() {
   }, [settingsVisible]);
 
   return (
-    <div>
+    <div id="neo-settings">
       {settingsVisible && (
         <div
           className={[
@@ -80,6 +82,9 @@ export default function Settings() {
               >
                 <div
                   className={css`
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                     padding: 8px;
                   `}
                 >
@@ -87,6 +92,24 @@ export default function Settings() {
                     {credentials.length} saved password
                     {credentials.length > 1 ? "s" : ""}
                   </h4>
+                  <Button
+                    intent="primary"
+                    outlined
+                    style={{ height: 20 }}
+                    onClick={() => setAddingPassword(true)}
+                  >
+                    Add password
+                  </Button>
+                  <AddPassword
+                    open={addingPassword}
+                    onSave={() => {
+                      passwordService
+                        .getCredentials()
+                        .then((creds) => setCredentials(creds));
+                      setAddingPassword(false);
+                    }}
+                    onClose={() => setAddingPassword(false)}
+                  />
                 </div>
                 <Divider
                   className={css`
@@ -157,7 +180,6 @@ export default function Settings() {
                     margin: 0;
                   `}
                 />
-                {credentials.length > 1 ? "s" : ""}
                 <table className="bp4-html-table ">
                   <thead>
                     <tr>

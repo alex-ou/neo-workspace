@@ -1,4 +1,5 @@
 import { Button, InputGroup } from "@blueprintjs/core";
+import { Tooltip2 } from "@blueprintjs/popover2";
 import { css } from "@emotion/css";
 import React, { useState } from "react";
 import { getDomainCredentials, formatedDomain } from "../password-manager";
@@ -15,7 +16,7 @@ export default function SavePasswordBar({
   onClose: () => void;
   onOpen: () => void;
 }) {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [domain, setDomain] = useState<string>();
   const [username, setUserName] = useState<string>();
@@ -75,14 +76,16 @@ export default function SavePasswordBar({
       ></InputGroup>
       <InputGroup
         value={password}
-        type={passwordVisible ? "text" : "password"}
+        type={showPassword ? "text" : "password"}
         onChange={(e) => setPassword(e.target.value)}
       ></InputGroup>
-      <Button
-        minimal
-        icon={passwordVisible ? "eye-off" : "eye-open"}
-        onClick={() => setPasswordVisible((v) => !v)}
-      />
+      <Tooltip2 content={`${showPassword ? "Hide" : "Show"} Password`}>
+        <Button
+          minimal
+          icon={showPassword ? "eye-off" : "eye-open"}
+          onClick={() => setShowPassword((v) => !v)}
+        />
+      </Tooltip2>
       <Button
         intent="primary"
         onClick={() => {

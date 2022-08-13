@@ -24,9 +24,12 @@ export function registerIpcMainHandlers() {
     if (!targetView) {
       targetView = new BrowserView({
         webPreferences: {
+          nodeIntegrationInSubFrames: true,
+          scrollBounce: true,
           preload: join(__dirname, "../preload/index.cjs"),
           devTools: true,
           additionalArguments: ["--web-view"],
+          minimumFontSize: 6,
         },
       });
       targetView.setAutoResize({ width: false, height: false });
