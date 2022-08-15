@@ -16,6 +16,8 @@ require("update-electron-app")({
   logger: require("electron-log"),
 });
 
+// app.commandLine.appendSwitch("lang", "zh");
+
 let win: BrowserWindow | null = null;
 
 const devTools = !import.meta.env.PROD;
@@ -43,11 +45,12 @@ async function createWindow() {
     const url = `http://${process.env["VITE_DEV_SERVER_HOST"]}:${process.env["VITE_DEV_SERVER_PORT"]}`;
 
     win.loadURL(url);
-    // win.webContents.openDevTools({ mode: "undocked" });
+    win.webContents.openDevTools({ mode: "undocked" });
   }
 }
 
 app.whenReady().then(() => {
+  console.log("alex", app.getLocale());
   createWindow();
   app.setJumpList([]);
 

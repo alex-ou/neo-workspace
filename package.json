@@ -16,6 +16,7 @@
     "build": "node scripts/build.mjs",
     "main": "electron .",
     "appx": "node scripts/appx.mjs",
+    "assets": "node scripts/update-https-list.js && node scripts/update-suffixes.js",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
@@ -27,6 +28,7 @@
     "update-electron-app": "^2.0.1"
   },
   "devDependencies": {
+    "@blueprintjs/select": "^4.5.3",
     "@blueprintjs/core": "^4.6.0",
     "@blueprintjs/icons": "^4.3.1",
     "@blueprintjs/popover2": "^1.5.0",

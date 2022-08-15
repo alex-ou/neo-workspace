@@ -2,6 +2,7 @@ import { getSettings, setSettings } from "./app-storage";
 
 interface SettingKeyValueMap {
   passwordNeverSaveDomains: string[];
+  searchEngine: string;
 }
 
 export class Setttings {
@@ -20,6 +21,15 @@ export class Setttings {
   setPasswordNeverSaveDomains = (domains: string[]) => {
     this.dict["passwordNeverSaveDomains"] = domains || [];
 
+    this.save();
+  };
+
+  getSearchEngine = (): string => {
+    return this.dict["searchEngine"];
+  };
+
+  setSearchEngine = (v: string) => {
+    this.dict["searchEngine"] = v || "";
     this.save();
   };
 
