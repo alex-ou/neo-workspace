@@ -50,7 +50,7 @@ export function registerIpcMainHandlers() {
       const icon = nativeImage.createFromPath(join(__dirname, "./logo.png"));
 
       const webContents = targetView.webContents;
-      webContents.setWindowOpenHandler(({ url }) => {
+      webContents.setWindowOpenHandler(({}) => {
         return {
           action: "allow",
           overrideBrowserWindowOptions: {
@@ -61,17 +61,35 @@ export function registerIpcMainHandlers() {
           },
         };
       });
-      webContents.on("did-navigate", (event, url) => {
-        const viewInfo = {
-          viewId: webContents.id,
-          title: webContents.getTitle(),
-          canGoBack: webContents.canGoBack(),
-          canGoForward: webContents.canGoForward(),
-          url: webContents.getURL(),
-        };
-        window.webContents.send("view:did-navigate", viewInfo);
-        console.log(viewInfo);
+
+      const getViewInfo = () => ({
+        viewId: webContents.id,
+        title: webContents.getTitle(),
+        canGoBack: webContents.canGoBack(),
+        canGoForward: webContents.canGoForward(),
+        url: webContents.getURL(),
+        isLoading: webContents.isLoading(),
       });
+      const viewDidUpdate = () => {
+        const viewInfo = getViewInfo();
+        console.log(viewInfo);
+
+        window.webContents.send("view:did-update", viewInfo);
+      };
+      webContents.on("did-navigate", viewDidUpdate);
+      webContents.on("did-start-loading", viewDidUpdate);
+      webContents.on("did-stop-loading", viewDidUpdate);
+      webContents.on(
+        "did-fail-load",
+        (event, errorCode, errorDescription, validatedURL, isMainFrame) => {
+          if (isMainFrame) {
+            window.webContents.send("view:did-update", {
+              ...getViewInfo(),
+              error: errorDescription,
+            });
+          }
+        }
+      );
 
       webContents.on("ipc-message", (e: any, channel, data) => {
         console.log("ipc-message", channel, data);
@@ -140,6 +158,33 @@ export function registerIpcMainHandlers() {
   });
 
   let hiddenViews: BrowserView[] = [];
+
+  ipcMain.handle("view:hide", (event, viewData) => {
+    const window = BrowserWindow.fromWebContents(event.sender)!;
+    console.log("hide-view:", viewData);
+    const targetView = window
+      .getBrowserViews()
+      .find((view) => view.webContents.id === viewData.id);
+    if (targetView) {
+      window.removeBrowserView(targetView);
+      hiddenViews = [targetView];
+    }
+  });
+
+  ipcMain.handle("view:show", (event, viewData) => {
+    const window = BrowserWindow.fromWebContents(event.sender)!;
+    console.log("show-view:", viewData);
+    const targetView = (hiddenViews || []).find(
+      (v) => v.webContents.id === viewData.id
+    );
+    if (targetView) {
+      window.addBrowserView(targetView);
+      hiddenViews = (hiddenViews || []).filter(
+        (v) => v.webContents.id !== viewData.id
+      );
+    }
+  });
+
   ipcMain.handle("view:hide-all", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
     console.log("hide-views:", viewData);

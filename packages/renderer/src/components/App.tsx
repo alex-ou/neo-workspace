@@ -28,9 +28,15 @@ function App() {
   useEffect(() => {
     dispatch({ type: "load-workspace" });
 
-    window.neonav.view.onNavigate((viewInfo) => {
-      console.log("received onNavigate", viewInfo);
+    window.neonav.view.onUpdate((viewInfo) => {
+      console.log("received onUpdate", viewInfo);
       dispatch({ type: "update-workspace-view", payload: { ...viewInfo } });
+
+      if (viewInfo.error) {
+        window.neonav.view.hideView(viewInfo.viewId);
+      } else {
+        window.neonav.view.showView(viewInfo.viewId);
+      }
     });
   }, []);
 

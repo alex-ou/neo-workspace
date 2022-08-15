@@ -50,7 +50,7 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
-  console.log("alex", app.getLocale());
+  console.log("app locale:", app.getLocale());
   createWindow();
   app.setJumpList([]);
 

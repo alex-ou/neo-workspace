@@ -1,4 +1,4 @@
-import { Button, InputGroup } from "@blueprintjs/core";
+import { Button, InputGroup, Spinner } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { dropRight } from "lodash";
 import { useContext, useRef } from "react";
@@ -12,8 +12,8 @@ import {
 } from "react-mosaic-component";
 import { AppAction } from "../store";
 import { WorkspaceView } from "../store/workspace";
-import { ViewManager } from "../utils/view-manager";
 import { parseAddressBarInput } from "../utils/search-engine";
+import { ViewManager } from "../utils/view-manager";
 
 export interface ToolbarProps {
   view?: WorkspaceView;
@@ -137,6 +137,7 @@ function Toolbar(props: ToolbarProps) {
               onURLChange(event.target.value);
             }
           }}
+          rightElement={view?.isLoading ? <Spinner size={16} /> : undefined}
         />
       </div>
       <div

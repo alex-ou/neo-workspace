@@ -65,7 +65,7 @@ var urlParser = {
 
     // if the url starts with a (supported) protocol
     if (urlParser.isURL(url)) {
-      if (!urlParser.isInternalURL(url) && url.startsWith("http://")) {
+      if (url.startsWith("http://")) {
         // prefer HTTPS over HTTP
         const noProtoURL = urlParser.removeProtocol(url);
 
@@ -102,46 +102,7 @@ var urlParser = {
       return url;
     }
   },
-  isInternalURL: function (url) {
-    return url.startsWith(urlParser.getFileURL(__dirname));
-  },
-  getSourceURL: function (url) {
-    // converts internal URLs (like the PDF viewer or the reader view) to the URL of the page they are displaying
-    if (urlParser.isInternalURL(url)) {
-      var representedURL;
-      try {
-        representedURL = new URLSearchParams(new URL(url).search).get("url");
-      } catch (e) {}
-      if (representedURL) {
-        return representedURL;
-      } else {
-        try {
-          var pageName = url.match(/\/pages\/([a-zA-Z]+)\//);
-          var urlObj = new URL(url);
-          if (pageName) {
-            return "min://" + pageName[1] + urlObj.search;
-          }
-        } catch (e) {}
-      }
-    }
-    return url;
-  },
-  getFileURL: function (path) {
-    if (window.platformType === "windows") {
-      // convert backslash to forward slash
-      path = path.replace(/\\/g, "/");
-      // https://blogs.msdn.microsoft.com/ie/2006/12/06/file-uris-in-windows/
 
-      // UNC path?
-      if (path.startsWith("//")) {
-        return encodeURI("file:" + path);
-      } else {
-        return encodeURI("file:///" + path);
-      }
-    } else {
-      return encodeURI("file://" + path);
-    }
-  },
   getDomain: function (url) {
     url = urlParser.removeProtocol(url);
     return url.split(/[/:]/)[0].toLowerCase();

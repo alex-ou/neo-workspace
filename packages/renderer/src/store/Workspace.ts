@@ -8,6 +8,8 @@ export interface WorkspaceView {
   canGoForward?: boolean;
   title?: string;
   url?: string;
+  isLoading?: boolean;
+  error?: string;
 }
 
 export interface Workspace {

@@ -11,6 +11,8 @@ export interface ViewInfo {
   viewId: string;
   title: string;
   url: string;
+  isLoading: boolean;
+  error?: string;
 }
 
 export interface NeoView {
@@ -22,13 +24,16 @@ export interface NeoView {
 
   destroyView(viewId: string): Promise<void>;
 
+  hideView(viewId: string): Promise<void>;
+  showView(viewId: string): Promise<void>;
+
   createView(options: { url: string; bounds: ViewBounds }): Promise<string>;
 
   setViewBounds(options: { id: string; bounds: ViewBounds }): Promise<void>;
 
   loadViewUrl(options: { id: string; url: string }): Promise<void>;
 
-  onNavigate(callback: (data: ViewInfo) => void): Promise<void>;
+  onUpdate(callback: (data: ViewInfo) => void): Promise<void>;
 }
 
 export interface WindowState {

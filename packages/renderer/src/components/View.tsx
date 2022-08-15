@@ -1,3 +1,4 @@
+import { H4, Icon } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { debounce } from "lodash";
 import React, { useState } from "react";
@@ -96,7 +97,24 @@ function View(props: ViewProps) {
           className={css`
             height: calc(100% - ${passwordBarHeight});
           `}
-        ></div>
+        >
+          {currentView?.error ? (
+            <div
+              className={css`
+                margin-top: 16px;
+                display: flex;
+                justify-content: space-around;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+              `}
+            >
+              <Icon icon="error" size={32} />
+              <H4>Oops..!</H4>
+              <b>Something went wrong. Please try again.</b>
+            </div>
+          ) : undefined}
+        </div>
       </div>
     </MosaicWindow>
   );

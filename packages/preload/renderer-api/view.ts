@@ -15,6 +15,18 @@ export async function destroyView(viewId: string): Promise<void> {
   });
 }
 
+export async function hideView(viewId: string): Promise<void> {
+  await ipcRenderer.invoke("view:hide", {
+    id: viewId,
+  });
+}
+
+export async function showView(viewId: string): Promise<void> {
+  await ipcRenderer.invoke("view:show", {
+    id: viewId,
+  });
+}
+
 export async function goBack(viewId: string): Promise<void> {
   await ipcRenderer.invoke("view:go-back", {
     id: viewId,
@@ -58,11 +70,11 @@ export async function loadViewUrl(options: {
   return await ipcRenderer.invoke("view:update", options);
 }
 
-export async function onNavigate(
+export async function onUpdate(
   callback: (info: ViewInfo) => void
 ): Promise<void> {
-  ipcRenderer.removeAllListeners("view:did-navigate");
-  ipcRenderer.on("view:did-navigate", (event, info) => {
+  ipcRenderer.removeAllListeners("view:did-update");
+  ipcRenderer.on("view:did-update", (event, info) => {
     callback(info);
   });
 }
