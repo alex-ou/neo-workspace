@@ -1,15 +1,16 @@
-import { join } from "path";
 import {
-  ipcMain,
   BrowserView,
   BrowserWindow,
-  nativeImage,
-  Menu,
-  MenuItem,
-  MenuItemConstructorOptions,
-  shell,
   dialog,
+  ipcMain,
+  Menu,
+  MenuItemConstructorOptions,
+  nativeImage,
+  shell,
 } from "electron";
+import contextMenu from "electron-context-menu";
+import { join } from "path";
+
 import registerPasswordIpcHandlers from "./password-main";
 
 import pkg from "../../package.json";
@@ -27,6 +28,7 @@ export function registerIpcMainHandlers() {
     if (!targetView) {
       targetView = new BrowserView({
         webPreferences: {
+          spellcheck: true,
           nodeIntegrationInSubFrames: true,
           scrollBounce: true,
           preload: join(__dirname, "../preload/index.cjs"),
@@ -37,6 +39,22 @@ export function registerIpcMainHandlers() {
       });
       targetView.setAutoResize({ width: false, height: false });
       targetView.setBounds(viewData.bounds);
+      contextMenu({
+        window: targetView.webContents,
+        showSearchWithGoogle: false,
+        labels: {
+          learnSpelling: "Learn spelling",
+          lookUpSelection: "Look up “{selection}",
+          selectAll: "Select all",
+          saveImage: "Save image",
+          saveImageAs: "Save image as…",
+          copyLink: "Copy link address",
+          saveLinkAs: "Save link as...",
+          copyImage: "Copy image",
+          copyImageAddress: "Copy image address",
+          inspect: "Inspect element",
+        },
+      });
       if (viewData.url) {
         targetView.webContents.loadURL(viewData.url);
       }
@@ -248,7 +266,7 @@ export function registerIpcMainHandlers() {
       },
       { type: "separator" },
       {
-        label: "Contact Us",
+        label: "Contact us",
         click: async () => {
           await shell.openExternal("https://www.neonav.co/#contacts");
         },

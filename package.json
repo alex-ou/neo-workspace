@@ -1,5 +1,6 @@
 {
   "name": "neo-workspace",
+  "productName": "Neo Workspace",
   "private": false,
   "version": "1.1.0",
   "files": [
@@ -22,16 +23,18 @@
     "make": "electron-forge make"
   },
   "dependencies": {
+    "electron-context-menu": "^3.4.0",
+    "electron-dl": "^3.3.1",
     "electron-log": "^4.4.8",
     "electron-squirrel-startup": "^1.0.0",
     "unity1-core": "0.0.1",
     "update-electron-app": "^2.0.1"
   },
   "devDependencies": {
-    "@blueprintjs/select": "^4.5.3",
     "@blueprintjs/core": "^4.6.0",
     "@blueprintjs/icons": "^4.3.1",
     "@blueprintjs/popover2": "^1.5.0",
+    "@blueprintjs/select": "^4.5.3",
     "@electron-forge/cli": "^6.0.0-beta.64",
     "@electron-forge/maker-deb": "^6.0.0-beta.64",
     "@electron-forge/maker-rpm": "^6.0.0-beta.64",

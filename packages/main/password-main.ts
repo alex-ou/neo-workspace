@@ -4,7 +4,6 @@ import fs from "fs";
 
 const userDataPath = app.getPath("userData");
 const passwordFilePath = path.join(userDataPath, "passwordStore");
-console.log(passwordFilePath);
 /*
 file format:
 {

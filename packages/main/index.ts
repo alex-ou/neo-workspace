@@ -1,6 +1,8 @@
 import { join } from "path";
 import { app, BrowserWindow, nativeImage } from "electron";
 import { registerIpcMainHandlers } from "./ipc-main";
+import contextMenu from "electron-context-menu";
+import "./download";
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -15,6 +17,10 @@ require("update-electron-app")({
   repo: "neonav-co/neonav-co.github.io",
   logger: require("electron-log"),
 });
+
+if (process.platform === "win32") {
+  app.setAppUserModelId(app.name);
+}
 
 // app.commandLine.appendSwitch("lang", "zh");
 
@@ -36,6 +42,11 @@ async function createWindow() {
       additionalArguments: ["--main-window"],
     },
     frame: false,
+  });
+
+  contextMenu({
+    window: win,
+    menu: (actions) => [actions.cut({}), actions.copy({}), actions.paste({})],
   });
 
   if (import.meta.env.PROD) {
