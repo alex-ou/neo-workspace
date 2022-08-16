@@ -386,13 +386,13 @@ function isEligibleForAutofill() {
 }
 
 function identifyUsernameAndPasswordFields(): boolean {
-  bestUserNameField = getBestUsernameField();
-  bestPasswordField = getBestPasswordField();
-
-  if (!isEligibleForAutofill()) {
+  const userNameField = getBestUsernameField();
+  const passwordField = getBestPasswordField();
+  if (!userNameField || !passwordField) {
     return false;
   }
-
+  bestUserNameField = userNameField;
+  bestPasswordField = passwordField;
   return true;
 }
 
