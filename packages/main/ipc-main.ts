@@ -72,12 +72,18 @@ export function registerIpcMainHandlers() {
       });
       const viewDidUpdate = () => {
         const viewInfo = getViewInfo();
-        console.log(viewInfo);
-
         window.webContents.send("view:did-update", viewInfo);
       };
       webContents.on("did-navigate", viewDidUpdate);
-      webContents.on("did-start-loading", viewDidUpdate);
+      webContents.on("did-start-loading", () => {
+        window.webContents.send("view:did-update", {
+          viewId: webContents.id,
+          title: webContents.getTitle(),
+          canGoBack: webContents.canGoBack(),
+          canGoForward: webContents.canGoForward(),
+          isLoading: webContents.isLoading(),
+        });
+      });
       webContents.on("did-stop-loading", viewDidUpdate);
       webContents.on(
         "did-fail-load",

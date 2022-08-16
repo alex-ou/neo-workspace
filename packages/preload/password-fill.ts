@@ -1,4 +1,3 @@
-import { webFrame } from "electron";
 import * as passwordService from "./renderer-api/password-service";
 interface Crediential {
   username: string;
@@ -22,8 +21,11 @@ const keyIcon = `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/s
 `;
 
 // Ref to added unlock button.
-var currentUnlockButton: HTMLDivElement | null = null;
-var currentAutocompleteList: HTMLDivElement | null = null;
+let currentUnlockButton: HTMLDivElement | null = null;
+let currentAutocompleteList: HTMLDivElement | null = null;
+
+let bestUserNameField: HTMLInputElement | null = null;
+let bestPasswordField: HTMLInputElement | null = null;
 
 // Creates an unlock button element.
 //
@@ -74,7 +76,7 @@ function createUnlockButton(input: HTMLInputElement): HTMLDivElement {
   // Click event.
   button.addEventListener("mousedown", (event) => {
     event.preventDefault();
-    requestAutofill();
+    passwordService.requestAutofill();
   });
 
   unlockDiv.appendChild(button);
@@ -281,42 +283,22 @@ function addFocusListener(
   }
 }
 
+function addAutofillButton(target: Element) {
+  if (!(target instanceof Node)) return;
+  if (
+    bestUserNameField?.isSameNode(target) ||
+    bestPasswordField?.isSameNode(target)
+  ) {
+    const unlockButton = createUnlockButton(target as HTMLInputElement);
+    document.body.appendChild(unlockButton);
+
+    currentUnlockButton = unlockButton;
+  }
+}
+
 function requestAutofill() {
-  if (getBestUsernameField() && getBestPasswordField()) {
+  if (isEligibleForAutofill()) {
     passwordService.requestAutofill();
-  }
-}
-
-function maybeAddUnlockButton(target: Element | null) {
-  // require both a username and a password field to reduce the false-positive rate
-  if (
-    target instanceof Node &&
-    getBestUsernameField() &&
-    getBestPasswordField()
-  ) {
-    if (
-      getBestUsernameField()?.isSameNode(target) ||
-      getBestPasswordField()?.isSameNode(target)
-    ) {
-      const unlockButton = createUnlockButton(target as HTMLInputElement);
-      document.body.appendChild(unlockButton);
-
-      currentUnlockButton = unlockButton;
-    }
-  }
-}
-
-function handleFocus(event: FocusEvent) {
-  maybeAddUnlockButton(event.target as Element);
-}
-
-function handleBlur() {
-  if (
-    currentUnlockButton !== null &&
-    currentUnlockButton.parentElement != null
-  ) {
-    currentUnlockButton.parentElement.removeChild(currentUnlockButton);
-    currentUnlockButton = null;
   }
 }
 
@@ -347,86 +329,115 @@ passwordService.onAutoFillMatch((data) => {
   }
 });
 
+// send passwords back to the main process so they can be saved to storage
+function handleFormSubmitted() {
+  const usernameValue = bestUserNameField?.value;
+  const passwordValue = bestPasswordField?.value;
+
+  if (
+    usernameValue &&
+    usernameValue.length > 0 &&
+    passwordValue &&
+    passwordValue.length > 0
+  ) {
+    passwordService.formFilled({
+      domain: window.location.hostname,
+      username: usernameValue,
+      password: passwordValue,
+    });
+  }
+}
+
+const inputAdditionObserver = new MutationObserver((mutationList) => {
+  for (const mutation of mutationList) {
+    if (mutation.type !== "childList") {
+      continue;
+    }
+
+    const addedInputNodes = Array.from(mutation.addedNodes).filter(
+      (node) =>
+        node instanceof Element && node.querySelectorAll("input").length > 0
+    );
+    if (addedInputNodes.length > 0) {
+      identifyUsernameAndPasswordFields();
+      requestAutofill();
+      return;
+    }
+  }
+});
+
+const inputRemovalObserver = new MutationObserver((mutationList) => {
+  if (!isEligibleForAutofill()) {
+    return;
+  }
+
+  const credetialFieldsRemoved =
+    !document.body.contains(bestUserNameField) &&
+    !document.body.contains(bestPasswordField);
+  console.log("CredetialFields removed:" + credetialFieldsRemoved);
+  if (credetialFieldsRemoved) {
+    handleFormSubmitted();
+  }
+});
+
+// require both a username and a password field to reduce the false-positive rate
+function isEligibleForAutofill() {
+  return !!bestUserNameField && !!bestPasswordField;
+}
+
+function identifyUsernameAndPasswordFields(): boolean {
+  bestUserNameField = getBestUsernameField();
+  bestPasswordField = getBestPasswordField();
+
+  if (!isEligibleForAutofill()) {
+    return false;
+  }
+
+  return true;
+}
+
 export default function initializePasswordFill() {
+  function handleFocus(event: FocusEvent) {
+    identifyUsernameAndPasswordFields();
+    addAutofillButton(event.target as Element);
+  }
+
+  function handleBlur() {
+    if (
+      currentUnlockButton !== null &&
+      currentUnlockButton.parentElement != null
+    ) {
+      currentUnlockButton.parentElement.removeChild(currentUnlockButton);
+      currentUnlockButton = null;
+    }
+  }
+
   // Add default focus event listeners.
   window.addEventListener("blur", handleBlur, true);
   window.addEventListener("focus", handleFocus, true);
 
-  // send passwords back to the main process so they can be saved to storage
-  function handleFormSubmit() {
-    var usernameValue = getBestUsernameField()?.value;
-    var passwordValue = getBestPasswordField()?.value;
-
-    if (
-      usernameValue &&
-      usernameValue.length > 0 &&
-      passwordValue &&
-      passwordValue.length > 0
-    ) {
-      passwordService.formFilled({
-        domain: window.location.hostname,
-        username: usernameValue,
-        password: passwordValue,
-      });
-    }
-  }
-
-  window.addEventListener("submit", handleFormSubmit);
-
-  // watch for clicks on button[type=submit]
-  window.addEventListener(
-    "click",
-    function (e: MouseEvent) {
-      e.composedPath().forEach(function (el: any) {
-        if (
-          el.tagName === "BUTTON" &&
-          el.getAttribute("type") === "submit" &&
-          !el.disabled
-        ) {
-          handleFormSubmit();
-        }
-      });
-    },
-    true
-  );
-
-  webFrame.executeJavaScript(`
-var origSubmit = HTMLFormElement.prototype.submit;
-HTMLFormElement.prototype.submit = function () {
-  window.postMessage({message: 'formSubmit'})
-  origSubmit.apply(this, arguments)
-}
-`);
-
-  window.addEventListener("message", function (e) {
-    if (e.data && e.data.message && e.data.message === "formSubmit") {
-      handleFormSubmit();
-    }
-  });
-
-  const observer = new MutationObserver((mutationList, observer) => {
-    for (const mutation of mutationList) {
-      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-        mutation.addedNodes.forEach((node) => {
-          if (
-            node instanceof Element &&
-            node.querySelectorAll("input").length > 0
-          ) {
-            requestAutofill();
-            return;
-          }
-        });
-      }
-    }
-  });
-
-  // Start observing the target node for configured mutations
-  observer.observe(document.body, {
+  // Start observing the DOM for the new inputs
+  inputAdditionObserver.observe(document.body, {
     attributes: false,
     childList: true,
-    subtree: false,
+    subtree: true,
   });
 
-  maybeAddUnlockButton(document.activeElement);
+  inputRemovalObserver.observe(document.body, {
+    attributes: false,
+    childList: true,
+    subtree: true,
+  });
+
+  addEventListener("beforeunload", () => {
+    console.log("Before unload:", isEligibleForAutofill());
+    handleFormSubmitted();
+  });
+
+  identifyUsernameAndPasswordFields();
   requestAutofill();
+
+  if (document.activeElement) {
+    addAutofillButton(document.activeElement);
+  }
 }
