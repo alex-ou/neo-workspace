@@ -43,7 +43,7 @@ export function registerIpcMainHandlers() {
         window: targetView.webContents,
         showSearchWithGoogle: false,
         labels: {
-          learnSpelling: "Learn spelling",
+          learnSpelling: "Add to dictionary",
           lookUpSelection: "Look up “{selection}",
           selectAll: "Select all",
           saveImage: "Save image",

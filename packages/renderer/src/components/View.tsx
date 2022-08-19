@@ -43,7 +43,7 @@ function View(props: ViewProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    debouncedFunc(containerRef.current!);
+    setTimeout(() => debouncedFunc(containerRef.current!), 0);
   }, [containerRef]);
 
   return (

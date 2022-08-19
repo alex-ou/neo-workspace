@@ -25,9 +25,7 @@
   "dependencies": {
     "electron-context-menu": "^3.4.0",
     "electron-dl": "^3.3.1",
-    "electron-log": "^4.4.8",
     "electron-squirrel-startup": "^1.0.0",
-    "unity1-core": "0.0.1",
     "update-electron-app": "^2.0.1"
   },
   "devDependencies": {

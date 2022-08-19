@@ -15,7 +15,6 @@ if (!app.requestSingleInstanceLock()) {
 
 require("update-electron-app")({
   repo: "neonav-co/neonav-co.github.io",
-  logger: require("electron-log"),
 });
 
 if (process.platform === "win32") {
@@ -23,6 +22,11 @@ if (process.platform === "win32") {
 }
 
 // app.commandLine.appendSwitch("lang", "zh");
+
+// catch unhandled exception
+process.on("uncaughtException", function (error) {
+  console.error(error);
+});
 
 let win: BrowserWindow | null = null;
 

@@ -2204,11 +2204,6 @@ electron-is-dev@^2.0.0:
   resolved "https://registry.yarnpkg.com/electron-is-dev/-/electron-is-dev-2.0.0.tgz#833487a069b8dad21425c67a19847d9064ab19bd"
   integrity sha512-3X99K852Yoqu9AcW50qz3ibYBWY79/pBhlMCab8ToEWS48R0T9tyxRiQhwylE7zQdXrMnx2JKqUJyMPmt5FBqA==
 
-electron-log@^4.4.8:
-  version "4.4.8"
-  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-4.4.8.tgz#fcb9f714dbcaefb6ac7984c4683912c74730248a"
-  integrity sha512-QQ4GvrXO+HkgqqEOYbi+DHL7hj5JM+nHi/j+qrN9zeeXVKy8ZABgbu4CnG+BBqDZ2+tbeq9tUC4DZfIWFU5AZA==
-
 electron-notarize@^1.1.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/electron-notarize/-/electron-notarize-1.2.1.tgz#347c18eca8e29dddadadee511b870c13d4008baf"
@@ -2311,15 +2306,6 @@ electron-winstaller@^5.0.0:
     fs-extra "^7.0.1"
     lodash.template "^4.2.2"
     temp "^0.9.0"
-
-electron@^19.0.8:
-  version "19.0.8"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-19.0.8.tgz#c4d4ba915de554f2926261eb37d3527d2b092d4c"
-  integrity sha512-OWK3P/NbDFfBUv+wbYv1/OV4jehY5DQPT7n1maQJfN9hsnrWTMktXS/bmS05eSUAjNAzHmKPKfiKH2c1Yr7nGw==
-  dependencies:
-    "@electron/get" "^1.14.1"
-    "@types/node" "^16.11.26"
-    extract-zip "^1.0.3"
 
 electron@^19.0.9:
   version "19.0.9"
@@ -5555,13 +5541,6 @@ unique-slug@^2.0.0:
   integrity sha512-zoWr9ObaxALD3DOPfjPSqxt4fnZiWblxHIgeWqW8x7UqDzEtHEQLzji2cuJYQFCU6KmoJikOYAZlrTHHebjx2w==
   dependencies:
     imurmurhash "^0.1.4"
-
-unity1-core@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/unity1-core/-/unity1-core-0.0.1.tgz#04334441c29a60e7fce397c0f99db40a3cea0905"
-  integrity sha512-9K1Vnpn7I2Sow98dU+Q6ejVNOeGO1sBPr63nfZANdudD6SW5I6mfEDANr5NKXqdPWhKerF4P9NseOwG8CqEgZA==
-  dependencies:
-    electron "^19.0.8"
 
 universalify@^0.1.0:
   version "0.1.2"

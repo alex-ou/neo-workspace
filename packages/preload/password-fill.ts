@@ -348,25 +348,7 @@ function handleFormSubmitted() {
   }
 }
 
-const inputAdditionObserver = new MutationObserver((mutationList) => {
-  for (const mutation of mutationList) {
-    if (mutation.type !== "childList") {
-      continue;
-    }
-
-    const addedInputNodes = Array.from(mutation.addedNodes).filter(
-      (node) =>
-        node instanceof Element && node.querySelectorAll("input").length > 0
-    );
-    if (addedInputNodes.length > 0) {
-      identifyUsernameAndPasswordFields();
-      requestAutofill();
-      return;
-    }
-  }
-});
-
-const inputRemovalObserver = new MutationObserver((mutationList) => {
+const detectEligibleFormSubmission = () => {
   if (!isEligibleForAutofill()) {
     return;
   }
@@ -378,6 +360,33 @@ const inputRemovalObserver = new MutationObserver((mutationList) => {
   if (credetialFieldsRemoved) {
     handleFormSubmitted();
   }
+};
+
+const areInputsAdded = (mutationList: MutationRecord[]) => {
+  console.log("alex", mutationList.length);
+  for (const mutation of mutationList) {
+    if (mutation.type !== "childList") {
+      continue;
+    }
+
+    const addedInputNodes = Array.from(mutation.addedNodes).filter(
+      (node) =>
+        node instanceof Element && node.querySelectorAll("input").length > 0
+    );
+    if (addedInputNodes.length > 0) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const inputsObserver = new MutationObserver((mutationList) => {
+  if (areInputsAdded(mutationList)) {
+    identifyUsernameAndPasswordFields();
+    requestAutofill();
+  }
+
+  detectEligibleFormSubmission();
 });
 
 // require both a username and a password field to reduce the false-positive rate
@@ -417,13 +426,7 @@ export default function initializePasswordFill() {
   window.addEventListener("focus", handleFocus, true);
 
   // Start observing the DOM for the new inputs
-  inputAdditionObserver.observe(document.body, {
-    attributes: false,
-    childList: true,
-    subtree: true,
-  });
-
-  inputRemovalObserver.observe(document.body, {
+  inputsObserver.observe(document.body, {
     attributes: false,
     childList: true,
     subtree: true,
