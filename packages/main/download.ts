@@ -1,13 +1,11 @@
-import path from "path";
+import { Notification, shell } from "electron";
 import electronDl from "electron-dl";
-import { Notification, shell, app, nativeImage } from "electron";
-
-const icon = nativeImage.createFromPath(path.join(__dirname, "./logo.png"));
+import { logoIcon } from "./utils";
 
 electronDl({
   onStarted: (item) => {
     const notification = new Notification({
-      icon,
+      icon: logoIcon,
       title: "Download Started",
       body: item.getFilename(),
     });
@@ -15,7 +13,7 @@ electronDl({
   },
   onCompleted: (file) => {
     const notification = new Notification({
-      icon,
+      icon: logoIcon,
       title: "Download Complete",
       body: file.path,
     });

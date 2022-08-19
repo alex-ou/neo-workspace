@@ -1,22 +1,25 @@
-import {
-  BrowserView,
-  BrowserWindow,
-  dialog,
-  ipcMain,
-  Menu,
-  MenuItemConstructorOptions,
-  nativeImage,
-  shell,
-} from "electron";
-import contextMenu from "electron-context-menu";
+import { BrowserView, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
+import { appMenuHanlder } from "./app-menu-handler";
+import { configureViewContextMenu } from "./context-menu";
 
-import registerPasswordIpcHandlers from "./password-main";
-
-import pkg from "../../package.json";
+import {
+  autofillMatched,
+  deletePassword,
+  getPassword,
+  savePassword,
+} from "./password-handler";
+import { logoIcon } from "./utils";
 
 export function registerIpcMainHandlers() {
-  registerPasswordIpcHandlers();
+  // passwords
+  ipcMain.handle("password:save", savePassword);
+  ipcMain.handle("password:delete", deletePassword);
+  ipcMain.handle("password:get", getPassword);
+  ipcMain.handle("password:autofill-matched", autofillMatched);
+
+  // menus
+  ipcMain.on("app:show-app-menu", appMenuHanlder);
 
   ipcMain.handle("view:create", async (event, viewData) => {
     const window: BrowserWindow = BrowserWindow.fromWebContents(event.sender)!;
@@ -39,22 +42,7 @@ export function registerIpcMainHandlers() {
       });
       targetView.setAutoResize({ width: false, height: false });
       targetView.setBounds(viewData.bounds);
-      contextMenu({
-        window: targetView.webContents,
-        showSearchWithGoogle: false,
-        labels: {
-          learnSpelling: "Add to dictionary",
-          lookUpSelection: "Look up “{selection}",
-          selectAll: "Select all",
-          saveImage: "Save image",
-          saveImageAs: "Save image as…",
-          copyLink: "Copy link address",
-          saveLinkAs: "Save link as...",
-          copyImage: "Copy image",
-          copyImageAddress: "Copy image address",
-          inspect: "Inspect element",
-        },
-      });
+      configureViewContextMenu(targetView);
       if (viewData.url) {
         targetView.webContents.loadURL(viewData.url);
       }
@@ -65,14 +53,12 @@ export function registerIpcMainHandlers() {
         `view created, id: ${targetView.webContents.id} for ${viewData.url}`
       );
 
-      const icon = nativeImage.createFromPath(join(__dirname, "./logo.png"));
-
       const webContents = targetView.webContents;
       webContents.setWindowOpenHandler(({}) => {
         return {
           action: "allow",
           overrideBrowserWindowOptions: {
-            icon,
+            icon: logoIcon,
             frames: false,
             autoHideMenuBar: true,
             webPreferences: {},
@@ -253,37 +239,5 @@ export function registerIpcMainHandlers() {
       maximized: window.isMaximized(),
       minimized: window.isMinimized(),
     };
-  });
-
-  ipcMain.on("app:show-app-menu", (event) => {
-    console.log("app:show-app-menu");
-    const template: MenuItemConstructorOptions[] = [
-      {
-        label: "Settings",
-        click: () => {
-          event.sender.send("app:menu-command", "Settings");
-        },
-      },
-      { type: "separator" },
-      {
-        label: "Contact us",
-        click: async () => {
-          await shell.openExternal("https://www.neonav.co/#contacts");
-        },
-      },
-      {
-        label: "About",
-        click: async () => {
-          dialog.showMessageBox({
-            title: "Neo Workspace",
-            //@ts-ignore
-            message: `Version ${pkg.version}\nWebsite: ${pkg.homepage}`,
-            icon: nativeImage.createFromPath(join(__dirname, "./logo.png")),
-          });
-        },
-      },
-    ];
-    const menu = Menu.buildFromTemplate(template);
-    menu.popup();
   });
 }

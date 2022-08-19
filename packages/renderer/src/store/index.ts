@@ -1,4 +1,4 @@
-import { getThreeWindowNode } from "../utils/mosaic-node";
+import { createMosaicNode } from "./../utils/mosaic-node";
 import { getWorkspaces, saveWorkspaces } from "./app-storage";
 import { Workspace, WorkspaceView } from "./workspace";
 
@@ -156,7 +156,7 @@ function loadWorkspace(): AppState {
       id: crypto.randomUUID(),
       name: "Workspace 1",
       isActive: true,
-      layout: getThreeWindowNode(),
+      layout: createMosaicNode(),
       views: [],
     });
   }
@@ -196,7 +196,7 @@ function createWorkspace(
     id: crypto.randomUUID(),
     name: action.payload.name,
     isActive: true,
-    layout: getThreeWindowNode(),
+    layout: createMosaicNode(),
     views: [],
   };
   workspaces.push(newWorkspace);
@@ -210,9 +210,52 @@ function removeWorkspace(
   state: AppState,
   { payload }: RemoveWorkspaceAction
 ): AppState {
+  const index = state.workspaces.findIndex((w) => w.id === payload.workspaceId);
+  if (index === -1) {
+    return state;
+  }
+
+  const workspaces = [...state.workspaces];
+  const workspaceToRemove = workspaces[index];
+  debugger;
+  const newState = {
+    ...state,
+    workspaces,
+  };
+
+  if (workspaces.length === 1) {
+    return {
+      ...state,
+      workspaces: [
+        {
+          id: crypto.randomUUID(),
+          name: "New Workspace",
+          isActive: true,
+          layout: createMosaicNode(),
+          views: [],
+        },
+      ],
+    };
+  }
+
+  // inactive workspaces just remove it
+  if (!workspaceToRemove.isActive) {
+    workspaces.splice(index, 1);
+    return newState;
+  }
+
+  let activeIndex =
+    index === 0 || index < workspaces.length - 1 ? index + 1 : index - 1;
+
+  workspaces[activeIndex] = {
+    ...workspaces[activeIndex],
+    isActive: true,
+  };
+  workspaces.splice(index, 1);
+
   return {
     ...state,
-    workspaces: state.workspaces.filter((w) => w.id !== payload.workspaceId),
+    workspaces,
   };
 }
 

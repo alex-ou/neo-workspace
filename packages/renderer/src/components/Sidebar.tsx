@@ -3,18 +3,16 @@ import {
   Callout,
   Card,
   Classes,
-  Colors,
   Dialog,
   Divider,
-  Icon,
   InputGroup,
 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useState } from "react";
+import config from "../../../../package.json";
 import { AppAction } from "../store";
 import { Workspace } from "../store/workspace";
 import { WorkspaceList } from "./WorkspaceList";
-import config from "../../../../package.json";
 interface SidebarProps {
   workspaces: Workspace[];
   dispatch: React.Dispatch<AppAction>;
@@ -22,8 +20,7 @@ interface SidebarProps {
 }
 
 function Sidebar(props: SidebarProps) {
-  const { workspaces, dispatch } = props;
-  const activeWorkspace = workspaces.find((w) => w.isActive);
+  const { dispatch } = props;
 
   const [workspaceName, setWorkspaceName] = useState<string>("");
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -74,18 +71,23 @@ function Sidebar(props: SidebarProps) {
             intent="primary"
             icon="add"
             onClick={() => {
-              setDialogOpen(true);
-              setWorkspaceEditing(undefined);
+              dispatch({
+                type: "add-workspace",
+                payload: {
+                  name: "New Workspace",
+                },
+              });
             }}
           >
-            Create new workspace
+            New workspace
           </Button>
         </Callout>
         <Dialog
+          autoFocus
           className={css`
             margin: 8px;
           `}
-          title={!workspaceEditing ? "Create new workspace" : "Edit workspace"}
+          title={!workspaceEditing ? "New workspace" : "Edit workspace"}
           isOpen={isDialogOpen}
           canOutsideClickClose
           usePortal={false}
@@ -93,48 +95,55 @@ function Sidebar(props: SidebarProps) {
             setDialogOpen(false);
           }}
         >
-          <div className={Classes.DIALOG_BODY}>
-            <InputGroup
-              autoFocus
-              value={workspaceName}
-              onChange={(e) => {
-                setWorkspaceName(e.target.value);
-              }}
-              placeholder="Type a workspace name"
-            ></InputGroup>
-          </div>
-          <div className={Classes.DIALOG_FOOTER}>
-            <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-              <Button
-                intent="primary"
-                onClick={() => {
-                  if (!workspaceName) return;
-                  if (!workspaceEditing) {
-                    dispatch({
-                      type: "add-workspace",
-                      payload: {
-                        name: workspaceName,
-                      },
-                    });
-                  } else {
-                    dispatch({
-                      type: "update-workspace",
-                      payload: {
-                        ...workspaceEditing,
-                        name: workspaceName,
-                      },
-                    });
-                  }
-
-                  setWorkspaceName("");
-                  setDialogOpen(false);
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!workspaceName) return;
+              if (!workspaceEditing) {
+                dispatch({
+                  type: "add-workspace",
+                  payload: {
+                    name: workspaceName,
+                  },
+                });
+              } else {
+                dispatch({
+                  type: "update-workspace",
+                  payload: {
+                    ...workspaceEditing,
+                    name: workspaceName,
+                  },
+                });
+              }
+              setWorkspaceName("");
+              setDialogOpen(false);
+            }}
+          >
+            <div className={Classes.DIALOG_BODY}>
+              <InputGroup
+                autoFocus
+                value={workspaceName}
+                onChange={(e) => {
+                  setWorkspaceName(e.target.value);
                 }}
-              >
-                Save
-              </Button>
-              <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+                placeholder="Type a workspace name"
+              ></InputGroup>
             </div>
-          </div>
+            <div className={Classes.DIALOG_FOOTER}>
+              <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+                <Button
+                  type="submit"
+                  intent="primary"
+                  // onClick={() => {
+
+                  // }}
+                >
+                  Save
+                </Button>
+                <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+              </div>
+            </div>
+          </form>
         </Dialog>
 
         <WorkspaceList

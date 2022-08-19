@@ -123,6 +123,11 @@ function WindowToolbar(props: WindowToolbarProps) {
           />
         </Button>
         <Button
+          className={css`
+            &:hover {
+              background: rgba(205, 66, 70, 0.15) !important;
+            }
+          `}
           onClick={() => {
             neonav.window.close();
           }}

@@ -1,8 +1,9 @@
-import { join } from "path";
+import { logoIcon } from "./utils";
 import { app, BrowserWindow, nativeImage } from "electron";
-import { registerIpcMainHandlers } from "./ipc-main";
-import contextMenu from "electron-context-menu";
+import { join } from "path";
+import { configureMainContextMenu } from "./context-menu";
 import "./download";
+import { registerIpcMainHandlers } from "./ipc-main";
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -33,11 +34,9 @@ let win: BrowserWindow | null = null;
 const devTools = !import.meta.env.PROD;
 
 async function createWindow() {
-  const icon = nativeImage.createFromPath(join(__dirname, "./logo.png"));
-
   win = new BrowserWindow({
     title: "Main window",
-    icon,
+    icon: logoIcon,
     width: 1000,
     height: 600,
     webPreferences: {
@@ -48,10 +47,7 @@ async function createWindow() {
     frame: false,
   });
 
-  contextMenu({
-    window: win,
-    menu: (actions) => [actions.cut({}), actions.copy({}), actions.paste({})],
-  });
+  configureMainContextMenu(win);
 
   if (import.meta.env.PROD) {
     win.loadFile(join(__dirname, "../renderer/index.html"));
@@ -62,6 +58,12 @@ async function createWindow() {
     win.loadURL(url);
     // win.webContents.openDevTools({ mode: "undocked" });
   }
+  win.webContents.on("before-input-event", (event, input) => {
+    console.log("key", input.alt, input.key);
+    if (input.control && input.key.toLowerCase() === "i") {
+      console.log("Pressed Control+I");
+    }
+  });
 }
 
 app.whenReady().then(() => {

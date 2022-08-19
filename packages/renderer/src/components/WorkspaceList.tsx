@@ -61,13 +61,11 @@ export function WorkspaceList(props: WorkspaceListProps) {
                     text="Rename"
                     onClick={() => props.onRename(w)}
                   />
-                  {!w.isActive && (
-                    <MenuItem2
-                      icon="cross"
-                      text="Delete"
-                      onClick={() => props.onRemove(w)}
-                    />
-                  )}
+                  <MenuItem2
+                    icon="cross"
+                    text="Delete"
+                    onClick={() => props.onRemove(w)}
+                  />
                 </Menu>
               }
             >
