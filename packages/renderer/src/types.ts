@@ -4,8 +4,17 @@ export interface CapturePasswordDetail {
   viewId: string;
   data: { domain: string; username: string; password: string };
 }
-export interface MenuCommand {
-  command: string;
+
+export type ViewCommandType =
+  | "openSettings"
+  | "newWorkspace"
+  | "removeWorkspace"
+  | "switchWorkspace"
+  | "reopenLastClosedWorkspace";
+
+export interface BrowserViewCommand {
+  type: ViewCommandType;
+  workspaceIndex?: number;
 }
 declare global {
   interface Window {
@@ -15,7 +24,7 @@ declare global {
 
 interface CustomEventMap {
   capturepassword: CustomEvent<CapturePasswordDetail>;
-  menucommand: CustomEvent<MenuCommand>;
+  viewcommand: CustomEvent<BrowserViewCommand>;
 }
 
 declare global {

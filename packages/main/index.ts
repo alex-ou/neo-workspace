@@ -3,6 +3,7 @@ import { join } from "path";
 import { configureMainContextMenu } from "./context-menu";
 import "./download";
 import { registerIpcHandlers } from "./handlers";
+import { bindMainWindowKeys } from "./key-bindings";
 import { logoIcon } from "./utils";
 
 if (require("electron-squirrel-startup")) {
@@ -44,6 +45,7 @@ async function createWindow() {
   });
 
   configureMainContextMenu(win);
+  bindMainWindowKeys(win);
 
   if (import.meta.env.PROD) {
     win.loadFile(join(__dirname, "../renderer/index.html"));
@@ -52,6 +54,7 @@ async function createWindow() {
     const url = `http://${process.env["VITE_DEV_SERVER_HOST"]}:${process.env["VITE_DEV_SERVER_PORT"]}`;
 
     win.loadURL(url);
+    win.setMenu(null);
     // win.webContents.openDevTools({ mode: "undocked" });
   }
 }

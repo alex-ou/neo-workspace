@@ -1,4 +1,5 @@
 import {
+  BrowserWindow,
   dialog,
   ipcMain,
   Menu,
@@ -9,11 +10,16 @@ import { logoIcon } from "../utils";
 import pkg from "../../../package.json";
 
 function appMenuHanlder(event: Electron.IpcMainEvent) {
+  const window = BrowserWindow.fromWebContents(event.sender)!;
+
   const template: MenuItemConstructorOptions[] = [
     {
       label: "Settings",
+      accelerator: "CommandOrControl+,",
       click: () => {
-        event.sender.send("app:menu-command", "Settings");
+        event.sender.send("app:browser-view-command", {
+          type: "openSettings",
+        });
       },
     },
     { type: "separator" },
@@ -36,6 +42,7 @@ function appMenuHanlder(event: Electron.IpcMainEvent) {
     },
   ];
   const menu = Menu.buildFromTemplate(template);
+  window.setMenu(menu);
   menu.popup();
 }
 

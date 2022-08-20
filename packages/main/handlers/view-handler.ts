@@ -1,6 +1,7 @@
 import { BrowserWindow, BrowserView, ipcMain } from "electron";
 import { join } from "path";
 import { configureViewContextMenu } from "../context-menu";
+import { bindBrowserViewKeys } from "../key-bindings";
 import { logoIcon } from "../utils";
 
 interface ViewIpcParams {
@@ -119,12 +120,7 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
       });
     });
 
-    webContents.on("before-input-event", (event, input) => {
-      console.log("key", input.alt, input.key);
-      // if (input.control && input.key.toLowerCase() === "i") {
-      //   console.log("Pressed Control+I");
-      // }
-    });
+    bindBrowserViewKeys(targetView, window);
   }
 
   return targetView.webContents.id;

@@ -77,7 +77,7 @@ export interface PasswordService {
 
 export interface Application {
   showAppMenu: () => Promise<void>;
-  onContextMenuCommand: (callback: (e: any, command: any) => void) => void;
+  onBrowserViewCommand: (callback: (e: any, command: any) => void) => void;
 }
 export type IpcMessageListener = (
   viewId: string,

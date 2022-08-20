@@ -13,7 +13,7 @@ import { reducer } from "../store";
 import { createMosaicNode } from "../utils/mosaic-node";
 import { defaultViewManager } from "../utils/view-manager";
 import Settings from "./settings/Settings";
-import Sidebar from "./Sidebar";
+import Sidebar from "./sidebar/Sidebar";
 import View from "./View";
 import WindowToolbar from "./WindowToolbar";
 import ZeroState from "./ZeroState";

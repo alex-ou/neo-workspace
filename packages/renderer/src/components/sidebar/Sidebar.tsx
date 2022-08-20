@@ -9,8 +9,9 @@ import {
 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useState } from "react";
-import { AppAction } from "../store";
-import { Workspace } from "../store/workspace";
+import { AppAction } from "../../store";
+import { Workspace } from "../../store/workspace";
+import { useViewCommand } from "../../utils/event-handler";
 import { WorkspaceList } from "./WorkspaceList";
 interface SidebarProps {
   workspaces: Workspace[];
@@ -21,10 +22,55 @@ interface SidebarProps {
 function Sidebar(props: SidebarProps) {
   const { dispatch } = props;
 
+  const activeWorkspace = props.workspaces.find((w) => w.isActive);
   const [workspaceName, setWorkspaceName] = useState<string>("");
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [workspaceEditing, setWorkspaceEditing] = useState<Workspace>();
 
+  const addNewWorkspace = () => {
+    dispatch({
+      type: "add-workspace",
+      payload: {
+        name: "New Workspace",
+      },
+    });
+  };
+  const removeWorksapce = (w: Workspace) =>
+    dispatch({
+      type: "remove-workspace",
+      payload: {
+        workspaceId: w.id,
+      },
+    });
+
+  const switchWorkspace = (workspaceId: string) => {
+    dispatch({
+      type: "switch-workspace",
+      payload: { workspaceId },
+    });
+  };
+
+  useViewCommand(
+    ["newWorkspace", "removeWorkspace", "switchWorkspace"],
+    (command) => {
+      switch (command.type) {
+        case "newWorkspace":
+          addNewWorkspace();
+          break;
+        case "removeWorkspace":
+          if (activeWorkspace) {
+            removeWorksapce(activeWorkspace);
+          }
+          break;
+        case "switchWorkspace":
+          const workspaceIndex = command.workspaceIndex || 0;
+          if (workspaceIndex >= 0 && workspaceIndex < props.workspaces.length) {
+            switchWorkspace(props.workspaces[workspaceIndex].id);
+          }
+          break;
+      }
+    }
+  );
   return (
     <div
       id="neo-sidebar"
@@ -141,20 +187,8 @@ function Sidebar(props: SidebarProps) {
             setWorkspaceEditing(w);
             setWorkspaceName(w.name);
           }}
-          onSwitch={(workspaceId: string) => {
-            dispatch({
-              type: "switch-workspace",
-              payload: { workspaceId },
-            });
-          }}
-          onRemove={(w: Workspace) => {
-            dispatch({
-              type: "remove-workspace",
-              payload: {
-                workspaceId: w.id,
-              },
-            });
-          }}
+          onSwitch={switchWorkspace}
+          onRemove={removeWorksapce}
         ></WorkspaceList>
         <Divider />
         <Button
@@ -162,14 +196,7 @@ function Sidebar(props: SidebarProps) {
           fill
           alignText="left"
           icon="plus"
-          onClick={() => {
-            dispatch({
-              type: "add-workspace",
-              payload: {
-                name: "New Workspace",
-              },
-            });
-          }}
+          onClick={addNewWorkspace}
         >
           <span
             className={css`
