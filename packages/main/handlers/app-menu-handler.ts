@@ -6,6 +6,7 @@ import {
   shell,
 } from "electron";
 import { logoIcon } from "../utils";
+import pkg from "../../../package.json";
 
 function appMenuHanlder(event: Electron.IpcMainEvent) {
   const template: MenuItemConstructorOptions[] = [

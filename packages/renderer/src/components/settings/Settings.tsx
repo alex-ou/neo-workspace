@@ -38,7 +38,7 @@ export default function Settings() {
               left: 4px;
               right: 4px;
               bottom: 4px;
-              z-index: 10;
+              z-index: 13;
             `,
           ].join(" ")}
         >

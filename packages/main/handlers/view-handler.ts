@@ -18,7 +18,7 @@ export function handleViewIpc(
 
     const window = BrowserWindow.fromWebContents(event.sender)!;
     let targetView = undefined;
-    if (viewData.id) {
+    if (viewData && viewData.id) {
       targetView = window
         .getBrowserViews()
         .find((view) => view.webContents.id === viewData.id);
