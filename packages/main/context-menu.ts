@@ -12,6 +12,18 @@ export function configureViewContextMenu(view: BrowserView) {
   contextMenu({
     window: view.webContents,
     showSearchWithGoogle: false,
+    showSelectAll: false,
+    prepend: (defaultActions, params, browserView) => {
+      const webContents = browserView as Electron.WebContents;
+
+      return [
+        {
+          label: "Refresh",
+          visible: !params.isEditable && !params.linkURL,
+          click: () => webContents.reload(),
+        },
+      ];
+    },
     labels: {
       learnSpelling: "Add to dictionary",
       lookUpSelection: "Look up “{selection}",

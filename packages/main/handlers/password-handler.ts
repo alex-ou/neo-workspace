@@ -1,9 +1,9 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, ipcMain } from "electron";
 import {
   DomainCredential,
   readPasswordFile,
   writePasswordFile,
-} from "./credential-file";
+} from "../credential-file";
 
 export const savePassword = async function (
   event: any,
@@ -75,3 +75,10 @@ export const autofillMatched = async (
     );
   }
 };
+
+export function registerPasswordIpcHandler() {
+  ipcMain.handle("password:save", savePassword);
+  ipcMain.handle("password:delete", deletePassword);
+  ipcMain.handle("password:get", getPassword);
+  ipcMain.handle("password:autofill-matched", autofillMatched);
+}

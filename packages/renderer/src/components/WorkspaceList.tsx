@@ -1,4 +1,10 @@
-import { Button, Classes, Menu, Radio, RadioGroup } from "@blueprintjs/core";
+import {
+  Button,
+  ButtonGroup,
+  Classes,
+  ControlGroup,
+  Menu,
+} from "@blueprintjs/core";
 import { MenuItem2, Popover2 } from "@blueprintjs/popover2";
 import { css } from "@emotion/css";
 import { Workspace } from "../store/workspace";
@@ -11,47 +17,44 @@ interface WorkspaceListProps {
 }
 
 export function WorkspaceList(props: WorkspaceListProps) {
-  const activeWorkspace = props.workspaces.find((w) => w.isActive);
-
   return (
-    <RadioGroup
-      onChange={(event) => {
-        props.onSwitch(event.currentTarget.value);
-      }}
-      selectedValue={activeWorkspace?.id}
+    <ButtonGroup
+      fill
+      vertical
       className={css`
+        height: auto !important;
         margin-top: 8px;
         padding: 0 8px;
       `}
     >
       {props.workspaces.map((w) => (
-        <Radio
-          className={
-            Classes.CARD +
-            " " +
-            css`
-              padding: 4px;
-              min-height: 50px;
-              display: flex;
-              align-items: center;
-              :not(.bp4-align-right) .bp4-control-indicator {
-                margin-left: -20px;
-              }
-              background-color: ${w.isActive
-                ? "rgba(45, 114, 210, 0.1)"
-                : "transparent"};
-            `
-          }
-          value={w.id}
+        <Button
+          minimal
+          alignText="left"
+          active={w.isActive}
+          intent={w.isActive ? "primary" : "none"}
+          onClick={() => {
+            if (!w.isActive) props.onSwitch(w.id);
+          }}
         >
-          <>
-            <span>{w.name}</span>
+          <span
+            className={css`
+              display: flex;
+            `}
+          >
             <span
               className={css`
+                display: flex;
+                align-items: center;
                 flex: 1;
               `}
-            />
+            >
+              {w.name}
+            </span>
             <Popover2
+              className={css`
+                flex: 0 !important;
+              `}
               position="bottom-left"
               modifiers={{ arrow: { enabled: true } }}
               content={
@@ -71,9 +74,9 @@ export function WorkspaceList(props: WorkspaceListProps) {
             >
               <Button minimal small icon="more"></Button>
             </Popover2>
-          </>
-        </Radio>
+          </span>
+        </Button>
       ))}
-    </RadioGroup>
+    </ButtonGroup>
   );
 }

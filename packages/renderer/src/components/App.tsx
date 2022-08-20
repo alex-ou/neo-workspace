@@ -19,7 +19,7 @@ import WindowToolbar from "./WindowToolbar";
 import ZeroState from "./ZeroState";
 
 function App() {
-  const [sidebarVisible, setSidebarVisible] = useState<boolean>(false);
+  const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
 
   const [state, dispatch] = useReducer(reducer, { workspaces: [] });
 

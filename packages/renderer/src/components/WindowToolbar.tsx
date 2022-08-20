@@ -88,7 +88,7 @@ function WindowToolbar(props: WindowToolbarProps) {
 
         <Divider></Divider>
         <Button
-          title="Toggle layout editing sidebar"
+          title="Toggle workspace sidebar"
           onClick={() => {
             props.onToggleSidebar?.();
           }}

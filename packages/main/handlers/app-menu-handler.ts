@@ -5,9 +5,9 @@ import {
   MenuItemConstructorOptions,
   shell,
 } from "electron";
-import { logoIcon } from "./utils";
+import { logoIcon } from "../utils";
 
-export function appMenuHanlder(event: Electron.IpcMainEvent) {
+function appMenuHanlder(event: Electron.IpcMainEvent) {
   const template: MenuItemConstructorOptions[] = [
     {
       label: "Settings",
@@ -36,4 +36,8 @@ export function appMenuHanlder(event: Electron.IpcMainEvent) {
   ];
   const menu = Menu.buildFromTemplate(template);
   menu.popup();
+}
+
+export function registerMenuIpcHandler() {
+  ipcMain.on("app:show-app-menu", appMenuHanlder);
 }

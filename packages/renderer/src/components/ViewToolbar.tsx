@@ -104,6 +104,7 @@ function Toolbar(props: ToolbarProps) {
       >
         <InputGroup
           small
+          autoFocus
           className={css`
             width: 100%;
           `}

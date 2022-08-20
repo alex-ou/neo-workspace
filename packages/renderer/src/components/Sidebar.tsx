@@ -9,7 +9,6 @@ import {
 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useState } from "react";
-import config from "../../../../package.json";
 import { AppAction } from "../store";
 import { Workspace } from "../store/workspace";
 import { WorkspaceList } from "./WorkspaceList";
@@ -30,7 +29,7 @@ function Sidebar(props: SidebarProps) {
     <div
       id="neo-sidebar"
       className={css`
-        width: 360px;
+        width: 300px;
         height: 100%;
         position: relative;
         margin: 0;
@@ -58,30 +57,19 @@ function Sidebar(props: SidebarProps) {
           `}
         >
           <h4 className={Classes.HEADING}>Workspaces</h4>
-          <Button minimal small icon="cross" onClick={props.onClose}></Button>
+          <Button
+            minimal
+            icon="chevron-right"
+            title="Collapse sidebar"
+            onClick={props.onClose}
+          ></Button>
         </div>
         <Divider
           className={css`
             margin: 0;
           `}
         />
-        <Callout>
-          <Button
-            outlined
-            intent="primary"
-            icon="add"
-            onClick={() => {
-              dispatch({
-                type: "add-workspace",
-                payload: {
-                  name: "New Workspace",
-                },
-              });
-            }}
-          >
-            New workspace
-          </Button>
-        </Callout>
+
         <Dialog
           autoFocus
           className={css`
@@ -168,19 +156,32 @@ function Sidebar(props: SidebarProps) {
             });
           }}
         ></WorkspaceList>
+        <Divider />
+        <Button
+          minimal
+          fill
+          alignText="left"
+          icon="plus"
+          onClick={() => {
+            dispatch({
+              type: "add-workspace",
+              payload: {
+                name: "New Workspace",
+              },
+            });
+          }}
+        >
+          <span
+            className={css`
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+            `}
+          >
+            New workspace <span className={Classes.TEXT_MUTED}>(Ctrl+T)</span>
+          </span>
+        </Button>
       </Card>
-      <div
-        className={css`
-          position: absolute;
-          bottom: 10px;
-          left: 8px;
-          right: 8px;
-          display: flex;
-          flex-direction: row-reverse;
-        `}
-      >
-        v{config.version}
-      </div>
     </div>
   );
 }
