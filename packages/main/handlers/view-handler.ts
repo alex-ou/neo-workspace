@@ -53,11 +53,10 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
     });
     targetView.setAutoResize({ width: false, height: false });
     window.addBrowserView(targetView);
+    targetView.setBounds(viewData.bounds);
+
     if (viewData.url) {
       targetView.webContents.loadURL(viewData.url);
-      targetView.setBounds(viewData.bounds);
-    } else {
-      targetView.setBounds({ x: 0, y: 0, width: 0, height: 0 });
     }
 
     configureViewContextMenu(targetView);
@@ -138,7 +137,11 @@ export function registerViewIpcHandler() {
     if (viewData.bounds) {
       view.setBounds(viewData.bounds);
       window.setTopBrowserView(view);
+    }
+    if (viewData.url) {
       view.webContents.focus();
+    } else {
+      window.webContents.focus();
     }
   });
   handleViewIpc("view:go-back", async ({ view }) => {
