@@ -138,6 +138,7 @@ export function registerViewIpcHandler() {
     if (viewData.bounds) {
       view.setBounds(viewData.bounds);
       window.setTopBrowserView(view);
+      view.webContents.focus();
     }
   });
   handleViewIpc("view:go-back", async ({ view }) => {
@@ -171,6 +172,7 @@ export function registerViewIpcHandler() {
     if (targetView) {
       window.addBrowserView(targetView);
       window.setTopBrowserView(targetView);
+      targetView.webContents.focus();
 
       hiddenViews = (hiddenViews || []).filter(
         (v) => v.webContents.id !== viewData.id
