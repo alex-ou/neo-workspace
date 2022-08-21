@@ -1,10 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Classes,
-  ControlGroup,
-  Menu,
-} from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Menu } from "@blueprintjs/core";
 import { MenuItem2, Popover2 } from "@blueprintjs/popover2";
 import { css } from "@emotion/css";
 import { Workspace } from "../../store/workspace";
@@ -13,7 +7,7 @@ interface WorkspaceListProps {
   workspaces: Workspace[];
   onRemove: (workspace: Workspace) => void;
   onRename: (workspace: Workspace) => void;
-  onSwitch: (workspaceId: string) => void;
+  onSwitch: (workspace: Workspace) => void;
 }
 
 export function WorkspaceList(props: WorkspaceListProps) {
@@ -33,9 +27,7 @@ export function WorkspaceList(props: WorkspaceListProps) {
           alignText="left"
           active={w.isActive}
           intent={w.isActive ? "primary" : "none"}
-          onClick={() => {
-            if (!w.isActive) props.onSwitch(w.id);
-          }}
+          onClick={() => props.onSwitch(w)}
         >
           <span
             className={css`

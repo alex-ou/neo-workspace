@@ -6,8 +6,8 @@ import {
   MenuItemConstructorOptions,
   shell,
 } from "electron";
-import { logoIcon } from "../utils";
 import pkg from "../../../package.json";
+import { logoIcon } from "../utils";
 
 function appMenuHanlder(event: Electron.IpcMainEvent) {
   const window = BrowserWindow.fromWebContents(event.sender)!;
@@ -42,7 +42,6 @@ function appMenuHanlder(event: Electron.IpcMainEvent) {
     },
   ];
   const menu = Menu.buildFromTemplate(template);
-  window.setMenu(menu);
   menu.popup();
 }
 

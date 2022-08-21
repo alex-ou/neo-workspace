@@ -217,7 +217,6 @@ function removeWorkspace(
 
   const workspaces = [...state.workspaces];
   const workspaceToRemove = workspaces[index];
-  debugger;
   const newState = {
     ...state,
     workspaces,

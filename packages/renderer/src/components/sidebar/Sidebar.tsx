@@ -1,6 +1,5 @@
 import {
   Button,
-  Callout,
   Card,
   Classes,
   Dialog,
@@ -43,15 +42,22 @@ function Sidebar(props: SidebarProps) {
       },
     });
 
-  const switchWorkspace = (workspaceId: string) => {
+  const switchWorkspace = (w: Workspace) => {
+    if (w.isActive) return;
     dispatch({
       type: "switch-workspace",
-      payload: { workspaceId },
+      payload: { workspaceId: w.id },
     });
   };
 
+  const editWorkspace = (w: Workspace) => {
+    setDialogOpen(true);
+    setWorkspaceEditing(w);
+    setWorkspaceName(w.name);
+  };
+
   useViewCommand(
-    ["newWorkspace", "removeWorkspace", "switchWorkspace"],
+    ["newWorkspace", "removeWorkspace", "switchWorkspace", "editWorkspace"],
     (command) => {
       switch (command.type) {
         case "newWorkspace":
@@ -62,10 +68,15 @@ function Sidebar(props: SidebarProps) {
             removeWorksapce(activeWorkspace);
           }
           break;
+        case "editWorkspace":
+          if (activeWorkspace) {
+            editWorkspace(activeWorkspace);
+          }
+          break;
         case "switchWorkspace":
           const workspaceIndex = command.workspaceIndex || 0;
           if (workspaceIndex >= 0 && workspaceIndex < props.workspaces.length) {
-            switchWorkspace(props.workspaces[workspaceIndex].id);
+            switchWorkspace(props.workspaces[workspaceIndex]);
           }
           break;
       }
@@ -182,11 +193,7 @@ function Sidebar(props: SidebarProps) {
 
         <WorkspaceList
           workspaces={props.workspaces}
-          onRename={(w: Workspace) => {
-            setDialogOpen(true);
-            setWorkspaceEditing(w);
-            setWorkspaceName(w.name);
-          }}
+          onRename={editWorkspace}
           onSwitch={switchWorkspace}
           onRemove={removeWorksapce}
         ></WorkspaceList>

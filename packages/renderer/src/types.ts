@@ -9,6 +9,7 @@ export type ViewCommandType =
   | "openSettings"
   | "newWorkspace"
   | "removeWorkspace"
+  | "editWorkspace"
   | "switchWorkspace"
   | "reopenLastClosedWorkspace";
 

@@ -1,7 +1,6 @@
 import { Button, Divider, H2 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import { useEffect, useState } from "react";
-import { BrowserViewCommand } from "../../types";
+import { useState } from "react";
 import { useViewCommand } from "../../utils/event-handler";
 import NeverSavedPasswordCard from "./NeverSavedPasswordCard";
 import SavedPasswordCard from "./SavedPasswordsCard";
