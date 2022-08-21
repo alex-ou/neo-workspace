@@ -52,10 +52,12 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
       },
     });
     targetView.setAutoResize({ width: false, height: false });
-    targetView.setBounds(viewData.bounds);
     window.addBrowserView(targetView);
     if (viewData.url) {
       targetView.webContents.loadURL(viewData.url);
+      targetView.setBounds(viewData.bounds);
+    } else {
+      targetView.setBounds({ x: 0, y: 0, width: 0, height: 0 });
     }
 
     configureViewContextMenu(targetView);
@@ -168,6 +170,8 @@ export function registerViewIpcHandler() {
     );
     if (targetView) {
       window.addBrowserView(targetView);
+      window.setTopBrowserView(targetView);
+
       hiddenViews = (hiddenViews || []).filter(
         (v) => v.webContents.id !== viewData.id
       );

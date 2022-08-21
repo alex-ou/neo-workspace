@@ -4,6 +4,7 @@ import { Workspace, WorkspaceView } from "./workspace";
 
 export interface AppState {
   workspaces: Workspace[];
+  removedWorkspaces: { workspace: Workspace; index: number }[];
 }
 
 interface LoadWorkspaceAction {
@@ -11,7 +12,7 @@ interface LoadWorkspaceAction {
 }
 interface AddWorkspaceAction {
   type: "add-workspace";
-  payload: { name: string };
+  payload: { name: string; url?: string };
 }
 interface RemoveWorkspaceAction {
   type: "remove-workspace";
@@ -45,6 +46,9 @@ interface CreateWorkspaceViewAction {
   type: "create-workspace-view";
   payload: WorkspaceView;
 }
+interface OpenLastClosedWorkspaceAction {
+  type: "open-last-closed-workspace";
+}
 
 export type AppAction =
   | UpdateWorkspaceViewAction
@@ -54,6 +58,7 @@ export type AppAction =
   | RemoveWorkspaceAction
   | UpdateActiveWorkspaceAction
   | UpdateWorkspaceAction
+  | OpenLastClosedWorkspaceAction
   | SwitchWorkspaceAction;
 
 export function reducer(state: AppState, action: AppAction): AppState {
@@ -82,6 +87,9 @@ export function reducer(state: AppState, action: AppAction): AppState {
       break;
     case "update-workspace-view":
       newState = updateWorkspaceView(state, action);
+      break;
+    case "open-last-closed-workspace":
+      newState = openLastClosedWorkspace(state, action);
       break;
   }
 
@@ -132,6 +140,34 @@ function createWorkspaceView(
   };
 }
 
+function openLastClosedWorkspace(
+  state: AppState,
+  _: OpenLastClosedWorkspaceAction
+): AppState {
+  const w = state.removedWorkspaces.pop();
+  if (!w) {
+    return state;
+  }
+  const workspaces = state.workspaces.map((w) => {
+    if (w.isActive) {
+      return { ...w, isActive: false };
+    }
+    return w;
+  });
+  workspaces.splice(w.index, 0, {
+    ...w.workspace,
+    isActive: true,
+    views: w.workspace.views.map((v) => ({
+      containerId: v.containerId,
+      url: v.url,
+    })),
+  });
+  return {
+    ...state,
+    workspaces,
+  };
+}
+
 function updateWorkspaceView(
   state: AppState,
   { payload }: UpdateWorkspaceViewAction
@@ -177,6 +213,7 @@ function loadWorkspace(): AppState {
 
   return {
     workspaces,
+    removedWorkspaces: [],
   };
 }
 
@@ -192,12 +229,14 @@ function createWorkspace(
           isActive: false,
         };
   });
+
+  const containerId = createMosaicNode();
   const newWorkspace: Workspace = {
     id: crypto.randomUUID(),
     name: action.payload.name,
     isActive: true,
-    layout: createMosaicNode(),
-    views: [],
+    layout: containerId,
+    views: [{ url: action.payload.url, containerId }],
   };
   workspaces.push(newWorkspace);
   return {
@@ -217,39 +256,39 @@ function removeWorkspace(
 
   const workspaces = [...state.workspaces];
   const workspaceToRemove = workspaces[index];
-  const newState = {
-    ...state,
-    workspaces,
-  };
 
   if (workspaces.length === 1) {
-    return {
-      ...state,
-      workspaces: [
-        {
-          id: crypto.randomUUID(),
-          name: "New Workspace",
-          isActive: true,
-          layout: createMosaicNode(),
-          views: [],
-        },
-      ],
+    workspaces.push({
+      id: crypto.randomUUID(),
+      name: "New Workspace",
+      isActive: true,
+      layout: createMosaicNode(),
+      views: [],
+    });
+  }
+
+  if (workspaceToRemove.isActive) {
+    let activeIndex = 0;
+    if (index === workspaces.length - 1) {
+      activeIndex = index - 1;
+    } else {
+      activeIndex = index + 1;
+    }
+
+    workspaces[activeIndex] = {
+      ...workspaces[activeIndex],
+      isActive: true,
     };
   }
 
-  // inactive workspaces just remove it
-  if (!workspaceToRemove.isActive) {
-    workspaces.splice(index, 1);
-    return newState;
+  state.removedWorkspaces.push({
+    workspace: workspaces[index],
+    index,
+  });
+  if (state.removedWorkspaces.length > 10) {
+    state.removedWorkspaces.shift();
   }
 
-  let activeIndex =
-    index === 0 || index < workspaces.length - 1 ? index + 1 : index - 1;
-
-  workspaces[activeIndex] = {
-    ...workspaces[activeIndex],
-    isActive: true,
-  };
   workspaces.splice(index, 1);
 
   return {

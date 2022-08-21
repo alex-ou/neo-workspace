@@ -1,7 +1,7 @@
 import { Button, Divider, H2 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useState } from "react";
-import { useViewCommand } from "../../utils/event-handler";
+import { useViewCommands } from "../../utils/event-handler";
 import NeverSavedPasswordCard from "./NeverSavedPasswordCard";
 import SavedPasswordCard from "./SavedPasswordsCard";
 import SearchEngineCard from "./SearchEngineCard";
@@ -10,9 +10,11 @@ import { SettingSection } from "./SettingSection";
 export default function Settings() {
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
 
-  useViewCommand("openSettings", () => {
-    setSettingsVisible(true);
-    window.neonav.view.hideAllViews();
+  useViewCommands({
+    openSettings: () => {
+      setSettingsVisible(true);
+      window.neonav.view.hideAllViews();
+    },
   });
 
   return (

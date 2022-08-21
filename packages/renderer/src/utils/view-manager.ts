@@ -1,4 +1,4 @@
-import { getViewBounds } from "./dom-util";
+import { getViewBounds, ViewBounds } from "./dom-util";
 
 const { neonav } = window;
 
@@ -7,6 +7,7 @@ interface ViewInfo {
   container: HTMLElement;
   resizeObserver: ResizeObserver;
   viewId: string;
+  bounds: ViewBounds;
 }
 
 export class ViewManager {
@@ -20,27 +21,31 @@ export class ViewManager {
     url?: string
   ): Promise<ViewInfo> => {
     let view = this.views.find((view) => view.containerId === containerId);
-    if (view) {
+    if (view && view.viewId) {
       console.log("found view", containerId, view.viewId);
       view.resizeObserver.unobserve(view.container);
       view.container = elem;
       view.resizeObserver.observe(elem);
       return view;
     }
-    console.log("creating new view", containerId);
+    console.log("creating new view for", containerId);
+    const bounds = getViewBounds(elem);
     view = {
       containerId,
       container: elem,
       resizeObserver: new ResizeObserver(() => {
         console.log("resized", view?.viewId);
+        const bounds = getViewBounds(view!.container);
+        view!.bounds = bounds;
         window.neonav.view.setViewBounds({
           id: view!.viewId,
-          bounds: getViewBounds(view!.container),
+          bounds,
         });
       }),
+      bounds,
       viewId: await neonav.view.createView({
         url: url || "",
-        bounds: getViewBounds(elem),
+        bounds,
       }),
     };
     this.views.push(view);
@@ -75,9 +80,13 @@ export class ViewManager {
   };
 
   loadViewUrl = (containerId: string, url: string) => {
-    console.log("load view url:", containerId);
     const view = this.views.find((view) => view.containerId === containerId);
-    if (view) neonav.view.loadViewUrl({ id: view?.viewId, url });
+    console.log("load view url:", containerId, view?.bounds);
+
+    if (view) {
+      neonav.view.loadViewUrl({ id: view?.viewId, url });
+      neonav.view.setViewBounds({ id: view?.viewId, bounds: view?.bounds });
+    }
   };
 
   hideAllViews() {

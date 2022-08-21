@@ -6,12 +6,12 @@ export interface ViewBounds {
 }
 
 export interface ViewInfo {
-  canGoBack: boolean;
-  canGoForward: boolean;
-  viewId: string;
-  title: string;
-  url: string;
-  isLoading: boolean;
+  canGoBack?: boolean;
+  canGoForward?: boolean;
+  viewId?: string;
+  title?: string;
+  url?: string;
+  isLoading?: boolean;
   error?: string;
 }
 

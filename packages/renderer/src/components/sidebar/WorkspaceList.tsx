@@ -10,6 +10,12 @@ interface WorkspaceListProps {
   onSwitch: (workspace: Workspace) => void;
 }
 
+const classes = {
+  menuItem: css`
+    display: flex;
+    justify-content: space-between;
+  `,
+};
 export function WorkspaceList(props: WorkspaceListProps) {
   return (
     <ButtonGroup
@@ -53,12 +59,22 @@ export function WorkspaceList(props: WorkspaceListProps) {
                 <Menu className={Classes.ELEVATION_2}>
                   <MenuItem2
                     icon="edit"
-                    text="Rename"
+                    text={
+                      <span className={classes.menuItem}>
+                        Rename
+                        <span className={Classes.TEXT_MUTED}>Ctrl+E</span>
+                      </span>
+                    }
                     onClick={() => props.onRename(w)}
                   />
                   <MenuItem2
                     icon="cross"
-                    text="Delete"
+                    text={
+                      <span className={classes.menuItem}>
+                        Delete
+                        <span className={Classes.TEXT_MUTED}>Ctrl+W</span>
+                      </span>
+                    }
                     onClick={() => props.onRemove(w)}
                   />
                 </Menu>

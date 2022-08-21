@@ -7,6 +7,7 @@ export interface CapturePasswordDetail {
 
 export type ViewCommandType =
   | "openSettings"
+  | "openUrl"
   | "newWorkspace"
   | "removeWorkspace"
   | "editWorkspace"
@@ -15,8 +16,15 @@ export type ViewCommandType =
 
 export interface BrowserViewCommand {
   type: ViewCommandType;
-  workspaceIndex?: number;
 }
+
+export interface SwitchWorkspaceCommand {
+  commandData: { workspaceIndex: number };
+}
+export interface OpenUrlCommand {
+  commandData: { url: string; title: string };
+}
+
 declare global {
   interface Window {
     neonav: NeoNavAPI;

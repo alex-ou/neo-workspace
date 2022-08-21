@@ -10,7 +10,8 @@ import { css } from "@emotion/css";
 import { useState } from "react";
 import { AppAction } from "../../store";
 import { Workspace } from "../../store/workspace";
-import { useViewCommand } from "../../utils/event-handler";
+import { useViewCommands } from "../../utils/event-handler";
+import { defaultViewManager } from "../../utils/view-manager";
 import { WorkspaceList } from "./WorkspaceList";
 interface SidebarProps {
   workspaces: Workspace[];
@@ -34,13 +35,15 @@ function Sidebar(props: SidebarProps) {
       },
     });
   };
-  const removeWorksapce = (w: Workspace) =>
+  const removeWorksapce = (w: Workspace) => {
+    w.views.forEach((v) => defaultViewManager.destroyView(v.containerId));
     dispatch({
       type: "remove-workspace",
       payload: {
         workspaceId: w.id,
       },
     });
+  };
 
   const switchWorkspace = (w: Workspace) => {
     if (w.isActive) return;
@@ -56,32 +59,26 @@ function Sidebar(props: SidebarProps) {
     setWorkspaceName(w.name);
   };
 
-  useViewCommand(
-    ["newWorkspace", "removeWorkspace", "switchWorkspace", "editWorkspace"],
-    (command) => {
-      switch (command.type) {
-        case "newWorkspace":
-          addNewWorkspace();
-          break;
-        case "removeWorkspace":
-          if (activeWorkspace) {
-            removeWorksapce(activeWorkspace);
-          }
-          break;
-        case "editWorkspace":
-          if (activeWorkspace) {
-            editWorkspace(activeWorkspace);
-          }
-          break;
-        case "switchWorkspace":
-          const workspaceIndex = command.workspaceIndex || 0;
-          if (workspaceIndex >= 0 && workspaceIndex < props.workspaces.length) {
-            switchWorkspace(props.workspaces[workspaceIndex]);
-          }
-          break;
+  useViewCommands({
+    newWorkspace: addNewWorkspace,
+    removeWorkspace: () => {
+      if (activeWorkspace) {
+        removeWorksapce(activeWorkspace);
       }
-    }
-  );
+    },
+    editWorkspace: () => {
+      if (activeWorkspace) {
+        editWorkspace(activeWorkspace);
+      }
+    },
+    switchWorkspace: (command) => {
+      const workspaceIndex = command.commandData.workspaceIndex || 0;
+      if (workspaceIndex >= 0 && workspaceIndex < props.workspaces.length) {
+        switchWorkspace(props.workspaces[workspaceIndex]);
+      }
+    },
+  });
+
   return (
     <div
       id="neo-sidebar"

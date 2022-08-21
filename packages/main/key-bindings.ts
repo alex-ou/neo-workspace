@@ -1,11 +1,11 @@
-import { BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow, globalShortcut } from "electron";
 import { BrowserView } from "electron";
 
 const REMOVE_WORKSPACE_COMMAND_INDEX = 2;
 
 const KEY_BINDINGS: {
   keys: string[];
-  command: { type: string; workspaceIndex?: number };
+  command: { type: string; commandData?: any };
 }[] = [
   {
     keys: ["control", ","],
@@ -32,7 +32,10 @@ const KEY_BINDINGS: {
 for (let i = 1; i < 10; i++) {
   KEY_BINDINGS.push({
     keys: ["control", String(i)],
-    command: { type: "switchWorkspace", workspaceIndex: i - 1 },
+    command: {
+      type: "switchWorkspace",
+      commandData: { workspaceIndex: i - 1 },
+    },
   });
 }
 
@@ -43,13 +46,19 @@ export function bindBrowserViewKeys(view: BrowserView, window: BrowserWindow) {
 export function bindMainWindowKeys(window: BrowserWindow) {
   bindKeys(window.webContents, window);
 
-  //overrides this one to prevent win from being closed
-  globalShortcut.register("CommandOrControl+W", () => {
+  const sendRemoveWorkspaceCmd = () => {
     window.webContents.send(
       "app:browser-view-command",
       KEY_BINDINGS[REMOVE_WORKSPACE_COMMAND_INDEX].command
     );
-  });
+  };
+  //overrides this one to prevent win from being closed
+  app.on("browser-window-focus", () =>
+    globalShortcut.register("CommandOrControl+W", sendRemoveWorkspaceCmd)
+  );
+  app.on("browser-window-blur", () =>
+    globalShortcut.unregister("CommandOrControl+W")
+  );
 }
 
 export function bindKeys(

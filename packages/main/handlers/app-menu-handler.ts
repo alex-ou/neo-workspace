@@ -4,7 +4,6 @@ import {
   ipcMain,
   Menu,
   MenuItemConstructorOptions,
-  shell,
 } from "electron";
 import pkg from "../../../package.json";
 import { logoIcon } from "../utils";
@@ -26,7 +25,13 @@ function appMenuHanlder(event: Electron.IpcMainEvent) {
     {
       label: "Contact us",
       click: async () => {
-        await shell.openExternal("https://www.neonav.co/#contacts");
+        event.sender.send("app:browser-view-command", {
+          type: "openUrl",
+          commandData: {
+            title: "ContatUs",
+            url: "https://www.neonav.co/#contacts",
+          },
+        });
       },
     },
     {

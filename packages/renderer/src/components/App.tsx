@@ -10,6 +10,7 @@ import { MosaicWithoutDragDropContext } from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
 import { AppContext } from "../app-context";
 import { reducer } from "../store";
+import { useViewCommands } from "../utils/event-handler";
 import { createMosaicNode } from "../utils/mosaic-node";
 import { defaultViewManager } from "../utils/view-manager";
 import Settings from "./settings/Settings";
@@ -21,7 +22,10 @@ import ZeroState from "./ZeroState";
 function App() {
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
 
-  const [state, dispatch] = useReducer(reducer, { workspaces: [] });
+  const [state, dispatch] = useReducer(reducer, {
+    workspaces: [],
+    removedWorkspaces: [],
+  });
 
   const activeWorkspace = state.workspaces.find((w) => w.isActive);
 
@@ -30,15 +34,35 @@ function App() {
 
     window.neonav.view.onUpdate((viewInfo) => {
       console.log("received onUpdate", viewInfo);
+      if (!viewInfo.url) {
+        delete viewInfo.url;
+      }
       dispatch({ type: "update-workspace-view", payload: { ...viewInfo } });
 
       if (viewInfo.error) {
-        window.neonav.view.hideView(viewInfo.viewId);
+        window.neonav.view.hideView(viewInfo.viewId!);
       } else {
-        window.neonav.view.showView(viewInfo.viewId);
+        window.neonav.view.showView(viewInfo.viewId!);
       }
     });
   }, []);
+
+  useViewCommands({
+    openUrl: (command) => {
+      dispatch({
+        type: "add-workspace",
+        payload: {
+          name: command.commandData.title,
+          url: command.commandData.url,
+        },
+      });
+    },
+    reopenLastClosedWorkspace: () => {
+      dispatch({
+        type: "open-last-closed-workspace",
+      });
+    },
+  });
 
   const toggleSidebar = () => setSidebarVisible((v) => !v);
   return (
