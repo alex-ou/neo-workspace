@@ -2,7 +2,7 @@ import { Button, ButtonGroup, Classes, Menu } from "@blueprintjs/core";
 import { MenuItem2, Popover2 } from "@blueprintjs/popover2";
 import { css } from "@emotion/css";
 import { Workspace } from "../../store/workspace";
-
+const MAX_WORKSPACE_NAME_LEN = 40;
 interface WorkspaceListProps {
   workspaces: Workspace[];
   onRemove: (workspace: Workspace) => void;
@@ -29,6 +29,7 @@ export function WorkspaceList(props: WorkspaceListProps) {
     >
       {props.workspaces.map((w) => (
         <Button
+          title={w.name}
           minimal
           alignText="left"
           active={w.isActive}
@@ -47,7 +48,7 @@ export function WorkspaceList(props: WorkspaceListProps) {
                 flex: 1;
               `}
             >
-              {w.name}
+              {w.name.slice(0, MAX_WORKSPACE_NAME_LEN)}
             </span>
             <Popover2
               className={css`

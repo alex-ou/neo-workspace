@@ -7,11 +7,14 @@ import {
   getNodeAtPath,
   MosaicBranch,
   MosaicContext,
+  MosaicDirection,
   MosaicParent,
   MosaicWindowContext,
 } from "react-mosaic-component";
 import { AppAction } from "../store";
 import { WorkspaceView } from "../store/workspace";
+import { useViewCommands } from "../utils/event-handler";
+import { createMosaicNode } from "../utils/mosaic-node";
 import { parseAddressBarInput } from "../utils/search-engine";
 import { ViewManager } from "../utils/view-manager";
 
@@ -34,22 +37,50 @@ function Toolbar(props: ToolbarProps) {
     }
 
     const url = parseAddressBarInput(value);
-    props.dispatch({
+    dispatch({
       type: "update-workspace-view",
       payload: {
         ...props.view,
         url,
       },
     });
-    props.viewManager.loadViewUrl(props.view!.containerId, url);
+    viewManager.loadViewUrl(props.view!.containerId, url);
   };
 
+  const createNewMosaicWindow = (direction: MosaicDirection) => {
+    const newNode = createMosaicNode();
+    const path = mosaicWindowActions.getPath();
+    mosaicActions.replaceWith(path, {
+      direction,
+      first: getAndAssertNodeAtPathExists(mosaicActions.getRoot(), path),
+      second: newNode,
+    });
+    return newNode;
+  };
+
+  useViewCommands({
+    openUrl: ({ commandData }) => {
+      if (commandData.viewId && commandData.viewId === view?.viewId) {
+        const newNode = createNewMosaicWindow(
+          commandData.location === "right" ? "row" : "column"
+        );
+        dispatch({
+          type: "create-workspace-view",
+          payload: {
+            containerId: newNode,
+            url: commandData.url,
+          },
+        });
+      }
+    },
+  });
   const parentNode = getNodeAtPath(
     mosaicActions.getRoot(),
     dropRight(props.path)
   ) as MosaicParent<string>;
   const isMaximised =
     parentNode.splitPercentage === 0 || parentNode.splitPercentage === 100;
+
   return (
     <div
       className={css`
@@ -65,7 +96,7 @@ function Toolbar(props: ToolbarProps) {
             className={css`
               cursor: move;
             `}
-            title="Drag window to a new location"
+            title="Drag pane to a new location"
             minimal
             icon="drag-handle-horizontal"
           ></Button>
@@ -147,36 +178,16 @@ function Toolbar(props: ToolbarProps) {
         `}
       >
         <Button
-          title="Split window vertically"
+          title="Split vertically"
           icon="add-row-bottom"
           minimal
-          onClick={() => {
-            const path = mosaicWindowActions.getPath();
-            mosaicActions.replaceWith(path, {
-              direction: "column",
-              second: crypto.randomUUID(),
-              first: getAndAssertNodeAtPathExists(
-                mosaicActions.getRoot(),
-                path
-              ),
-            });
-          }}
+          onClick={() => createNewMosaicWindow("column")}
         ></Button>
         <Button
-          title="Split window horizontally"
+          title="Split horizontally"
           icon="add-column-right"
           minimal
-          onClick={() => {
-            const path = mosaicWindowActions.getPath();
-            mosaicActions.replaceWith(path, {
-              direction: "row",
-              second: crypto.randomUUID(),
-              first: getAndAssertNodeAtPathExists(
-                mosaicActions.getRoot(),
-                path
-              ),
-            });
-          }}
+          onClick={() => createNewMosaicWindow("row")}
         ></Button>
         <Button
           title={isMaximised ? "Restore" : "Maximize"}
@@ -190,7 +201,7 @@ function Toolbar(props: ToolbarProps) {
           }}
         ></Button>
         <Button
-          title="Close Window"
+          title="Close"
           icon="cross"
           minimal
           onClick={() => {

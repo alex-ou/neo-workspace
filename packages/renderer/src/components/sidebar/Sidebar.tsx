@@ -31,6 +31,7 @@ function Sidebar(props: SidebarProps) {
     dispatch({
       type: "add-workspace",
       payload: {
+        isActive: true,
         name: "New Workspace",
       },
     });
@@ -146,6 +147,7 @@ function Sidebar(props: SidebarProps) {
                   type: "add-workspace",
                   payload: {
                     name: workspaceName,
+                    isActive: true,
                   },
                 });
               } else {

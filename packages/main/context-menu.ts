@@ -8,7 +8,21 @@ export function configureMainContextMenu(win: BrowserWindow) {
   });
 }
 
-export function configureViewContextMenu(view: BrowserView) {
+export function configureViewContextMenu(
+  view: BrowserView,
+  window: BrowserWindow
+) {
+  const sendOpenUrlCommand = (url: string, location: "right" | "bottom") => {
+    window.webContents.send("app:browser-view-command", {
+      type: "openUrl",
+      commandData: {
+        url,
+        viewId: view.webContents.id,
+        location,
+        inBackground: true,
+      },
+    });
+  };
   contextMenu({
     window: view.webContents,
     showSearchWithGoogle: false,
@@ -17,6 +31,30 @@ export function configureViewContextMenu(view: BrowserView) {
       const webContents = browserView as Electron.WebContents;
 
       return [
+        {
+          label: "Open link to the right",
+          visible: !!params.linkURL,
+          click: () => sendOpenUrlCommand(params.linkURL, "right"),
+        },
+        {
+          label: "Open link to the bottom",
+          visible: !!params.linkURL,
+          click: () => sendOpenUrlCommand(params.linkURL, "bottom"),
+        },
+        {
+          label: "Open link in new workspace",
+          visible: !!params.linkURL,
+          click: () => {
+            window.webContents.send("app:browser-view-command", {
+              type: "openUrl",
+              commandData: {
+                urlText: params.linkText,
+                url: params.linkURL,
+                inBackground: true,
+              },
+            });
+          },
+        },
         {
           label: "Refresh",
           visible: !params.isEditable && !params.linkURL,

@@ -48,14 +48,17 @@ function App() {
   }, []);
 
   useViewCommands({
-    openUrl: (command) => {
-      dispatch({
-        type: "add-workspace",
-        payload: {
-          name: command.commandData.title,
-          url: command.commandData.url,
-        },
-      });
+    openUrl: ({ commandData }) => {
+      if (!commandData.viewId) {
+        dispatch({
+          type: "add-workspace",
+          payload: {
+            isActive: !commandData.inBackground,
+            name: commandData.urlText,
+            url: commandData.url,
+          },
+        });
+      }
     },
     reopenLastClosedWorkspace: () => {
       dispatch({

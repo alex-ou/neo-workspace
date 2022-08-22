@@ -12,7 +12,7 @@ interface LoadWorkspaceAction {
 }
 interface AddWorkspaceAction {
   type: "add-workspace";
-  payload: { name: string; url?: string };
+  payload: { name: string; url?: string; isActive: boolean };
 }
 interface RemoveWorkspaceAction {
   type: "remove-workspace";
@@ -219,24 +219,29 @@ function loadWorkspace(): AppState {
 
 function createWorkspace(
   state: AppState,
-  action: AddWorkspaceAction
+  { payload }: AddWorkspaceAction
 ): AppState {
-  let workspaces = state.workspaces.map((w) => {
-    return !w.isActive
-      ? w
-      : {
-          ...w,
-          isActive: false,
-        };
-  });
+  let workspaces: Workspace[];
+  if (payload.isActive) {
+    workspaces = state.workspaces.map((w) => {
+      return !w.isActive
+        ? w
+        : {
+            ...w,
+            isActive: false,
+          };
+    });
+  } else {
+    workspaces = [...state.workspaces];
+  }
 
   const containerId = createMosaicNode();
   const newWorkspace: Workspace = {
     id: crypto.randomUUID(),
-    name: action.payload.name,
-    isActive: true,
+    name: payload.name,
+    isActive: payload.isActive,
     layout: containerId,
-    views: [{ url: action.payload.url, containerId }],
+    views: [{ url: payload.url, containerId }],
   };
   workspaces.push(newWorkspace);
   return {

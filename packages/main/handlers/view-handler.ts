@@ -59,7 +59,7 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
       targetView.webContents.loadURL(viewData.url);
     }
 
-    configureViewContextMenu(targetView);
+    configureViewContextMenu(targetView, window);
 
     // targetView.webContents.openDevTools();
 

@@ -28,8 +28,9 @@ function appMenuHanlder(event: Electron.IpcMainEvent) {
         event.sender.send("app:browser-view-command", {
           type: "openUrl",
           commandData: {
-            title: "ContatUs",
+            urlText: "ContatUs",
             url: "https://www.neonav.co/#contacts",
+            inBackground: false,
           },
         });
       },

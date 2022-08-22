@@ -22,7 +22,13 @@ export interface SwitchWorkspaceCommand {
   commandData: { workspaceIndex: number };
 }
 export interface OpenUrlCommand {
-  commandData: { url: string; title: string };
+  commandData: {
+    url: string;
+    urlText: string;
+    viewId?: string;
+    location?: "right" | "bottom";
+    inBackground?: boolean;
+  };
 }
 
 declare global {
