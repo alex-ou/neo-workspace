@@ -29,6 +29,7 @@ export function WorkspaceList(props: WorkspaceListProps) {
     >
       {props.workspaces.map((w) => (
         <Button
+          key={w.id}
           title={w.name}
           minimal
           alignText="left"

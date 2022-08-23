@@ -12,7 +12,8 @@ export type ViewCommandType =
   | "removeWorkspace"
   | "editWorkspace"
   | "switchWorkspace"
-  | "reopenLastClosedWorkspace";
+  | "reopenLastClosedWorkspace"
+  | "focusAddressBar";
 
 export interface BrowserViewCommand {
   type: ViewCommandType;

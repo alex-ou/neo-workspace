@@ -34,9 +34,7 @@ function App() {
 
     window.neonav.view.onUpdate((viewInfo) => {
       console.log("received onUpdate", JSON.stringify(viewInfo));
-      if (!viewInfo.url) {
-        delete viewInfo.url;
-      }
+
       dispatch({ type: "update-workspace-view", payload: { ...viewInfo } });
 
       if (viewInfo.error) {
@@ -78,6 +76,7 @@ function App() {
           renderTile={(id, path) => {
             return (
               <View
+                acitveWorkspace={activeWorkspace}
                 views={activeWorkspace?.views || []}
                 dispatch={dispatch}
                 viewManager={defaultViewManager}

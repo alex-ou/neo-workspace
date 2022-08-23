@@ -1,6 +1,10 @@
 import { WindowState } from "./types";
 import { ipcRenderer } from "electron";
 
+export async function focus(): Promise<void> {
+  return await ipcRenderer.invoke("window:focus");
+}
+
 export async function maximize(): Promise<void> {
   return await ipcRenderer.invoke("window:maximize");
 }

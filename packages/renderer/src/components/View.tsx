@@ -1,10 +1,10 @@
-import { H4, Icon } from "@blueprintjs/core";
+import { Colors, H4, Icon } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { debounce } from "lodash";
 import React, { useState } from "react";
 import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
-import { WorkspaceView } from "../store/workspace";
+import { Workspace, WorkspaceView } from "../store/workspace";
 import { ViewManager } from "../utils/view-manager";
 import SavePasswordBar from "./SavePasswordBar";
 import ViewToolbar from "./ViewToolbar";
@@ -14,13 +14,13 @@ interface ViewProps {
   id: string;
   path: MosaicBranch[];
   views: WorkspaceView[];
+  acitveWorkspace?: Workspace;
   dispatch: React.Dispatch<AppAction>;
 }
-function View(props: ViewProps) {
-  const viewManager = props.viewManager;
-
-  const { id, path } = props;
-  const currentView = props.views.find((v) => v.containerId === id);
+function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
+  const currentView = (acitveWorkspace?.views || []).find(
+    (v) => v.containerId === id
+  );
 
   const [isCapturingPassword, setIsCapturingPassword] = useState(false);
   const passwordBarHeight = isCapturingPassword ? "44px" : "0px";
@@ -30,7 +30,7 @@ function View(props: ViewProps) {
       return;
     }
     viewManager.createView(id, elem, currentView?.url).then((viewInfo) => {
-      props.dispatch({
+      dispatch({
         type: "create-workspace-view",
         payload: {
           containerId: id,
@@ -50,6 +50,10 @@ function View(props: ViewProps) {
   return (
     // @ts-ignore
     <MosaicWindow<string>
+      className={css`
+        border: 2px solid
+          ${currentView?.isFocused ? Colors.BLUE5 : "transparent"};
+      `}
       path={path}
       draggable={false}
       createNode={() => crypto.randomUUID()}
@@ -62,7 +66,7 @@ function View(props: ViewProps) {
         >
           <ViewToolbar
             path={path}
-            dispatch={props.dispatch}
+            dispatch={dispatch}
             view={currentView}
             viewManager={viewManager}
           />

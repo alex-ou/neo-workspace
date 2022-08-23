@@ -41,6 +41,7 @@ export interface WindowState {
   maximized: boolean;
 }
 export interface NeoWindow {
+  focus(): Promise<void>;
   maximize(): Promise<void>;
   unmaximize(): Promise<void>;
   minimize(): Promise<void>;

@@ -9,6 +9,7 @@ export interface WorkspaceView {
   title?: string;
   url?: string;
   isLoading?: boolean;
+  isFocused?: boolean;
   error?: string;
 }
 

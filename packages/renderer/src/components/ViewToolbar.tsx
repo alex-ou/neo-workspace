@@ -30,7 +30,7 @@ function Toolbar(props: ToolbarProps) {
   const { mosaicActions } = useContext(MosaicContext);
   const { view, viewManager, dispatch } = props;
 
-  const inputRef = useRef<HTMLInputElement>();
+  const urlInputRef = useRef<HTMLInputElement>();
   const onURLChange = (value: string) => {
     if (!value) {
       return;
@@ -58,22 +58,33 @@ function Toolbar(props: ToolbarProps) {
     return newNode;
   };
 
-  useViewCommands({
-    openUrl: ({ commandData }) => {
-      if (commandData.viewId && commandData.viewId === view?.viewId) {
-        const newNode = createNewMosaicWindow(
-          commandData.location === "right" ? "row" : "column"
-        );
-        dispatch({
-          type: "create-workspace-view",
-          payload: {
-            containerId: newNode,
-            url: commandData.url,
-          },
-        });
-      }
+  useViewCommands(
+    {
+      openUrl: ({ commandData }) => {
+        if (commandData.viewId && commandData.viewId === view?.viewId) {
+          const newNode = createNewMosaicWindow(
+            commandData.location === "right" ? "row" : "column"
+          );
+          dispatch({
+            type: "create-workspace-view",
+            payload: {
+              containerId: newNode,
+              url: commandData.url,
+            },
+          });
+        }
+      },
+      focusAddressBar: () => {
+        if (view?.isFocused) {
+          console.log("focusAddressBar", view.viewId);
+          window.neonav.window.focus().then(() => {
+            urlInputRef.current!.focus();
+          });
+        }
+      },
     },
-  });
+    [urlInputRef]
+  );
   const parentNode = getNodeAtPath(
     mosaicActions.getRoot(),
     dropRight(props.path)
@@ -135,14 +146,20 @@ function Toolbar(props: ToolbarProps) {
       >
         <InputGroup
           small
-          autoFocus
+          // autoFocus
+
           className={css`
             width: 100%;
           `}
           //@ts-ignore
-          inputRef={inputRef}
+          inputRef={urlInputRef}
           onFocus={() => {
-            inputRef.current?.select();
+            props.dispatch({
+              type: "update-workspace-view",
+              payload: { ...props.view, isFocused: true },
+            });
+
+            urlInputRef.current?.select();
           }}
           onDrag={(e) => {
             e.preventDefault();

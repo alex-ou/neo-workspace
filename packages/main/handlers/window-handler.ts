@@ -1,6 +1,12 @@
 import { ipcMain, BrowserWindow } from "electron";
 
 export function registerWindowIpcHandler() {
+  ipcMain.handle("window:focus", (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender)!;
+    console.log("window:focus");
+    window.webContents.focus();
+  });
+
   ipcMain.handle("window:maximize", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
     console.log("window:maximize", viewData);

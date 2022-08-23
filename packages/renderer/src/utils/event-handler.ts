@@ -16,7 +16,7 @@ type CommandFuncMap = {
   switchWorkspace?: (command: SwitchWorkspaceCommand) => void;
 };
 
-export function useViewCommands(map: CommandFuncMap) {
+export function useViewCommands(map: CommandFuncMap, deps?: any[]) {
   useEffect(() => {
     const commandTypes = Object.keys(map);
 
@@ -30,7 +30,7 @@ export function useViewCommands(map: CommandFuncMap) {
     return () => {
       document.removeEventListener("viewcommand", listener);
     };
-  }, [map]);
+  }, [map, deps]);
 }
 
 export function registerEventHandlers() {

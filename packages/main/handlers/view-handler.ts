@@ -82,6 +82,10 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
 
     webContents.on("focus", () => {
       console.log("view focus", webContents.id);
+      window.webContents.send("view:did-update", {
+        viewId: webContents.id,
+        isFocused: true,
+      });
     });
 
     webContents.on("did-navigate", () => {
@@ -97,8 +101,8 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
       console.log("did-start-loading", webContents.id, webContents.getURL());
 
       window.webContents.send("view:did-update", {
-        ...getViewInfo(webContents),
-        url: undefined,
+        viewId: webContents.id,
+        isLoading: true,
       });
     });
 
@@ -106,8 +110,8 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
       console.log("did-stop-loading", webContents.id, webContents.getURL());
 
       window.webContents.send("view:did-update", {
-        ...getViewInfo(webContents),
-        url: undefined,
+        viewId: webContents.id,
+        isLoading: false,
       });
     });
 

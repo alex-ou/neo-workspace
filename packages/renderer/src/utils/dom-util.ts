@@ -11,7 +11,7 @@ export function getViewBounds(elem?: HTMLElement) {
   return {
     x: formatNumber(rect?.x),
     y: formatNumber(rect?.y),
-    width: formatNumber(rect?.width),
-    height: formatNumber(rect?.height),
+    width: Math.max(formatNumber(rect?.width) - 1, 0),
+    height: Math.max(formatNumber(rect?.height) - 1, 0),
   };
 }

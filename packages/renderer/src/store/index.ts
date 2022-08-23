@@ -172,12 +172,26 @@ function updateWorkspaceView(
   state: AppState,
   { payload }: UpdateWorkspaceViewAction
 ): AppState {
-  const views = getActiveViews(state).map((v) => {
-    if (v.containerId === payload.containerId || v.viewId === payload.viewId) {
-      return { ...v, ...payload };
-    }
-    return v;
-  });
+  const isSameView = (v: WorkspaceView) =>
+    v.containerId === payload.containerId || v.viewId === payload.viewId;
+
+  let views = getActiveViews(state);
+  const index = views.findIndex(isSameView);
+  if (index === -1) {
+    return state;
+  }
+
+  views = [...views];
+
+  if (payload.isFocused) {
+    views = views.map((v) => (v.isFocused ? { ...v, isFocused: false } : v));
+  }
+
+  views[index] = {
+    ...views[index],
+    ...payload,
+  };
+
   return {
     ...state,
     workspaces: _updateActiveWorkspace(state.workspaces, { views }),
