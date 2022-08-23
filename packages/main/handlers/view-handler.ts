@@ -4,6 +4,8 @@ import { configureViewContextMenu } from "../context-menu";
 import { bindBrowserViewKeys } from "../key-bindings";
 import { logoIcon } from "../utils";
 
+const BLANK_PAGE_URL = "about:blank";
+
 interface ViewIpcParams {
   view: BrowserView | undefined;
   window: BrowserWindow;
@@ -17,7 +19,7 @@ export function handleViewIpc(
   ipcMain.handle(channel, (event, viewData) => {
     console.log(channel, viewData);
 
-    const window = BrowserWindow.fromWebContents(event.sender)!;
+    const window: BrowserWindow = BrowserWindow.fromWebContents(event.sender)!;
     let targetView = undefined;
     if (viewData && viewData.id) {
       targetView = window
@@ -33,7 +35,7 @@ const getViewInfo = (webContents: Electron.WebContents) => ({
   title: webContents.getTitle(),
   canGoBack: webContents.canGoBack(),
   canGoForward: webContents.canGoForward(),
-  url: webContents.getURL(),
+  url: webContents.getURL().replace(BLANK_PAGE_URL, ""),
   isLoading: webContents.isLoading(),
 });
 
@@ -55,9 +57,7 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
     window.addBrowserView(targetView);
     targetView.setBounds(viewData.bounds);
 
-    if (viewData.url) {
-      targetView.webContents.loadURL(viewData.url);
-    }
+    targetView.webContents.loadURL(viewData.url || BLANK_PAGE_URL);
 
     configureViewContextMenu(targetView, window);
 
@@ -80,23 +80,36 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
       };
     });
 
-    webContents.on("did-navigate", () =>
-      window.webContents.send("view:did-update", getViewInfo(webContents))
-    );
+    webContents.on("focus", () => {
+      console.log("view focus", webContents.id);
+    });
+
+    webContents.on("did-navigate", () => {
+      console.log("did-navigate", webContents.getURL());
+      if (webContents.getURL() === BLANK_PAGE_URL) {
+        return;
+      }
+
+      window.webContents.send("view:did-update", getViewInfo(webContents));
+    });
 
     webContents.on("did-start-loading", () => {
+      console.log("did-start-loading", webContents.id, webContents.getURL());
+
       window.webContents.send("view:did-update", {
-        viewId: webContents.id,
-        title: webContents.getTitle(),
-        canGoBack: webContents.canGoBack(),
-        canGoForward: webContents.canGoForward(),
-        isLoading: webContents.isLoading(),
+        ...getViewInfo(webContents),
+        url: undefined,
       });
     });
 
-    webContents.on("did-stop-loading", () =>
-      window.webContents.send("view:did-update", getViewInfo(webContents))
-    );
+    webContents.on("did-stop-loading", () => {
+      console.log("did-stop-loading", webContents.id, webContents.getURL());
+
+      window.webContents.send("view:did-update", {
+        ...getViewInfo(webContents),
+        url: undefined,
+      });
+    });
 
     webContents.on(
       "did-fail-load",

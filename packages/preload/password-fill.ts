@@ -363,7 +363,6 @@ const detectEligibleFormSubmission = () => {
 };
 
 const areInputsAdded = (mutationList: MutationRecord[]) => {
-  console.log("alex", mutationList.length);
   for (const mutation of mutationList) {
     if (mutation.type !== "childList") {
       continue;

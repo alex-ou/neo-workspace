@@ -33,7 +33,7 @@ function App() {
     dispatch({ type: "load-workspace" });
 
     window.neonav.view.onUpdate((viewInfo) => {
-      console.log("received onUpdate", viewInfo);
+      console.log("received onUpdate", JSON.stringify(viewInfo));
       if (!viewInfo.url) {
         delete viewInfo.url;
       }

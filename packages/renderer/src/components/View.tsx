@@ -35,6 +35,7 @@ function View(props: ViewProps) {
         payload: {
           containerId: id,
           viewId: viewInfo.viewId,
+          url: currentView?.url,
         },
       });
     });
