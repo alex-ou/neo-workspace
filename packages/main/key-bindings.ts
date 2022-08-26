@@ -8,6 +8,10 @@ const KEY_BINDINGS: {
   command: { type: string; commandData?: any };
 }[] = [
   {
+    keys: ["control", ","],
+    command: { type: "openSettings" },
+  },
+  {
     keys: ["control", "t"],
     command: { type: "newWorkspace" },
   },
@@ -55,10 +59,7 @@ const KEY_BINDINGS: {
     keys: ["alt", "arrowright"],
     command: { type: "moveWindowFocusRight" },
   },
-  {
-    keys: ["control", ","],
-    command: { type: "openSettings" },
-  },
+
   {
     keys: ["escape"],
     command: { type: "closeSettings" },
