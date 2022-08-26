@@ -1,6 +1,6 @@
 import { Colors, H4, Icon } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import React, { useState } from "react";
 import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
@@ -52,7 +52,7 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
     <MosaicWindow<string>
       className={css`
         border: 2px solid
-          ${currentView?.isFocused ? Colors.BLUE5 : "transparent"};
+          ${currentView?.isFocused ? Colors.BLUE4 : "transparent"};
       `}
       path={path}
       draggable={false}

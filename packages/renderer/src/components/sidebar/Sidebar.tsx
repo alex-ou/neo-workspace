@@ -8,9 +8,9 @@ import {
 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useState } from "react";
+import { useViewCommands } from "../../hooks/view-command";
 import { AppAction } from "../../store";
 import { Workspace } from "../../store/workspace";
-import { useViewCommands } from "../../utils/event-handler";
 import { defaultViewManager } from "../../utils/view-manager";
 import { WorkspaceList } from "./WorkspaceList";
 interface SidebarProps {

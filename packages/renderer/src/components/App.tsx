@@ -9,8 +9,8 @@ import HTML5toTouch from "react-dnd-multi-backend/dist/esm/HTML5toTouch";
 import { MosaicWithoutDragDropContext } from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
 import { AppContext } from "../app-context";
+import { useWorkspaceCommandHandling } from "../hooks/view-command";
 import { reducer } from "../store";
-import { useViewCommands } from "../utils/event-handler";
 import { createMosaicNode } from "../utils/mosaic-node";
 import { defaultViewManager } from "../utils/view-manager";
 import Settings from "./settings/Settings";
@@ -45,25 +45,7 @@ function App() {
     });
   }, []);
 
-  useViewCommands({
-    openUrl: ({ commandData }) => {
-      if (!commandData.viewId) {
-        dispatch({
-          type: "add-workspace",
-          payload: {
-            isActive: !commandData.inBackground,
-            name: commandData.urlText,
-            url: commandData.url,
-          },
-        });
-      }
-    },
-    reopenLastClosedWorkspace: () => {
-      dispatch({
-        type: "open-last-closed-workspace",
-      });
-    },
-  });
+  useWorkspaceCommandHandling(activeWorkspace, dispatch);
 
   const toggleSidebar = () => setSidebarVisible((v) => !v);
   return (

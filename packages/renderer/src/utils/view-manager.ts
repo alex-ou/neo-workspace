@@ -79,6 +79,14 @@ export class ViewManager {
     }
   };
 
+  focusView = (containerId: string) => {
+    console.log("view focus :", containerId);
+    const view = this.views.find((view) => view.containerId === containerId);
+    if (view && view.viewId) {
+      neonav.view.focusView(view.viewId);
+    }
+  };
+
   loadViewUrl = (containerId: string, url: string) => {
     const view = this.views.find((view) => view.containerId === containerId);
     console.log("load view url:", containerId, view?.bounds);

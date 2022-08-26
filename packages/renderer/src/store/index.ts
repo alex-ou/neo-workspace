@@ -46,6 +46,14 @@ interface CreateWorkspaceViewAction {
   type: "create-workspace-view";
   payload: WorkspaceView;
 }
+
+interface RemoveWorkspaceViewAction {
+  type: "remove-workspace-view";
+  payload: {
+    containerId: string;
+  };
+}
+
 interface OpenLastClosedWorkspaceAction {
   type: "open-last-closed-workspace";
 }
@@ -53,6 +61,7 @@ interface OpenLastClosedWorkspaceAction {
 export type AppAction =
   | UpdateWorkspaceViewAction
   | CreateWorkspaceViewAction
+  | RemoveWorkspaceViewAction
   | LoadWorkspaceAction
   | AddWorkspaceAction
   | RemoveWorkspaceAction
@@ -76,20 +85,26 @@ export function reducer(state: AppState, action: AppAction): AppState {
     case "switch-workspace":
       newState = switchWorkspace(state, action);
       break;
-    case "update-active-workspace":
-      newState = updateActiveWorkspace(state, action);
-      break;
+
     case "update-workspace":
       newState = updateWorkspace(state, action);
       break;
+    case "update-active-workspace":
+      newState = updateActiveWorkspace(state, action);
+      break;
+
+    case "open-last-closed-workspace":
+      newState = openLastClosedWorkspace(state, action);
+      break;
+
     case "create-workspace-view":
       newState = createWorkspaceView(state, action);
       break;
     case "update-workspace-view":
       newState = updateWorkspaceView(state, action);
       break;
-    case "open-last-closed-workspace":
-      newState = openLastClosedWorkspace(state, action);
+    case "remove-workspace-view":
+      newState = removeWorkspaceView(state, action);
       break;
   }
 
@@ -128,10 +143,14 @@ function createWorkspaceView(
   }
 
   views = [...views];
+  if (payload.isFocused) {
+    views = views.map((v) => (v.isFocused ? { ...v, isFocused: false } : v));
+  }
+
   if (index === -1) {
     views.push(payload);
   } else {
-    views[index] = payload;
+    views[index] = { ...views[index], ...payload };
   }
 
   return {
@@ -198,6 +217,34 @@ function updateWorkspaceView(
   };
 }
 
+function removeWorkspaceView(
+  state: AppState,
+  { payload }: RemoveWorkspaceViewAction
+): AppState {
+  let views = getActiveViews(state);
+  const index = views.findIndex((v) => v.containerId === payload.containerId);
+  if (index === -1) {
+    return state;
+  }
+
+  views = [...views];
+  const viewToRemove = views[index];
+  if (viewToRemove.isFocused) {
+    const activeIndex = index < views.length - 1 ? index + 1 : index - 1;
+    views[activeIndex] = {
+      ...views[activeIndex],
+      isFocused: true,
+    };
+  }
+
+  views.splice(index, 1);
+
+  return {
+    ...state,
+    workspaces: _updateActiveWorkspace(state.workspaces, { views }),
+  };
+}
+
 function loadWorkspace(): AppState {
   const workspaces = getWorkspaces();
 
@@ -216,11 +263,20 @@ function loadWorkspace(): AppState {
       w.views = [];
       return;
     }
-    w.views = w.views.map((v) => ({
+    const views = w.views.map((v) => ({
       containerId: v.containerId,
       viewId: undefined,
       url: v.url,
     }));
+    w.views = [];
+    //dedup
+    views.forEach((v) => {
+      if (
+        v.containerId &&
+        w.views.findIndex((wv) => wv.containerId === v.containerId) === -1
+      )
+        w.views.push(v);
+    });
   });
 
   console.log("loading workspace");

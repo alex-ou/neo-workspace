@@ -8,10 +8,6 @@ const KEY_BINDINGS: {
   command: { type: string; commandData?: any };
 }[] = [
   {
-    keys: ["control", ","],
-    command: { type: "openSettings" },
-  },
-  {
     keys: ["control", "t"],
     command: { type: "newWorkspace" },
   },
@@ -30,6 +26,42 @@ const KEY_BINDINGS: {
   {
     keys: ["control", "l"],
     command: { type: "focusAddressBar" },
+  },
+  {
+    keys: ["shift", "alt", "+"],
+    command: { type: "splitWindowHorizontally" },
+  },
+  {
+    keys: ["shift", "alt", "_"],
+    command: { type: "splitWindowVertially" },
+  },
+  {
+    keys: ["control", "shift", "w"],
+    command: { type: "closeFocusingWindow" },
+  },
+  {
+    keys: ["alt", "arrowup"],
+    command: { type: "moveWindowFocusUp" },
+  },
+  {
+    keys: ["alt", "arrowdown"],
+    command: { type: "moveWindowFocusDown" },
+  },
+  {
+    keys: ["alt", "arrowleft"],
+    command: { type: "moveWindowFocusLeft" },
+  },
+  {
+    keys: ["alt", "arrowright"],
+    command: { type: "moveWindowFocusRight" },
+  },
+  {
+    keys: ["control", ","],
+    command: { type: "openSettings" },
+  },
+  {
+    keys: ["escape"],
+    command: { type: "closeSettings" },
   },
 ];
 // ctrl+[1-9]

@@ -161,6 +161,10 @@ export function registerViewIpcHandler() {
       window.webContents.focus();
     }
   });
+  handleViewIpc("view:focus", async ({ view }) => {
+    if (!view) return;
+    view.webContents.focus();
+  });
   handleViewIpc("view:go-back", async ({ view }) => {
     if (!view) return;
     view.webContents.goBack();

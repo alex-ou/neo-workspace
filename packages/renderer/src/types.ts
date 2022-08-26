@@ -7,13 +7,21 @@ export interface CapturePasswordDetail {
 
 export type ViewCommandType =
   | "openSettings"
+  | "closeSettings"
   | "openUrl"
   | "newWorkspace"
   | "removeWorkspace"
   | "editWorkspace"
   | "switchWorkspace"
   | "reopenLastClosedWorkspace"
-  | "focusAddressBar";
+  | "focusAddressBar"
+  | "splitWindowHorizontally"
+  | "splitWindowVertially"
+  | "closeFocusingWindow"
+  | "moveWindowFocusUp"
+  | "moveWindowFocusDown"
+  | "moveWindowFocusLeft"
+  | "moveWindowFocusRight";
 
 export interface BrowserViewCommand {
   type: ViewCommandType;

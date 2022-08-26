@@ -27,6 +27,8 @@ export interface NeoView {
   hideView(viewId: string): Promise<void>;
   showView(viewId: string): Promise<void>;
 
+  focusView(viewId: string): Promise<void>;
+
   createView(options: { url: string; bounds: ViewBounds }): Promise<string>;
 
   setViewBounds(options: { id: string; bounds: ViewBounds }): Promise<void>;

@@ -1,7 +1,7 @@
 import { Button, InputGroup, Spinner } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import { dropRight } from "lodash";
-import { useContext, useRef } from "react";
+import dropRight from "lodash/dropRight";
+import { useContext, useEffect, useRef } from "react";
 import {
   getAndAssertNodeAtPathExists,
   getNodeAtPath,
@@ -11,13 +11,12 @@ import {
   MosaicParent,
   MosaicWindowContext,
 } from "react-mosaic-component";
+import { useViewCommands } from "../hooks/view-command";
 import { AppAction } from "../store";
 import { WorkspaceView } from "../store/workspace";
-import { useViewCommands } from "../utils/event-handler";
 import { createMosaicNode } from "../utils/mosaic-node";
 import { parseAddressBarInput } from "../utils/search-engine";
 import { ViewManager } from "../utils/view-manager";
-
 export interface ToolbarProps {
   view?: WorkspaceView;
   viewManager: ViewManager;
@@ -58,33 +57,70 @@ function Toolbar(props: ToolbarProps) {
     return newNode;
   };
 
+  const splitWindow = (direction: MosaicDirection, args: any) => {
+    const newNode = createNewMosaicWindow(direction);
+    dispatch({
+      type: "create-workspace-view",
+      payload: {
+        containerId: newNode,
+        ...args,
+      },
+    });
+  };
+
+  const removeWindow = () => {
+    viewManager.destroyView(view?.containerId || "");
+    mosaicActions.remove(mosaicWindowActions.getPath());
+    dispatch({
+      type: "remove-workspace-view",
+      payload: {
+        containerId: view!.containerId,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (view?.isFocused && !view?.url) {
+      urlInputRef.current!.focus();
+    }
+  }, [view?.isFocused]);
+
   useViewCommands(
     {
       openUrl: ({ commandData }) => {
+        // open lins to the right and bottom
         if (commandData.viewId && commandData.viewId === view?.viewId) {
-          const newNode = createNewMosaicWindow(
-            commandData.location === "right" ? "row" : "column"
-          );
-          dispatch({
-            type: "create-workspace-view",
-            payload: {
-              containerId: newNode,
-              url: commandData.url,
-            },
+          splitWindow(commandData.location === "right" ? "row" : "column", {
+            url: commandData.url,
           });
         }
       },
       focusAddressBar: () => {
         if (view?.isFocused) {
-          console.log("focusAddressBar", view.viewId);
           window.neonav.window.focus().then(() => {
             urlInputRef.current!.focus();
           });
         }
       },
+      splitWindowHorizontally: () => {
+        if (view?.isFocused) {
+          splitWindow("row", { isFocused: true });
+        }
+      },
+      splitWindowVertially: () => {
+        if (view?.isFocused) {
+          splitWindow("column", { isFocused: true });
+        }
+      },
+      closeFocusingWindow: () => {
+        if (view?.isFocused) {
+          removeWindow();
+        }
+      },
     },
     [urlInputRef]
   );
+
   const parentNode = getNodeAtPath(
     mosaicActions.getRoot(),
     dropRight(props.path)
@@ -146,8 +182,7 @@ function Toolbar(props: ToolbarProps) {
       >
         <InputGroup
           small
-          // autoFocus
-
+          autoFocus
           className={css`
             width: 100%;
           `}
@@ -221,10 +256,7 @@ function Toolbar(props: ToolbarProps) {
           title="Close"
           icon="cross"
           minimal
-          onClick={() => {
-            viewManager.destroyView(view?.containerId || "");
-            mosaicActions.remove(mosaicWindowActions.getPath());
-          }}
+          onClick={removeWindow}
         ></Button>
       </div>
     </div>

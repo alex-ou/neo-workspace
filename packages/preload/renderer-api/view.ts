@@ -26,6 +26,11 @@ export async function showView(viewId: string): Promise<void> {
     id: viewId,
   });
 }
+export async function focusView(viewId: string): Promise<void> {
+  await ipcRenderer.invoke("view:focus", {
+    id: viewId,
+  });
+}
 
 export async function goBack(viewId: string): Promise<void> {
   await ipcRenderer.invoke("view:go-back", {
