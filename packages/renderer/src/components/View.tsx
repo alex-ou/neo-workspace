@@ -48,7 +48,7 @@ function View({ id, path, viewManager, activeWorkspace, dispatch }: ViewProps) {
         },
       });
     });
-  }, [containerRef]);
+  }, [containerRef, currentView?.url, id]);
 
   return (
     // @ts-ignore

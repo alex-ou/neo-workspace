@@ -102,6 +102,10 @@ export class ViewManager {
 
     if (view) {
       neonav.view.loadViewUrl({ id: view?.viewId, url });
+      neonav.view.setViewBounds({
+        id: view?.viewId,
+        bounds: view?.bounds,
+      });
     }
   };
 
