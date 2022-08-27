@@ -24,6 +24,7 @@ function appMenuHandler(event: Electron.IpcMainEvent) {
     { type: "separator" },
     {
       label: "Keyboard shortcuts",
+      accelerator: "CommandOrControl+.",
       click: async () => {
         event.sender.send("app:browser-view-command", {
           type: "openKeyboardShortcuts",
