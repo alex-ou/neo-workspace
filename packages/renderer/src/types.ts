@@ -7,6 +7,7 @@ export interface CapturePasswordDetail {
 
 export type ViewCommandType =
   | "openSettings"
+  | "openKeyboardShortcuts"
   | "openUrl"
   | "newWorkspace"
   | "removeWorkspace"
@@ -15,7 +16,7 @@ export type ViewCommandType =
   | "reopenLastClosedWorkspace"
   | "focusAddressBar"
   | "splitWindowHorizontally"
-  | "splitWindowVertially"
+  | "splitWindowVertically"
   | "closeFocusingWindow"
   | "moveWindowFocusUp"
   | "moveWindowFocusDown"

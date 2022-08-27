@@ -136,6 +136,8 @@ function createWorkspaceView(
   state: AppState,
   { payload }: CreateWorkspaceViewAction
 ): AppState {
+  console.log("createWorkspaceView", payload);
+
   let views = getActiveViews(state);
 
   const index = views.findIndex((v) => v.containerId === payload.containerId);
@@ -144,10 +146,10 @@ function createWorkspaceView(
   }
 
   views = [...views];
+
   if (payload.isFocused) {
     views = views.map((v) => (v.isFocused ? { ...v, isFocused: false } : v));
   }
-
   if (index === -1) {
     views.push(payload);
   } else {
@@ -192,8 +194,11 @@ function updateWorkspaceView(
   state: AppState,
   { payload }: UpdateWorkspaceViewAction
 ): AppState {
+  console.log("updateWorkspaceView", payload);
+
   const isSameView = (v: WorkspaceView) =>
-    v.containerId === payload.containerId || v.viewId === payload.viewId;
+    v.containerId === payload.containerId ||
+    (payload.viewId && v.viewId === payload.viewId);
 
   let views = getActiveViews(state);
   const index = views.findIndex(isSameView);
@@ -384,14 +389,14 @@ function switchWorkspace(
   { payload }: SwitchWorkspaceAction
 ): AppState {
   let workspaces = state.workspaces.map((w) => {
-    if (w.isActive) {
+    if (w.isActive && w.id !== payload.workspaceId) {
       return {
         ...w,
         isActive: false,
       };
     }
 
-    if (w.id === payload.workspaceId) {
+    if (w.id === payload.workspaceId && !w.isActive) {
       return {
         ...w,
         isActive: true,

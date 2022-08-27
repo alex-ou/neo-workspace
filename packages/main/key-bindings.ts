@@ -24,6 +24,10 @@ const KEY_BINDINGS: {
     command: { type: "editWorkspace" },
   },
   {
+    keys: ["control", "."],
+    command: { type: "openKeyboardShortcuts" },
+  },
+  {
     keys: ["control", "shift", "t"],
     command: { type: "reopenLastClosedWorkspace" },
   },
@@ -37,7 +41,7 @@ const KEY_BINDINGS: {
   },
   {
     keys: ["shift", "alt", "_"],
-    command: { type: "splitWindowVertially" },
+    command: { type: "splitWindowVertically" },
   },
   {
     keys: ["control", "shift", "w"],

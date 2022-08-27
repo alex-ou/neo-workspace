@@ -2,7 +2,9 @@
 import urlParser from "./url-parser";
 import { settings } from "../store/settings";
 
-const NEO_ADDRESS_PREFIX = "neo://";
+export const NEO_ADDRESS_PREFIX = "neo://";
+
+export type NeoComponentType = "settings" | "keyboard-shortcuts";
 
 export interface SearchEngineItem {
   name: string;
@@ -81,7 +83,7 @@ export function isNeoUrl(value: string): boolean {
   return (value || "").toLowerCase().startsWith(NEO_ADDRESS_PREFIX);
 }
 
-export function getNeoComponent(url: string): string | null {
+export function getNeoComponent(url: string): NeoComponentType | null {
   if (!isNeoUrl(url)) return null;
-  return url.trim().replace(NEO_ADDRESS_PREFIX, "");
+  return url.trim().replace(NEO_ADDRESS_PREFIX, "") as NeoComponentType;
 }

@@ -45,7 +45,7 @@ function App() {
     });
   }, []);
 
-  useWorkspaceCommandHandling(activeWorkspace, dispatch);
+  useWorkspaceCommandHandling(state.workspaces, dispatch);
 
   const toggleSidebar = () => setSidebarVisible((v) => !v);
   return (
@@ -57,8 +57,7 @@ function App() {
           renderTile={(id, path) => {
             return (
               <View
-                acitveWorkspace={activeWorkspace}
-                views={activeWorkspace?.views || []}
+                activeWorkspace={activeWorkspace}
                 dispatch={dispatch}
                 viewManager={defaultViewManager}
                 id={id}

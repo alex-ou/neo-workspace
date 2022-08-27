@@ -33,7 +33,6 @@ function Toolbar(props: ToolbarProps) {
     if (!value) {
       return;
     }
-
     const url = parseAddressBarInput(value);
     neonav.view.loadViewUrl({ id: view!.viewId!, url });
     dispatch({
@@ -105,7 +104,7 @@ function Toolbar(props: ToolbarProps) {
           splitWindow("row", { isFocused: true });
         }
       },
-      splitWindowVertially: () => {
+      splitWindowVertically: () => {
         if (view?.isFocused) {
           splitWindow("column", { isFocused: true });
         }
@@ -231,13 +230,13 @@ function Toolbar(props: ToolbarProps) {
           title="Split vertically"
           icon="add-row-bottom"
           minimal
-          onClick={() => createNewMosaicWindow("column")}
+          onClick={() => splitWindow("column", { isFocused: true })}
         ></Button>
         <Button
           title="Split horizontally"
           icon="add-column-right"
           minimal
-          onClick={() => createNewMosaicWindow("row")}
+          onClick={() => splitWindow("row", { isFocused: true })}
         ></Button>
         <Button
           title={isMaximised ? "Restore" : "Maximize"}

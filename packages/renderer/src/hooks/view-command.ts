@@ -1,11 +1,12 @@
-import { WorkspaceView } from "./../store/workspace";
-import { defaultViewManager } from "./../utils/view-manager";
 import { Workspace } from "../store/workspace";
+import { WorkspaceView } from "./../store/workspace";
+import { NeoComponentType, NEO_ADDRESS_PREFIX } from "./../utils/address-input";
 import {
   findNextInDirection,
   findPrevInDirection,
   NodeType,
 } from "./../utils/mosaic-node";
+import { defaultViewManager } from "./../utils/view-manager";
 
 import { useEffect } from "react";
 import {
@@ -45,9 +46,11 @@ export function useViewCommands(map: CommandFuncMap, deps?: any[]) {
 }
 
 export function useWorkspaceCommandHandling(
-  workspace: Workspace | undefined,
+  workspaces: Workspace[],
   dispatch: (value: AppAction) => void
 ) {
+  const workspace = workspaces.find((w) => w.isActive);
+
   const setFocusingView = (node: NodeType, views?: WorkspaceView[]) => {
     if (!node) {
       return;
@@ -92,17 +95,35 @@ export function useWorkspaceCommandHandling(
     return getPath(tree, focusedView?.containerId);
   };
 
+  const openNeoUrl = (comp: NeoComponentType, name: string) => {
+    const neoUrl = `${NEO_ADDRESS_PREFIX}${comp}`;
+    const w = workspaces.find((w) => w.views.find((v) => v.url === neoUrl));
+    if (w) {
+      dispatch({
+        type: "switch-workspace",
+        payload: {
+          workspaceId: w.id,
+        },
+      });
+    } else {
+      dispatch({
+        type: "add-workspace",
+        payload: {
+          isActive: true,
+          name: name,
+          url: neoUrl,
+        },
+      });
+    }
+  };
+
   useViewCommands(
     {
       openSettings: () => {
-        dispatch({
-          type: "add-workspace",
-          payload: {
-            isActive: true,
-            name: "Settings",
-            url: "neo://settings",
-          },
-        });
+        openNeoUrl("settings", "Settings");
+      },
+      openKeyboardShortcuts: () => {
+        openNeoUrl("keyboard-shortcuts", "keyboard shortcuts");
       },
       openUrl: ({ commandData }) => {
         if (!commandData.viewId) {

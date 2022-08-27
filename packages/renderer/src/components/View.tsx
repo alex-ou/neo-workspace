@@ -1,14 +1,14 @@
-import { Colors, H4, Icon } from "@blueprintjs/core";
+import { Colors } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import debounce from "lodash/debounce";
 import React, { useState } from "react";
 import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
-import { Workspace, WorkspaceView } from "../store/workspace";
+import { Workspace } from "../store/workspace";
 import { getNeoComponent } from "../utils/address-input";
 import { createMosaicNode } from "../utils/mosaic-node";
 import { ViewManager } from "../utils/view-manager";
 import Error from "./Error";
+import KeyboardShortcuts from "./KeyboardShortcuts";
 import SavePasswordBar from "./SavePasswordBar";
 import Settings from "./settings/Settings";
 import ViewToolbar from "./ViewToolbar";
@@ -17,12 +17,11 @@ interface ViewProps {
   viewManager: ViewManager;
   id: string;
   path: MosaicBranch[];
-  views: WorkspaceView[];
-  acitveWorkspace?: Workspace;
+  activeWorkspace?: Workspace;
   dispatch: React.Dispatch<AppAction>;
 }
-function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
-  const currentView = (acitveWorkspace?.views || []).find(
+function View({ id, path, viewManager, activeWorkspace, dispatch }: ViewProps) {
+  const currentView = (activeWorkspace?.views || []).find(
     (v) => v.containerId === id
   );
 
@@ -31,10 +30,14 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
   const [isCapturingPassword, setIsCapturingPassword] = useState(false);
   const passwordBarHeight = isCapturingPassword ? "44px" : "0px";
 
-  const createViewDebounced = debounce((elem: HTMLDivElement) => {
-    if (!elem) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const elem = containerRef.current;
+    if (neoComponent || !elem) {
       return;
     }
+
     viewManager.createView(id, elem, currentView?.url).then((viewInfo) => {
       dispatch({
         type: "create-workspace-view",
@@ -45,15 +48,7 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
         },
       });
     });
-  }, 200);
-
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!neoComponent) {
-      createViewDebounced(containerRef.current!);
-    }
-  }, [containerRef, neoComponent]);
+  }, [containerRef]);
 
   return (
     // @ts-ignore
@@ -108,6 +103,7 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
         >
           {currentView?.error && <Error error={currentView.error} />}
           {neoComponent === "settings" && <Settings />}
+          {neoComponent === "keyboard-shortcuts" && <KeyboardShortcuts />}
         </div>
       </div>
     </MosaicWindow>

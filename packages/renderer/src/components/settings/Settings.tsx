@@ -8,21 +8,13 @@ import { SettingSection } from "./SettingSection";
 export default function Settings() {
   return (
     <div
-      id="neo-settings"
       className={css`
         position: relative;
         height: 100%;
         padding: 16px;
       `}
     >
-      <div
-        className={css`
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          height: 48px;
-        `}
-      >
+      <div>
         <H2>Settings</H2>
       </div>
       <Divider
@@ -33,7 +25,7 @@ export default function Settings() {
       />
       <div
         className={css`
-          height: calc(100% - 64px);
+          height: calc(100% - 32px);
           overflow-x: auto;
           overflow-y: auto;
           width: 100%;

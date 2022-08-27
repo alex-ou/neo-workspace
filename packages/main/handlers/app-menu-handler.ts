@@ -8,7 +8,7 @@ import {
 import pkg from "../../../package.json";
 import { logoIcon } from "../utils";
 
-function appMenuHanlder(event: Electron.IpcMainEvent) {
+function appMenuHandler(event: Electron.IpcMainEvent) {
   const window = BrowserWindow.fromWebContents(event.sender)!;
 
   const template: MenuItemConstructorOptions[] = [
@@ -23,12 +23,20 @@ function appMenuHanlder(event: Electron.IpcMainEvent) {
     },
     { type: "separator" },
     {
+      label: "Keyboard shortcuts",
+      click: async () => {
+        event.sender.send("app:browser-view-command", {
+          type: "openKeyboardShortcuts",
+        });
+      },
+    },
+    {
       label: "Contact us",
       click: async () => {
         event.sender.send("app:browser-view-command", {
           type: "openUrl",
           commandData: {
-            urlText: "ContatUs",
+            urlText: "ContactUs",
             url: "https://www.neonav.co/#contacts",
             inBackground: false,
           },
@@ -52,5 +60,5 @@ function appMenuHanlder(event: Electron.IpcMainEvent) {
 }
 
 export function registerMenuIpcHandler() {
-  ipcMain.on("app:show-app-menu", appMenuHanlder);
+  ipcMain.on("app:show-app-menu", appMenuHandler);
 }

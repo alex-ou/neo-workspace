@@ -63,6 +63,10 @@ var urlParser = {
       return "view-source:" + urlParser.parse(realURL);
     }
 
+    if (url.indexOf("neo://") === 0) {
+      return url;
+    }
+
     // if the url starts with a (supported) protocol
     if (urlParser.isURL(url)) {
       if (url.startsWith("http://")) {
