@@ -32,12 +32,12 @@ export function configureViewContextMenu(
 
       return [
         {
-          label: "Open link to the right",
+          label: "Open link in new pane to the right",
           visible: !!params.linkURL,
           click: () => sendOpenUrlCommand(params.linkURL, "right"),
         },
         {
-          label: "Open link to the bottom",
+          label: "Open link in new pane below",
           visible: !!params.linkURL,
           click: () => sendOpenUrlCommand(params.linkURL, "bottom"),
         },
