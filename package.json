@@ -1,12 +1,12 @@
 {
-  "name": "neo-workspace",
-  "productName": "Neo Workspace",
+  "name": "neo-navigator",
+  "productName": "Neo Navigator",
   "private": false,
   "version": "1.3.0",
   "files": [
     "dist"
   ],
-  "description": "A workspace manager for webapps",
+  "description": "A browser built for large screens, multitasking and privacy",
   "homepage": "https://www.neonav.co",
   "author": "NeoNav",
   "main": "./dist/main/index.js",
@@ -65,7 +65,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "NeoWorkspace",
+        "name": "NeoNavigator",
         "icon": "./packages/main/public/logo.ico",
         "asar": true,
         "ignore": "\\.vite/"
@@ -74,7 +74,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "neo-workspace",
+            "name": "neo-navigator",
             "iconUrl": "https://www.unity1.co/assets/img/favicon.ico",
             "setupIcon": "./packages/main/public/logo.ico",
             "loadingGif": "./build/loading.gif",

@@ -48,7 +48,7 @@ function appMenuHandler(event: Electron.IpcMainEvent) {
       label: "About",
       click: async () => {
         dialog.showMessageBox({
-          title: "Neo Workspace",
+          title: "Neo Navigator",
           //@ts-ignore
           message: `Version ${pkg.version}\nWebsite: ${pkg.homepage}`,
           icon: logoIcon,
