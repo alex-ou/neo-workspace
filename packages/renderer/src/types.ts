@@ -7,7 +7,6 @@ export interface CapturePasswordDetail {
 
 export type ViewCommandType =
   | "openSettings"
-  | "closeSettings"
   | "openUrl"
   | "newWorkspace"
   | "removeWorkspace"

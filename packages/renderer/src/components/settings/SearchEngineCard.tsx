@@ -5,7 +5,7 @@ import {
   getDefaultSearchEngine,
   SearchEngineItem,
   searchEngines,
-} from "../../utils/search-engine";
+} from "../../utils/address-input";
 import { MenuItem2 } from "@blueprintjs/popover2";
 import { useState } from "react";
 import { settings } from "../../store/settings";

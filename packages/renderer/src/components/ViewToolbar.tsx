@@ -14,12 +14,11 @@ import {
 import { useViewCommands } from "../hooks/view-command";
 import { AppAction } from "../store";
 import { WorkspaceView } from "../store/workspace";
+import { parseAddressBarInput } from "../utils/address-input";
 import { createMosaicNode } from "../utils/mosaic-node";
-import { parseAddressBarInput } from "../utils/search-engine";
-import { ViewManager } from "../utils/view-manager";
+const { neonav } = window;
 export interface ToolbarProps {
   view?: WorkspaceView;
-  viewManager: ViewManager;
   path: MosaicBranch[];
   dispatch: React.Dispatch<AppAction>;
 }
@@ -27,7 +26,7 @@ export interface ToolbarProps {
 function Toolbar(props: ToolbarProps) {
   const { mosaicWindowActions } = useContext(MosaicWindowContext);
   const { mosaicActions } = useContext(MosaicContext);
-  const { view, viewManager, dispatch } = props;
+  const { view, dispatch } = props;
 
   const urlInputRef = useRef<HTMLInputElement>();
   const onURLChange = (value: string) => {
@@ -36,6 +35,7 @@ function Toolbar(props: ToolbarProps) {
     }
 
     const url = parseAddressBarInput(value);
+    neonav.view.loadViewUrl({ id: view!.viewId!, url });
     dispatch({
       type: "update-workspace-view",
       payload: {
@@ -43,7 +43,6 @@ function Toolbar(props: ToolbarProps) {
         url,
       },
     });
-    viewManager.loadViewUrl(props.view!.containerId, url);
   };
 
   const createNewMosaicWindow = (direction: MosaicDirection) => {
@@ -69,7 +68,6 @@ function Toolbar(props: ToolbarProps) {
   };
 
   const removeWindow = () => {
-    viewManager.destroyView(view?.containerId || "");
     mosaicActions.remove(mosaicWindowActions.getPath());
     dispatch({
       type: "remove-workspace-view",
@@ -97,7 +95,7 @@ function Toolbar(props: ToolbarProps) {
       },
       focusAddressBar: () => {
         if (view?.isFocused) {
-          window.neonav.window.focus().then(() => {
+          neonav.window.focus().then(() => {
             urlInputRef.current!.focus();
           });
         }
@@ -160,7 +158,7 @@ function Toolbar(props: ToolbarProps) {
           disabled={!view?.canGoBack}
           minimal
           onClick={() => {
-            viewManager.goBack(view?.containerId || "");
+            neonav.view.goBack(view?.viewId || "");
           }}
         ></Button>
         <Button
@@ -169,7 +167,7 @@ function Toolbar(props: ToolbarProps) {
           disabled={!view?.canGoForward}
           minimal
           onClick={() => {
-            viewManager.goForward(view?.containerId || "");
+            neonav.view.goForward(view?.viewId || "");
           }}
         ></Button>
       </div>

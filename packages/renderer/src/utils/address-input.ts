@@ -1,6 +1,8 @@
 //@ts-ignore
-import urlParser from "../utils/url-parser";
+import urlParser from "./url-parser";
 import { settings } from "../store/settings";
+
+const NEO_ADDRESS_PREFIX = "neo://";
 
 export interface SearchEngineItem {
   name: string;
@@ -73,4 +75,13 @@ export function parseAddressBarInput(value: string) {
     "%s",
     encodeURIComponent(value)
   );
+}
+
+export function isNeoUrl(value: string): boolean {
+  return (value || "").toLowerCase().startsWith(NEO_ADDRESS_PREFIX);
+}
+
+export function getNeoComponent(url: string): string | null {
+  if (!isNeoUrl(url)) return null;
+  return url.trim().replace(NEO_ADDRESS_PREFIX, "");
 }

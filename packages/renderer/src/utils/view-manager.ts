@@ -28,39 +28,48 @@ export class ViewManager {
       view.resizeObserver.observe(elem);
       return view;
     }
+
     console.log("creating new view for", containerId);
     const bounds = getViewBounds(elem);
+    const viewId = await neonav.view.createView({
+      url: url || "",
+      bounds,
+    });
     view = {
       containerId,
       container: elem,
       resizeObserver: new ResizeObserver(() => {
-        console.log("resized", view?.viewId);
+        console.log("resizeObserver, view resized", view?.viewId);
         const bounds = getViewBounds(view!.container);
         view!.bounds = bounds;
-        window.neonav.view.setViewBounds({
+        neonav.view.setViewBounds({
           id: view!.viewId,
           bounds,
         });
       }),
       bounds,
-      viewId: await neonav.view.createView({
-        url: url || "",
-        bounds,
-      }),
+      viewId,
     };
-    this.views.push(view);
 
     view.resizeObserver.observe(view.container);
+    this.views.push(view);
+
     return view;
   };
 
   destroyView = (containerId: string) => {
     console.log("destroy view:", containerId);
-    const view = this.views.find((view) => view.containerId === containerId);
-    if (view && view.viewId) {
-      neonav.view.destroyView(view.viewId);
-      view.viewId = "";
+    const index = this.views.findIndex(
+      (view) => view.containerId === containerId
+    );
+    if (index === -1) {
+      return;
     }
+    const view = this.views[index];
+    if (view.viewId) {
+      neonav.view.destroyView(view.viewId);
+    }
+    this.views.splice(index, 1);
   };
 
   goForward = (containerId: string) => {

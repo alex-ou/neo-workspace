@@ -37,7 +37,6 @@ function Sidebar(props: SidebarProps) {
     });
   };
   const removeWorksapce = (w: Workspace) => {
-    w.views.forEach((v) => defaultViewManager.destroyView(v.containerId));
     dispatch({
       type: "remove-workspace",
       payload: {

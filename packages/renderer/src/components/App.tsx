@@ -52,7 +52,6 @@ function App() {
     <AppContext.Provider value={{}}>
       <WindowToolbar onToggleSidebar={toggleSidebar} />
       <div id="neo-layout">
-        <Settings />
         <MosaicWithoutDragDropContext<string>
           zeroStateView={<ZeroState createNode={createMosaicNode} />}
           renderTile={(id, path) => {

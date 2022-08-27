@@ -5,8 +5,12 @@ import React, { useState } from "react";
 import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
 import { Workspace, WorkspaceView } from "../store/workspace";
+import { getNeoComponent } from "../utils/address-input";
+import { createMosaicNode } from "../utils/mosaic-node";
 import { ViewManager } from "../utils/view-manager";
+import Error from "./Error";
 import SavePasswordBar from "./SavePasswordBar";
+import Settings from "./settings/Settings";
 import ViewToolbar from "./ViewToolbar";
 
 interface ViewProps {
@@ -22,10 +26,12 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
     (v) => v.containerId === id
   );
 
+  const neoComponent = getNeoComponent(currentView?.url || "");
+
   const [isCapturingPassword, setIsCapturingPassword] = useState(false);
   const passwordBarHeight = isCapturingPassword ? "44px" : "0px";
 
-  const debouncedFunc = debounce((elem: HTMLDivElement) => {
+  const createViewDebounced = debounce((elem: HTMLDivElement) => {
     if (!elem) {
       return;
     }
@@ -44,8 +50,10 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    setTimeout(() => debouncedFunc(containerRef.current!), 0);
-  }, [containerRef]);
+    if (!neoComponent) {
+      createViewDebounced(containerRef.current!);
+    }
+  }, [containerRef, neoComponent]);
 
   return (
     // @ts-ignore
@@ -56,7 +64,7 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
       `}
       path={path}
       draggable={false}
-      createNode={() => crypto.randomUUID()}
+      createNode={createMosaicNode}
       renderToolbar={() => (
         <div
           className={css`
@@ -64,12 +72,7 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
             min-width: 270px;
           `}
         >
-          <ViewToolbar
-            path={path}
-            dispatch={dispatch}
-            view={currentView}
-            viewManager={viewManager}
-          />
+          <ViewToolbar path={path} dispatch={dispatch} view={currentView} />
         </div>
       )}
       onDragStart={() => viewManager.hideAllViews()}
@@ -103,22 +106,8 @@ function View({ id, path, viewManager, acitveWorkspace, dispatch }: ViewProps) {
             height: calc(100% - ${passwordBarHeight});
           `}
         >
-          {currentView?.error ? (
-            <div
-              className={css`
-                margin-top: 16px;
-                display: flex;
-                justify-content: space-around;
-                flex-direction: column;
-                align-items: center;
-                gap: 4px;
-              `}
-            >
-              <Icon icon="error" size={32} />
-              <H4>Oops..!</H4>
-              <b>Something went wrong. Please try again.</b>
-            </div>
-          ) : undefined}
+          {currentView?.error && <Error error={currentView.error} />}
+          {neoComponent === "settings" && <Settings />}
         </div>
       </div>
     </MosaicWindow>

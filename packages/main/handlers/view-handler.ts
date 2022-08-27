@@ -185,7 +185,14 @@ export function registerViewIpcHandler() {
   handleViewIpc("view:hide", async ({ view, window }) => {
     if (view) {
       window.removeBrowserView(view);
-      hiddenViews = [view];
+      const index = hiddenViews.findIndex(
+        (v) => view.webContents.id === view.webContents.id
+      );
+      if (index === -1) {
+        hiddenViews.push(view);
+      } else {
+        hiddenViews[index] = view;
+      }
     }
   });
 
@@ -198,9 +205,7 @@ export function registerViewIpcHandler() {
       window.setTopBrowserView(targetView);
       targetView.webContents.focus();
 
-      hiddenViews = (hiddenViews || []).filter(
-        (v) => v.webContents.id !== viewData.id
-      );
+      hiddenViews = hiddenViews.filter((v) => v.webContents.id !== viewData.id);
     }
   });
 

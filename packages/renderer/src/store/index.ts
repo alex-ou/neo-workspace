@@ -1,3 +1,4 @@
+import { defaultViewManager } from "./../utils/view-manager";
 import { createMosaicNode } from "./../utils/mosaic-node";
 import { getWorkspaces, saveWorkspaces } from "./app-storage";
 import { Workspace, WorkspaceView } from "./workspace";
@@ -221,6 +222,8 @@ function removeWorkspaceView(
   state: AppState,
   { payload }: RemoveWorkspaceViewAction
 ): AppState {
+  defaultViewManager.destroyView(payload.containerId);
+
   let views = getActiveViews(state);
   const index = views.findIndex((v) => v.containerId === payload.containerId);
   if (index === -1) {
@@ -331,6 +334,10 @@ function removeWorkspace(
 
   const workspaces = [...state.workspaces];
   const workspaceToRemove = workspaces[index];
+
+  workspaceToRemove.views.forEach((v) =>
+    defaultViewManager.destroyView(v.containerId)
+  );
 
   if (workspaces.length === 1) {
     workspaces.push({

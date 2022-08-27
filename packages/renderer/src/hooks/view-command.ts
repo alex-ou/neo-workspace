@@ -94,6 +94,16 @@ export function useWorkspaceCommandHandling(
 
   useViewCommands(
     {
+      openSettings: () => {
+        dispatch({
+          type: "add-workspace",
+          payload: {
+            isActive: true,
+            name: "Settings",
+            url: "neo://settings",
+          },
+        });
+      },
       openUrl: ({ commandData }) => {
         if (!commandData.viewId) {
           dispatch({

@@ -59,11 +59,6 @@ const KEY_BINDINGS: {
     keys: ["alt", "arrowright"],
     command: { type: "moveWindowFocusRight" },
   },
-
-  {
-    keys: ["escape"],
-    command: { type: "closeSettings" },
-  },
 ];
 // ctrl+[1-9]
 for (let i = 1; i < 10; i++) {
