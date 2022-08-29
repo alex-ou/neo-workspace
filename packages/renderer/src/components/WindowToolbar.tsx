@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Divider, Icon, Classes } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import { useEffect, useState } from "react";
 import { WindowState } from "../../../preload/renderer-api/types";
 import { ReactComponent as Logo } from "../assets/logo.svg";
@@ -26,7 +26,7 @@ function WindowToolbar(props: WindowToolbarProps) {
   useEffect(() => {
     const setState = () =>
       neonav.window.getState().then((state: WindowState) => {
-        setIsMaximized(state.maximized);
+        setIsMaximized(state.isMaximized || state.isFullscreen);
       });
     const resizeHandler = debounce(() => setState(), 500);
 

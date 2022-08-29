@@ -39,8 +39,9 @@ export interface NeoView {
 }
 
 export interface WindowState {
-  minimized: boolean;
-  maximized: boolean;
+  isMinimized: boolean;
+  isFullscreen: boolean;
+  isMaximized: boolean;
 }
 export interface NeoWindow {
   focus(): Promise<void>;

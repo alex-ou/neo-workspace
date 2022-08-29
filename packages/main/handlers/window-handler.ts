@@ -28,15 +28,18 @@ export function registerWindowIpcHandler() {
   ipcMain.handle("window:unmaximize", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
     console.log("window:unmaximize", viewData);
+    window.setFullScreen(false);
     window.unmaximize();
   });
 
   ipcMain.handle("window:get-state", (event, viewData) => {
     const window = BrowserWindow.fromWebContents(event.sender)!;
-    console.log("window:is-maximized", viewData);
-    return {
-      maximized: window.isMaximized(),
-      minimized: window.isMinimized(),
+    const state = {
+      isFullscreen: window.isFullScreen(),
+      isMaximized: window.isMaximized(),
+      isMinimized: window.isMinimized(),
     };
+    console.log("window:get-state", state);
+    return state;
   });
 }
