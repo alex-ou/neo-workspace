@@ -115,7 +115,7 @@ function Toolbar(props: ToolbarProps) {
         }
       },
     },
-    [urlInputRef]
+    [urlInputRef, view?.viewId]
   );
 
   const parentNode = getNodeAtPath(

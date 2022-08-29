@@ -21,7 +21,7 @@ export class ViewManager {
     url?: string
   ): Promise<ViewInfo> => {
     let view = this.views.find((view) => view.containerId === containerId);
-    if (view && view.viewId) {
+    if (view) {
       console.log("found view", containerId, view.viewId);
       view.resizeObserver.unobserve(view.container);
       view.container = elem;
@@ -31,10 +31,7 @@ export class ViewManager {
 
     console.log("creating new view for", containerId);
     const bounds = getViewBounds(elem);
-    const viewId = await neonav.view.createView({
-      url: url || "",
-      bounds,
-    });
+
     view = {
       containerId,
       container: elem,
@@ -48,11 +45,14 @@ export class ViewManager {
         });
       }),
       bounds,
-      viewId,
+      viewId: await neonav.view.createView({
+        url: url || "",
+        bounds,
+      }),
     };
+    this.views.push(view);
 
     view.resizeObserver.observe(view.container);
-    this.views.push(view);
 
     return view;
   };

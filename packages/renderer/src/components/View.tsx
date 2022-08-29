@@ -1,6 +1,8 @@
 import { Colors } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import React, { useState } from "react";
+import debounce from "lodash/debounce";
+
 import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
 import { AppAction } from "../store";
 import { Workspace } from "../store/workspace";
@@ -30,14 +32,10 @@ function View({ id, path, viewManager, activeWorkspace, dispatch }: ViewProps) {
   const [isCapturingPassword, setIsCapturingPassword] = useState(false);
   const passwordBarHeight = isCapturingPassword ? "44px" : "0px";
 
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const elem = containerRef.current;
+  const debouncedFunc = debounce((elem: HTMLDivElement) => {
     if (neoComponent || !elem) {
       return;
     }
-
     viewManager.createView(id, elem, currentView?.url).then((viewInfo) => {
       dispatch({
         type: "create-workspace-view",
@@ -48,6 +46,12 @@ function View({ id, path, viewManager, activeWorkspace, dispatch }: ViewProps) {
         },
       });
     });
+  }, 200);
+
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    debouncedFunc(containerRef.current!);
   }, [containerRef, currentView?.url, id]);
 
   return (
