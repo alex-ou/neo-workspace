@@ -31,7 +31,7 @@ const renderString: ItemRenderer<SearchEngineItem> = (
 };
 export default function SearchEngineCard() {
   const defaultOne = getDefaultSearchEngine();
-  const [current, SetCurrent] = useState<string>(
+  const [current, setCurrent] = useState<string>(
     settings.getSearchEngine() || defaultOne.name
   );
   return (
@@ -47,7 +47,7 @@ export default function SearchEngineCard() {
           items={Object.values(searchEngines)}
           filterable={false}
           onItemSelect={(v) => {
-            SetCurrent(v.name);
+            setCurrent(v.name);
             settings.setSearchEngine(v.name);
           }}
           itemRenderer={renderString}

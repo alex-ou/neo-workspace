@@ -80,6 +80,7 @@ export interface PasswordService {
 }
 
 export interface Application {
+  updateSettings: (settings: { [key: string]: any }) => Promise<void>;
   showAppMenu: () => Promise<void>;
   onBrowserViewCommand: (callback: (e: any, command: any) => void) => void;
 }

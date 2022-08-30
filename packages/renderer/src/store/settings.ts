@@ -3,9 +3,10 @@ import { getSettings, setSettings } from "./app-storage";
 interface SettingKeyValueMap {
   passwordNeverSaveDomains: string[];
   searchEngine: string;
+  isBlockingAds: boolean;
 }
 
-export class Setttings {
+export class Settings {
   dict: SettingKeyValueMap;
 
   constructor() {
@@ -33,7 +34,20 @@ export class Setttings {
     this.save();
   };
 
-  save = () => setSettings(this.dict);
+  isBlockingAds = () => {
+    const v = this.dict["isBlockingAds"];
+    return typeof v === "undefined" ? true : v;
+  };
+
+  setIsBlockingAds = (v: boolean) => {
+    this.dict["isBlockingAds"] = v;
+    this.save();
+  };
+
+  save = () => {
+    setSettings(this.dict);
+    window.neonav.application.updateSettings(this.dict);
+  };
 }
 
-export const settings = new Setttings();
+export const settings = new Settings();

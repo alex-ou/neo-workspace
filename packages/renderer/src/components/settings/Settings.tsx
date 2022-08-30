@@ -1,5 +1,6 @@
 import { Divider, H2 } from "@blueprintjs/core";
 import { css } from "@emotion/css";
+import ContentBlockingCard from "./ContentBlockingCard";
 import NeverSavedPasswordCard from "./NeverSavedPasswordCard";
 import SavedPasswordCard from "./SavedPasswordsCard";
 import SearchEngineCard from "./SearchEngineCard";
@@ -35,6 +36,9 @@ export default function Settings() {
       >
         <SettingSection title="Search engine">
           <SearchEngineCard />
+        </SettingSection>
+        <SettingSection title="Content blocking">
+          <ContentBlockingCard />
         </SettingSection>
         <SettingSection title="Passwords">
           <SavedPasswordCard />

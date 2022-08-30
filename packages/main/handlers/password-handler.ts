@@ -3,7 +3,7 @@ import {
   DomainCredential,
   readPasswordFile,
   writePasswordFile,
-} from "../credential-file";
+} from "../storage/credential-file";
 
 export const savePassword = async function (
   event: any,
