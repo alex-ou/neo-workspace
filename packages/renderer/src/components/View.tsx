@@ -16,13 +16,21 @@ import Settings from "./settings/Settings";
 import ViewToolbar from "./ViewToolbar";
 
 interface ViewProps {
+  showToolbar?: boolean;
   viewManager: ViewManager;
   id: string;
   path: MosaicBranch[];
   activeWorkspace?: Workspace;
   dispatch: React.Dispatch<AppAction>;
 }
-function View({ id, path, viewManager, activeWorkspace, dispatch }: ViewProps) {
+function View({
+  id,
+  path,
+  viewManager,
+  activeWorkspace,
+  showToolbar,
+  dispatch,
+}: ViewProps) {
   const currentView = (activeWorkspace?.views || []).find(
     (v) => v.containerId === id
   );
@@ -60,6 +68,9 @@ function View({ id, path, viewManager, activeWorkspace, dispatch }: ViewProps) {
       className={css`
         border: 2px solid
           ${currentView?.isFocused ? Colors.BLUE4 : "transparent"};
+        .mosaic-window-toolbar {
+          display: ${showToolbar ? "flex" : "none"};
+        }
       `}
       path={path}
       draggable={false}

@@ -43,6 +43,11 @@ async function createWindow() {
       additionalArguments: ["--main-window"],
     },
     frame: false,
+    titleBarStyle: "hidden",
+    titleBarOverlay: {
+      color: "#fff",
+      height: 29,
+    },
   });
 
   configureMainContextMenu(win);

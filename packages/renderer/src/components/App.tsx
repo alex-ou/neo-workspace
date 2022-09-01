@@ -2,6 +2,7 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
+import { css } from "@emotion/css";
 
 import { useEffect, useReducer, useState } from "react";
 import { DndProvider } from "react-dnd-multi-backend";
@@ -10,10 +11,10 @@ import { MosaicWithoutDragDropContext } from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
 import { AppContext } from "../app-context";
 import { useWorkspaceCommandHandling } from "../hooks/view-command";
+import { useWindowState } from "../hooks/window-state";
 import { reducer } from "../store";
 import { createMosaicNode } from "../utils/mosaic-node";
 import { defaultViewManager } from "../utils/view-manager";
-import Settings from "./settings/Settings";
 import Sidebar from "./sidebar/Sidebar";
 import View from "./View";
 import WindowToolbar from "./WindowToolbar";
@@ -21,6 +22,7 @@ import ZeroState from "./ZeroState";
 
 function App() {
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
+  const { isFullscreen } = useWindowState();
 
   const [state, dispatch] = useReducer(reducer, {
     workspaces: [],
@@ -50,13 +52,26 @@ function App() {
   const toggleSidebar = () => setSidebarVisible((v) => !v);
   return (
     <AppContext.Provider value={{}}>
-      <WindowToolbar onToggleSidebar={toggleSidebar} />
-      <div id="neo-layout">
+      {!isFullscreen && <WindowToolbar onToggleSidebar={toggleSidebar} />}
+      <div
+        id="neo-layout"
+        className={css`
+          height: calc(
+            100% - ${isFullscreen ? "0px" : "var(--neo-titlebar-height)"}
+          );
+          display: flex;
+          .mosaic-tile {
+            margin: ${isFullscreen ? 0 : 3}px;
+          }
+        `}
+      >
         <MosaicWithoutDragDropContext<string>
+          blueprintNamespace="bp4"
           zeroStateView={<ZeroState createNode={createMosaicNode} />}
           renderTile={(id, path) => {
             return (
               <View
+                showToolbar={!isFullscreen}
                 activeWorkspace={activeWorkspace}
                 dispatch={dispatch}
                 viewManager={defaultViewManager}
@@ -75,7 +90,7 @@ function App() {
             });
           }}
         />
-        {sidebarVisible && (
+        {sidebarVisible && !isFullscreen && (
           <Sidebar
             workspaces={state.workspaces}
             dispatch={dispatch}

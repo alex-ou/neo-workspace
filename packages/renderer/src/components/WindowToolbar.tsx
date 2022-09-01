@@ -1,17 +1,12 @@
-import { Button, ButtonGroup, Divider, Icon, Classes } from "@blueprintjs/core";
+import { Button, ButtonGroup, Classes, Divider, Icon } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import debounce from "lodash/debounce";
 import { useEffect, useState } from "react";
-import { WindowState } from "../../../preload/renderer-api/types";
 import { ReactComponent as Logo } from "../assets/logo.svg";
 
 export interface WindowToolbarProps {
   onToggleSidebar: () => void;
 }
 function WindowToolbar(props: WindowToolbarProps) {
-  const { neonav } = window;
-  const [isMaximized, setIsMaximized] = useState<boolean>(false);
-
   const [darkTheme, setDarkTheme] = useState(
     document.getElementById("root")!.classList.contains(Classes.DARK)
   );
@@ -23,23 +18,12 @@ function WindowToolbar(props: WindowToolbarProps) {
       .classList.toggle(Classes.DARK, darkTheme);
   }, [darkTheme]);
 
-  useEffect(() => {
-    const setState = () =>
-      neonav.window.getState().then((state: WindowState) => {
-        setIsMaximized(state.isMaximized || state.isFullscreen);
-      });
-    const resizeHandler = debounce(() => setState(), 500);
-
-    window.addEventListener("resize", resizeHandler);
-    return () => {
-      window.removeEventListener("resize", resizeHandler);
-    };
-  }, []);
-
   return (
     <div
       id="neo-toolbar"
       className={css`
+        width: var(--neo-titlebar-width);
+        height: var(--neo-titlebar-height);
         display: flex;
         align-items: center;
       `}
@@ -86,7 +70,6 @@ function WindowToolbar(props: WindowToolbarProps) {
           <Icon icon={darkTheme ? "flash" : "moon"} />
         </Button>
 
-        <Divider></Divider>
         <Button
           title="Toggle workspace sidebar"
           onClick={() => {
@@ -95,45 +78,7 @@ function WindowToolbar(props: WindowToolbarProps) {
         >
           <Icon icon="panel-stats" />
         </Button>
-
-        <Divider></Divider>
-
-        <Button
-          onClick={() => {
-            neonav.window.minimize();
-          }}
-        >
-          <Icon icon="minus" />
-        </Button>
-
-        <Button
-          onClick={() => {
-            isMaximized ? neonav.window.unmaximize() : neonav.window.maximize();
-            setIsMaximized(!isMaximized);
-          }}
-        >
-          <Icon
-            className={css`
-              svg {
-                margin-bottom: 2px;
-              }
-            `}
-            size={12}
-            icon={isMaximized ? "duplicate" : "square"}
-          />
-        </Button>
-        <Button
-          className={css`
-            &:hover {
-              background: rgba(205, 66, 70, 0.15) !important;
-            }
-          `}
-          onClick={() => {
-            neonav.window.close();
-          }}
-        >
-          <Icon icon="cross" />
-        </Button>
+        <Divider />
       </ButtonGroup>
     </div>
   );

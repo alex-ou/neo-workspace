@@ -1,6 +1,11 @@
 @import (reference)
   "../../../node_modules/@blueprintjs/core/lib/less/variables.less";
 
+:root {
+  --neo-titlebar-height: calc(env(titlebar-area-height) + 1px);
+  --neo-titlebar-width: env(titlebar-area-width, 100%);
+}
+
 html,
 body,
 #root {
@@ -11,15 +16,6 @@ body,
 
 #root.bp4-dark {
   background: @dark-gray2;
-}
-
-#neo-toolbar {
-  height: 30px;
-}
-
-#neo-layout {
-  height: calc(100% - 30px);
-  display: flex;
 }
 
 #neo-sidebar {
