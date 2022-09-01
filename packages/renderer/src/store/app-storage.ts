@@ -1,6 +1,7 @@
 import { Workspace } from "./workspace";
 
 const WORKSPACE_KEY = "workspaces";
+const PINNED_WORKSPACE_IDS_KEY = "neo_pinned_workspace_ids";
 const SETTINGS_KEY = "neo_settings";
 
 function getItem(key: string): any {
@@ -26,6 +27,14 @@ export function getWorkspaces(): Workspace[] {
 
 export function saveWorkspaces(values: Workspace[]) {
   return setItem(WORKSPACE_KEY, values || []);
+}
+
+export function getPinnedWorkspaceIds(): string[] {
+  return getItem(PINNED_WORKSPACE_IDS_KEY) || [];
+}
+
+export function savePinnedWorkspaceIds(values: string[]) {
+  return setItem(PINNED_WORKSPACE_IDS_KEY, values || []);
 }
 
 export function setSettings(settings: any) {

@@ -11,21 +11,29 @@ import { useState } from "react";
 import { useViewCommands } from "../../hooks/view-command";
 import { AppAction } from "../../store";
 import { Workspace } from "../../store/workspace";
-import { defaultViewManager } from "../../utils/view-manager";
 import { WorkspaceList } from "./WorkspaceList";
 interface SidebarProps {
+  pinnedWorkspaceIds: string[];
   workspaces: Workspace[];
   dispatch: React.Dispatch<AppAction>;
   onClose: () => void;
 }
 
 function Sidebar(props: SidebarProps) {
-  const { dispatch } = props;
+  const { dispatch, pinnedWorkspaceIds } = props;
 
   const activeWorkspace = props.workspaces.find((w) => w.isActive);
+
   const [workspaceName, setWorkspaceName] = useState<string>("");
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [workspaceEditing, setWorkspaceEditing] = useState<Workspace>();
+
+  const unpinnedWorkspaces = props.workspaces.filter(
+    (w) => !pinnedWorkspaceIds.includes(w.id)
+  );
+  const pinnedWorkspaces = pinnedWorkspaceIds
+    .map((id) => props.workspaces.find((w) => w.id === id)!)
+    .filter((w) => !!w);
 
   const addNewWorkspace = () => {
     dispatch({
@@ -36,7 +44,7 @@ function Sidebar(props: SidebarProps) {
       },
     });
   };
-  const removeWorksapce = (w: Workspace) => {
+  const removeWorkspace = (w: Workspace) => {
     dispatch({
       type: "remove-workspace",
       payload: {
@@ -63,7 +71,7 @@ function Sidebar(props: SidebarProps) {
     newWorkspace: addNewWorkspace,
     removeWorkspace: () => {
       if (activeWorkspace) {
-        removeWorksapce(activeWorkspace);
+        removeWorkspace(activeWorkspace);
       }
     },
     editWorkspace: () => {
@@ -190,10 +198,28 @@ function Sidebar(props: SidebarProps) {
         </Dialog>
 
         <WorkspaceList
-          workspaces={props.workspaces}
+          groupName="pinned"
+          workspaces={pinnedWorkspaces}
           onRename={editWorkspace}
           onSwitch={switchWorkspace}
-          onRemove={removeWorksapce}
+          onRemove={removeWorkspace}
+          onUnpin={(w) =>
+            dispatch({
+              type: "unpin-workspace",
+              payload: { workspaceId: w.id },
+            })
+          }
+        ></WorkspaceList>
+
+        <WorkspaceList
+          groupName="unpinned"
+          workspaces={unpinnedWorkspaces}
+          onRename={editWorkspace}
+          onSwitch={switchWorkspace}
+          onRemove={removeWorkspace}
+          onPin={(w) =>
+            dispatch({ type: "pin-workspace", payload: { workspaceId: w.id } })
+          }
         ></WorkspaceList>
         <Divider />
         <Button

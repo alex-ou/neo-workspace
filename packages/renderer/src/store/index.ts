@@ -1,11 +1,17 @@
 import { defaultViewManager } from "./../utils/view-manager";
 import { createMosaicNode } from "./../utils/mosaic-node";
-import { getWorkspaces, saveWorkspaces } from "./app-storage";
+import {
+  getPinnedWorkspaceIds,
+  getWorkspaces,
+  savePinnedWorkspaceIds,
+  saveWorkspaces,
+} from "./app-storage";
 import { Workspace, WorkspaceView } from "./workspace";
 
 export interface AppState {
   workspaces: Workspace[];
   removedWorkspaces: { workspace: Workspace; index: number }[];
+  pinnedWorkspaceIds: string[];
 }
 
 interface LoadWorkspaceAction {
@@ -59,7 +65,22 @@ interface OpenLastClosedWorkspaceAction {
   type: "open-last-closed-workspace";
 }
 
+interface PinWorkspaceAction {
+  type: "pin-workspace";
+  payload: {
+    workspaceId: string;
+  };
+}
+interface UnpinWorkspaceAction {
+  type: "unpin-workspace";
+  payload: {
+    workspaceId: string;
+  };
+}
+
 export type AppAction =
+  | PinWorkspaceAction
+  | UnpinWorkspaceAction
   | UpdateWorkspaceViewAction
   | CreateWorkspaceViewAction
   | RemoveWorkspaceViewAction
@@ -93,6 +114,12 @@ export function reducer(state: AppState, action: AppAction): AppState {
     case "update-active-workspace":
       newState = updateActiveWorkspace(state, action);
       break;
+    case "pin-workspace":
+      newState = pinWorkspace(state, action);
+      break;
+    case "unpin-workspace":
+      newState = unpinWorkspace(state, action);
+      break;
 
     case "open-last-closed-workspace":
       newState = openLastClosedWorkspace(state, action);
@@ -110,6 +137,7 @@ export function reducer(state: AppState, action: AppAction): AppState {
   }
 
   saveWorkspaces(newState.workspaces);
+  savePinnedWorkspaceIds(newState.pinnedWorkspaceIds);
   return newState;
 }
 
@@ -289,9 +317,14 @@ function loadWorkspace(): AppState {
 
   console.log("loading workspace");
 
+  const pinnedWorkspaceIds = getPinnedWorkspaceIds().filter((id) =>
+    workspaces.some((w) => w.id === id)
+  );
+
   return {
     workspaces,
     removedWorkspaces: [],
+    pinnedWorkspaceIds,
   };
 }
 
@@ -451,5 +484,26 @@ function updateWorkspace(
   return {
     ...state,
     workspaces,
+  };
+}
+
+function pinWorkspace(
+  state: AppState,
+  { payload }: PinWorkspaceAction
+): AppState {
+  return {
+    ...state,
+    pinnedWorkspaceIds: [...state.pinnedWorkspaceIds, payload.workspaceId],
+  };
+}
+function unpinWorkspace(
+  state: AppState,
+  { payload }: UnpinWorkspaceAction
+): AppState {
+  return {
+    ...state,
+    pinnedWorkspaceIds: state.pinnedWorkspaceIds.filter(
+      (id) => id !== payload.workspaceId
+    ),
   };
 }

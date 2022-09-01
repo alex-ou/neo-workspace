@@ -27,6 +27,7 @@ function App() {
   const [state, dispatch] = useReducer(reducer, {
     workspaces: [],
     removedWorkspaces: [],
+    pinnedWorkspaceIds: [],
   });
 
   const activeWorkspace = state.workspaces.find((w) => w.isActive);
@@ -92,6 +93,7 @@ function App() {
         />
         {sidebarVisible && !isFullscreen && (
           <Sidebar
+            pinnedWorkspaceIds={state.pinnedWorkspaceIds}
             workspaces={state.workspaces}
             dispatch={dispatch}
             onClose={toggleSidebar}
