@@ -47,7 +47,7 @@ export function WorkspaceList(props: WorkspaceListProps) {
           vertical
           className={css`
             height: auto !important;
-            margin-top: 0px;
+            margin-bottom: 15px;
             padding: 0 8px;
           `}
         >

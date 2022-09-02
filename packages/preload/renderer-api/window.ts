@@ -24,3 +24,7 @@ export async function close(): Promise<void> {
 export async function getState(): Promise<WindowState> {
   return await ipcRenderer.invoke("window:get-state");
 }
+
+export async function setTheme(options: { theme: string }): Promise<void> {
+  return await ipcRenderer.invoke("window:set-theme", options);
+}

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, nativeTheme } from "electron";
 import { join } from "path";
 import { configureMainContextMenu } from "./context-menu";
 import "./download";
@@ -6,7 +6,6 @@ import { registerIpcHandlers } from "./handlers";
 import { bindMainWindowKeys } from "./key-bindings";
 import { logoIcon } from "./utils";
 import "./adblocker";
-
 if (require("electron-squirrel-startup")) {
   app.quit();
 }

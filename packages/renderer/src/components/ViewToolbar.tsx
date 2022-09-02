@@ -226,18 +226,23 @@ function Toolbar(props: ToolbarProps) {
           margin: 2px 4px;
         `}
       >
-        <Button
-          title="Split vertically"
-          icon="add-row-bottom"
-          minimal
-          onClick={() => splitWindow("column", { isFocused: true })}
-        ></Button>
-        <Button
-          title="Split horizontally"
-          icon="add-column-right"
-          minimal
-          onClick={() => splitWindow("row", { isFocused: true })}
-        ></Button>
+        {!isMaximised && (
+          <>
+            {" "}
+            <Button
+              title="Split vertically"
+              icon="add-row-bottom"
+              minimal
+              onClick={() => splitWindow("column", { isFocused: true })}
+            ></Button>
+            <Button
+              title="Split horizontally"
+              icon="add-column-right"
+              minimal
+              onClick={() => splitWindow("row", { isFocused: true })}
+            ></Button>
+          </>
+        )}
         <Button
           title={isMaximised ? "Restore" : "Maximize"}
           icon={isMaximised ? "minimize" : "maximize"}

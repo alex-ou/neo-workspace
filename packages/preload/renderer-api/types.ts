@@ -50,6 +50,7 @@ export interface NeoWindow {
   minimize(): Promise<void>;
   close(): Promise<void>;
   getState(): Promise<WindowState>;
+  setTheme(options: { theme: "light" | "dark" }): Promise<void>;
 }
 export interface DomainCredential {
   username: string;

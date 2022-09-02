@@ -16,6 +16,10 @@ function WindowToolbar(props: WindowToolbarProps) {
     document
       .querySelector(".mosaic-blueprint-theme")!
       .classList.toggle(Classes.DARK, darkTheme);
+
+    window.neonav.window.setTheme({
+      theme: darkTheme ? "dark" : "light",
+    });
   }, [darkTheme]);
 
   return (

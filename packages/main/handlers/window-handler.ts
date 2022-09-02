@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow } from "electron";
+import { ipcMain, BrowserWindow, nativeTheme } from "electron";
 
 export function registerWindowIpcHandler() {
   ipcMain.handle("window:focus", (event) => {
@@ -41,5 +41,15 @@ export function registerWindowIpcHandler() {
     };
     console.log("window:get-state", state);
     return state;
+  });
+
+  ipcMain.handle("window:set-theme", (event, viewData) => {
+    const { theme } = viewData;
+    const window = BrowserWindow.fromWebContents(event.sender)!;
+    const overlayOptions =
+      theme === "dark"
+        ? { color: "#252a31", symbolColor: "#f6f7f9", height: 29 }
+        : { color: "#fff", symbolColor: "#1c2127", height: 29 };
+    window.setTitleBarOverlay(overlayOptions);
   });
 }
