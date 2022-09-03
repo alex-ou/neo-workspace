@@ -2,11 +2,15 @@ import { Button, ButtonGroup, Classes, Divider, Icon } from "@blueprintjs/core";
 import { css } from "@emotion/css";
 import { useEffect, useState } from "react";
 import { ReactComponent as Logo } from "../assets/logo.svg";
+import { Workspace } from "../store/workspace";
 
 export interface WindowToolbarProps {
+  activeWorkspace?: Workspace;
+
   onToggleSidebar: () => void;
 }
 function WindowToolbar(props: WindowToolbarProps) {
+  const { activeWorkspace } = props;
   const [darkTheme, setDarkTheme] = useState(
     document.getElementById("root")!.classList.contains(Classes.DARK)
   );
@@ -33,7 +37,6 @@ function WindowToolbar(props: WindowToolbarProps) {
       `}
     >
       <Button
-        intent="primary"
         minimal
         icon="menu"
         onClick={() => window.neonav.application.showAppMenu()}
@@ -53,13 +56,12 @@ function WindowToolbar(props: WindowToolbarProps) {
             align-items: center;
           `}
         >
-          <Logo className={css``} />
           <span
             className={css`
               margin-left: 8px;
             `}
           >
-            <span className="bp4-heading ">{document.title}</span>
+            <span className="bp4-heading ">{activeWorkspace?.name}</span>
           </span>
         </div>
       </div>

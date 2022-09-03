@@ -4,6 +4,7 @@ export interface WorkspaceView {
   containerId: string;
   viewId?: string;
 
+  favicons?: string[];
   canGoBack?: boolean;
   canGoForward?: boolean;
   title?: string;
@@ -18,5 +19,6 @@ export interface Workspace {
   name: string;
   layout?: NodeType;
   isActive: boolean;
+  isAddressBarHidden?: boolean;
   views: WorkspaceView[];
 }

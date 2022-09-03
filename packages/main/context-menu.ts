@@ -25,6 +25,7 @@ export function configureViewContextMenu(
   };
   contextMenu({
     window: view.webContents,
+    showCopyImageAddress: true,
     showSearchWithGoogle: false,
     showSelectAll: false,
     prepend: (defaultActions, params, browserView) => {
@@ -55,8 +56,21 @@ export function configureViewContextMenu(
             });
           },
         },
+
         {
-          label: "Refresh",
+          label: "Back",
+          visible: !params.isEditable && !params.linkURL,
+          enabled: webContents.canGoBack(),
+          click: () => webContents.goBack(),
+        },
+        {
+          label: "Forward",
+          visible: !params.isEditable && !params.linkURL,
+          enabled: webContents.canGoForward(),
+          click: () => webContents.goForward(),
+        },
+        {
+          label: "Reload",
           visible: !params.isEditable && !params.linkURL,
           click: () => webContents.reload(),
         },

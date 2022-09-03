@@ -35,6 +35,7 @@ function Sidebar(props: SidebarProps) {
     .map((id) => props.workspaces.find((w) => w.id === id)!)
     .filter((w) => !!w);
 
+  const workspacesInOrder = [...pinnedWorkspaces, ...unpinnedWorkspaces];
   const addNewWorkspace = () => {
     dispatch({
       type: "add-workspace",
@@ -67,6 +68,15 @@ function Sidebar(props: SidebarProps) {
     setWorkspaceName(w.name);
   };
 
+  const toggleAddressBar = (w: Workspace) => {
+    dispatch({
+      type: "update-workspace",
+      payload: {
+        id: w.id,
+        isAddressBarHidden: !w.isAddressBarHidden,
+      },
+    });
+  };
   useViewCommands({
     newWorkspace: addNewWorkspace,
     removeWorkspace: () => {
@@ -81,8 +91,8 @@ function Sidebar(props: SidebarProps) {
     },
     switchWorkspace: (command) => {
       const workspaceIndex = command.commandData.workspaceIndex || 0;
-      if (workspaceIndex >= 0 && workspaceIndex < props.workspaces.length) {
-        switchWorkspace(props.workspaces[workspaceIndex]);
+      if (workspaceIndex >= 0 && workspaceIndex < workspacesInOrder.length) {
+        switchWorkspace(workspacesInOrder[workspaceIndex]);
       }
     },
   });
@@ -198,11 +208,13 @@ function Sidebar(props: SidebarProps) {
         </Dialog>
 
         <WorkspaceList
+          startIndex={0}
           groupName="pinned"
           workspaces={pinnedWorkspaces}
           onRename={editWorkspace}
           onSwitch={switchWorkspace}
           onRemove={removeWorkspace}
+          onToggleAddressBar={toggleAddressBar}
           onUnpin={(w) =>
             dispatch({
               type: "unpin-workspace",
@@ -212,11 +224,13 @@ function Sidebar(props: SidebarProps) {
         ></WorkspaceList>
 
         <WorkspaceList
+          startIndex={pinnedWorkspaceIds.length}
           groupName="unpinned"
           workspaces={unpinnedWorkspaces}
           onRename={editWorkspace}
           onSwitch={switchWorkspace}
           onRemove={removeWorkspace}
+          onToggleAddressBar={toggleAddressBar}
           onPin={(w) =>
             dispatch({ type: "pin-workspace", payload: { workspaceId: w.id } })
           }

@@ -13,6 +13,15 @@ function appMenuHandler(event: Electron.IpcMainEvent) {
 
   const template: MenuItemConstructorOptions[] = [
     {
+      label: "Toggle full screen",
+      accelerator: "F11",
+      click: () => {
+        window.setFullScreen(!window.isFullScreen());
+      },
+    },
+    { type: "separator" },
+
+    {
       label: "Settings",
       accelerator: "CommandOrControl+,",
       click: () => {

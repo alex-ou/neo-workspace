@@ -3,14 +3,17 @@ import {
   ButtonGroup,
   Classes,
   Collapse,
+  Icon,
   Menu,
 } from "@blueprintjs/core";
 import { MenuItem2, Popover2 } from "@blueprintjs/popover2";
 import { css } from "@emotion/css";
 import { useState } from "react";
 import { Workspace } from "../../store/workspace";
+import Favicon from "./Favicon";
 const MAX_WORKSPACE_NAME_LEN = 40;
 interface WorkspaceListProps {
+  startIndex: number;
   groupName: "pinned" | "unpinned";
   workspaces: Workspace[];
   onRemove: (workspace: Workspace) => void;
@@ -18,6 +21,7 @@ interface WorkspaceListProps {
   onSwitch: (workspace: Workspace) => void;
   onPin?: (workspace: Workspace) => void;
   onUnpin?: (workspace: Workspace) => void;
+  onToggleAddressBar?: (workspace: Workspace) => void;
 }
 
 const classes = {
@@ -28,11 +32,11 @@ const classes = {
 };
 export function WorkspaceList(props: WorkspaceListProps) {
   const [isExpanded, setIsExpanded] = useState(true);
-
   return (
     <>
       <Button
         minimal
+        active
         small
         icon={isExpanded ? "caret-down" : "caret-right"}
         onClick={() => setIsExpanded((v) => !v)}
@@ -47,11 +51,10 @@ export function WorkspaceList(props: WorkspaceListProps) {
           vertical
           className={css`
             height: auto !important;
-            margin-bottom: 15px;
-            padding: 0 8px;
+            padding: 0;
           `}
         >
-          {props.workspaces.map((w) => (
+          {props.workspaces.map((w, i) => (
             <Button
               key={w.id}
               title={w.name}
@@ -72,9 +75,14 @@ export function WorkspaceList(props: WorkspaceListProps) {
                     display: flex;
                     align-items: center;
                     flex: 1;
+                    img {
+                      margin-right: 2px;
+                    }
                   `}
                 >
-                  {w.name.slice(0, MAX_WORKSPACE_NAME_LEN)}
+                  <span className={Classes.TEXT_LARGE}>
+                    {w.name.slice(0, MAX_WORKSPACE_NAME_LEN)}
+                  </span>
                 </span>
                 <Popover2
                   className={css`
@@ -98,6 +106,7 @@ export function WorkspaceList(props: WorkspaceListProps) {
                           onClick={() => props.onUnpin?.(w)}
                         />
                       )}
+
                       <MenuItem2
                         icon="edit"
                         text={
@@ -118,12 +127,48 @@ export function WorkspaceList(props: WorkspaceListProps) {
                         }
                         onClick={() => props.onRemove(w)}
                       />
+                      <MenuItem2
+                        text={
+                          <span
+                            className={
+                              classes.menuItem +
+                              " " +
+                              css`
+                                margin-left: 24px;
+                              `
+                            }
+                          >
+                            {w.isAddressBarHidden
+                              ? "Show address bar"
+                              : "Hide address bar"}
+                          </span>
+                        }
+                        onClick={() => props.onToggleAddressBar?.(w)}
+                      />
                     </Menu>
                   }
                 >
                   <Button minimal small icon="more"></Button>
                 </Popover2>
               </span>
+              <div
+                className={[
+                  Classes.TEXT_MUTED,
+                  Classes.TEXT_SMALL,
+                  css`
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 4px;
+                  `,
+                ].join(" ")}
+              >
+                <span>
+                  {w.views.length} pane{w.views.length > 1 ? "s" : ""}
+                </span>
+                {props.startIndex + i + 1 < 10 && (
+                  <span>Ctrl+{props.startIndex + i + 1}</span>
+                )}
+              </div>
             </Button>
           ))}
         </ButtonGroup>

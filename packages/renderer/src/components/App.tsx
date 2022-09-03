@@ -53,7 +53,12 @@ function App() {
   const toggleSidebar = () => setSidebarVisible((v) => !v);
   return (
     <AppContext.Provider value={{}}>
-      {!isFullscreen && <WindowToolbar onToggleSidebar={toggleSidebar} />}
+      {!isFullscreen && (
+        <WindowToolbar
+          activeWorkspace={activeWorkspace}
+          onToggleSidebar={toggleSidebar}
+        />
+      )}
       <div
         id="neo-layout"
         className={css`
@@ -72,7 +77,9 @@ function App() {
           renderTile={(id, path) => {
             return (
               <View
-                showToolbar={!isFullscreen}
+                showToolbar={
+                  !isFullscreen && !activeWorkspace?.isAddressBarHidden
+                }
                 activeWorkspace={activeWorkspace}
                 dispatch={dispatch}
                 viewManager={defaultViewManager}
