@@ -30,17 +30,14 @@ function WindowToolbar(props: WindowToolbarProps) {
     <div
       id="neo-toolbar"
       className={css`
+        margin-left: 2px;
         width: var(--neo-titlebar-width);
         height: var(--neo-titlebar-height);
         display: flex;
         align-items: center;
       `}
     >
-      <Button
-        minimal
-        icon="menu"
-        onClick={() => window.neonav.application.showAppMenu()}
-      />
+      <Logo />
 
       <div
         className={css`
@@ -66,7 +63,14 @@ function WindowToolbar(props: WindowToolbarProps) {
         </div>
       </div>
 
-      <ButtonGroup minimal alignText="center">
+      <ButtonGroup large minimal alignText="center">
+        <Button
+          minimal
+          icon="more"
+          onClick={() => window.neonav.application.showAppMenu()}
+        />
+        <Divider />
+
         <Button
           title={darkTheme ? "Turn on light" : "Turn off light"}
           onClick={() => {

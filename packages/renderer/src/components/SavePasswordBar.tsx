@@ -2,7 +2,7 @@ import { Button, InputGroup } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 import { css } from "@emotion/css";
 import React, { useState } from "react";
-import { getDomainCredentials, formatedDomain } from "../password-manager";
+import { getDomainCredentials, formatDomain } from "../password-manager";
 import { settings } from "../store/settings";
 import { CapturePasswordDetail } from "../types";
 const passwordService = window.neonav.passwordService;
@@ -28,7 +28,7 @@ export default function SavePasswordBar({
         return;
       }
       const data = e.detail.data;
-      const formattedDomain = formatedDomain(data.domain);
+      const formattedDomain = formatDomain(data.domain);
       getDomainCredentials(formattedDomain).then((credentials) => {
         const alreadyExists = credentials.some(
           (c) => c.username === data.username && c.password === data.password

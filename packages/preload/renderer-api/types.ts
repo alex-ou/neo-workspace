@@ -21,6 +21,7 @@ export interface NeoView {
 
   goBack(viewId: string): Promise<void>;
   goForward(viewId: string): Promise<void>;
+  reload(viewId: string): Promise<void>;
 
   destroyView(viewId: string): Promise<void>;
 
@@ -36,6 +37,17 @@ export interface NeoView {
   loadViewUrl(options: { id: string; url: string }): Promise<void>;
 
   onUpdate(callback: (data: ViewInfo) => void): Promise<void>;
+  isDocumentReaderable(): boolean;
+  parseDocument(): {
+    title: string;
+    byline: string;
+    dir: string;
+    content: string;
+    textContent: string;
+    length: number;
+    excerpt: string;
+    siteName: string;
+  } | null;
 }
 
 export interface WindowState {

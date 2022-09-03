@@ -3,7 +3,7 @@ import { CapturePasswordDetail } from "./types";
 
 const { passwordService } = window.neonav;
 
-export function formatedDomain(domain: string) {
+export function formatDomain(domain: string) {
   if (domain.startsWith("www.")) {
     return domain.slice(4);
   }
@@ -16,7 +16,7 @@ function getDomainFromUrl(url: string) {
     domain = new URL(url).hostname;
   } catch (_) {}
 
-  return formatedDomain(domain);
+  return formatDomain(domain);
 }
 
 export function getDomainCredentials(domain: string) {
@@ -33,7 +33,7 @@ export function handleAutoFillRequest(
 ) {
   const hostname = new URL(frameUrl).hostname;
 
-  const formattedHostname = formatedDomain(hostname);
+  const formattedHostname = formatDomain(hostname);
 
   console.log("onAutoFill", id, formattedHostname);
 
@@ -66,9 +66,7 @@ export function handleFormFilled(
 ) {
   console.log("onFormFill", id, data, frameId, frameUrl);
   if (
-    !settings
-      .getPasswordNeverSaveDomains()
-      .includes(formatedDomain(data.domain))
+    !settings.getPasswordNeverSaveDomains().includes(formatDomain(data.domain))
   ) {
     document.dispatchEvent(
       new CustomEvent<CapturePasswordDetail>("capturepassword", {

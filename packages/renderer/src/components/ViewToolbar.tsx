@@ -169,6 +169,25 @@ function Toolbar(props: ToolbarProps) {
             neonav.view.goForward(view?.viewId || "");
           }}
         ></Button>
+        {view?.isLoading ? (
+          <Button minimal>
+            <Spinner
+              size={16}
+              className={css`
+                margin: 0 -7px;
+              `}
+            />
+          </Button>
+        ) : (
+          <Button
+            title="Click to reload"
+            icon="repeat"
+            minimal
+            onClick={() => {
+              neonav.view.reload(view?.viewId || "");
+            }}
+          ></Button>
+        )}
       </div>
       <div
         className={css`
@@ -218,7 +237,31 @@ function Toolbar(props: ToolbarProps) {
               onURLChange(event.target.value);
             }
           }}
-          rightElement={view?.isLoading ? <Spinner size={16} /> : undefined}
+          rightElement={
+            view?.isLoading ? undefined : (
+              <Button
+                disabled={false}
+                style={{ paddingTop: 2 }}
+                title="Show reader view"
+                minimal
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+              </Button>
+            )
+          }
         />
       </div>
       <div

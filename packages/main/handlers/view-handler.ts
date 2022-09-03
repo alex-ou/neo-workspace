@@ -169,6 +169,10 @@ export function registerViewIpcHandler() {
     if (!view) return;
     view.webContents.goBack();
   });
+  handleViewIpc("view:reload", async ({ view }) => {
+    if (!view) return;
+    view.webContents.reload();
+  });
   handleViewIpc("view:go-forward", async ({ view }) => {
     if (!view) return;
     view.webContents.goForward();

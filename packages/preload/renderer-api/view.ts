@@ -1,6 +1,12 @@
 import { ViewInfo } from "./types";
 import { ipcRenderer } from "electron";
-
+import { Readability, isProbablyReaderable } from "@mozilla/readability";
+export function isDocumentReaderable(): boolean {
+  return isProbablyReaderable(document);
+}
+export function parseDocument() {
+  return new Readability(document).parse();
+}
 export async function hideAllViews(): Promise<void> {
   return await ipcRenderer.invoke("view:hide-all");
 }
@@ -40,6 +46,12 @@ export async function goBack(viewId: string): Promise<void> {
 
 export async function goForward(viewId: string): Promise<void> {
   await ipcRenderer.invoke("view:go-forward", {
+    id: viewId,
+  });
+}
+
+export async function reload(viewId: string): Promise<void> {
+  return await ipcRenderer.invoke("view:reload", {
     id: viewId,
   });
 }
