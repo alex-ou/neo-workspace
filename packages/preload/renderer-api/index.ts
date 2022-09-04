@@ -1,13 +1,19 @@
+import {
+  onReaderModeReady,
+  onShowReaderView,
+  showReaderView,
+} from "./reader-mode-service";
 import { contextBridge } from "electron";
 import {
   autofillMatched,
-  initialize,
   onAutoFill,
   onFormFilled,
   saveCredential,
   deleteCredential,
   getCredentials,
 } from "./password-service";
+
+import { initialize } from "./ipc-listeners";
 import { NeoNavAPI } from "./types";
 import * as viewAPI from "./view";
 import * as windowAPI from "./window";
@@ -26,6 +32,11 @@ export function exposeNeoNavAPI() {
       saveCredential,
       deleteCredential,
       getCredentials,
+    },
+    readerModeService: {
+      onShowReaderView,
+      showReaderView,
+      onReaderModeReady,
     },
     application,
   } as NeoNavAPI);

@@ -4,6 +4,9 @@ export interface CapturePasswordDetail {
   viewId: string;
   data: { domain: string; username: string; password: string };
 }
+export interface ReaderModeReadyDetail {
+  viewId: string;
+}
 
 export type ViewCommandType =
   | "openSettings"
@@ -49,6 +52,7 @@ declare global {
 interface CustomEventMap {
   capturepassword: CustomEvent<CapturePasswordDetail>;
   viewcommand: CustomEvent<BrowserViewCommand>;
+  readermodeready: CustomEvent<ReaderModeReadyDetail>;
 }
 
 declare global {

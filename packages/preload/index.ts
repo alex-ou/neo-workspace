@@ -1,5 +1,6 @@
 import { exposeNeoNavAPI } from "./renderer-api";
 import initializePasswordFill from "./password-fill";
+import { initializeReaderMode } from "./reader-mode";
 
 exposeNeoNavAPI();
 
@@ -24,5 +25,6 @@ const isWebView = process.argv.includes("--web-view");
 domReady().then(() => {
   if (isWebView) {
     initializePasswordFill();
+    initializeReaderMode();
   }
 });

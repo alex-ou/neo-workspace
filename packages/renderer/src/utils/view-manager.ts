@@ -109,12 +109,36 @@ export class ViewManager {
     }
   };
 
+  onViewUpdate(callback: (viewInfo: any) => void): void {
+    window.neonav.view.onUpdate((viewInfo) => {
+      console.log("received onUpdate", JSON.stringify(viewInfo));
+
+      if (viewInfo.error) {
+        window.neonav.view.hideView(viewInfo.viewId!);
+      } else {
+        window.neonav.view.showView(viewInfo.viewId!);
+      }
+
+      callback(viewInfo);
+    });
+  }
+
   hideAllViews() {
     neonav.view.hideAllViews();
   }
   showAllViews() {
     neonav.view.showAllViews();
   }
+
+  private findViewAndExec = (
+    containerId: string,
+    callback: (view: ViewInfo) => void
+  ) => {
+    const view = this.views.find((view) => view.containerId === containerId);
+    if (view && view.viewId) {
+      callback(view);
+    }
+  };
 }
 
 export const defaultViewManager = new ViewManager();

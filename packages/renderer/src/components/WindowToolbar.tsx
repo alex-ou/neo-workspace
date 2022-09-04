@@ -1,30 +1,18 @@
-import { Button, ButtonGroup, Classes, Divider, Icon } from "@blueprintjs/core";
+import { Button, ButtonGroup, Divider, Icon } from "@blueprintjs/core";
 import { css } from "@emotion/css";
-import { useEffect, useState } from "react";
 import { ReactComponent as Logo } from "../assets/logo.svg";
+import { AppAction } from "../store";
 import { Workspace } from "../store/workspace";
 
 export interface WindowToolbarProps {
   activeWorkspace?: Workspace;
-
-  onToggleSidebar: () => void;
+  currentTheme: string;
+  dispatch: React.Dispatch<AppAction>;
 }
 function WindowToolbar(props: WindowToolbarProps) {
   const { activeWorkspace } = props;
-  const [darkTheme, setDarkTheme] = useState(
-    document.getElementById("root")!.classList.contains(Classes.DARK)
-  );
 
-  useEffect(() => {
-    document.getElementById("root")!.classList.toggle(Classes.DARK, darkTheme);
-    document
-      .querySelector(".mosaic-blueprint-theme")!
-      .classList.toggle(Classes.DARK, darkTheme);
-
-    window.neonav.window.setTheme({
-      theme: darkTheme ? "dark" : "light",
-    });
-  }, [darkTheme]);
+  const isDarkTheme = props.currentTheme === "dark";
 
   return (
     <div
@@ -72,18 +60,25 @@ function WindowToolbar(props: WindowToolbarProps) {
         <Divider />
 
         <Button
-          title={darkTheme ? "Turn on light" : "Turn off light"}
+          title={isDarkTheme ? "Turn on light" : "Turn off light"}
           onClick={() => {
-            setDarkTheme(!darkTheme);
+            props.dispatch({
+              type: "set-theme",
+              payload: {
+                theme: isDarkTheme ? "light" : "dark",
+              },
+            });
           }}
         >
-          <Icon icon={darkTheme ? "flash" : "moon"} />
+          <Icon icon={isDarkTheme ? "flash" : "moon"} />
         </Button>
 
         <Button
           title="Toggle workspace sidebar"
           onClick={() => {
-            props.onToggleSidebar?.();
+            props.dispatch({
+              type: "toggle-sidebar",
+            });
           }}
         >
           <Icon icon="panel-stats" />

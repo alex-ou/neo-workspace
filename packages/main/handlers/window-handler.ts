@@ -46,6 +46,7 @@ export function registerWindowIpcHandler() {
   ipcMain.handle("window:set-theme", (event, viewData) => {
     const { theme } = viewData;
     const window = BrowserWindow.fromWebContents(event.sender)!;
+    nativeTheme.themeSource = theme;
     const overlayOptions =
       theme === "dark"
         ? { color: "#252a31", symbolColor: "#f6f7f9", height: 29 }

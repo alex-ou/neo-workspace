@@ -4,6 +4,7 @@ import { registerViewIpcHandler } from "./view-handler";
 import { registerPasswordIpcHandler } from "./password-handler";
 import { registerWindowIpcHandler } from "./window-handler";
 import { registerSettingsIpcHandler } from "./settings-handler";
+import { registerReaderModeIpcHandler } from "./reader-mode-handler";
 
 export function registerIpcHandlers() {
   registerPasswordIpcHandler();
@@ -11,4 +12,5 @@ export function registerIpcHandlers() {
   registerSettingsIpcHandler();
   registerWindowIpcHandler();
   registerViewIpcHandler();
+  registerReaderModeIpcHandler();
 }

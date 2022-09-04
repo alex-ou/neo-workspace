@@ -1,20 +1,10 @@
 import { ipcRenderer } from "electron";
+import { subscribe } from "./ipc-listeners";
 import {
   MatchingCredentials,
   IpcMessageListener,
   DomainCredential,
 } from "./types";
-
-interface ListenerInfo {
-  name: string;
-  fn: IpcMessageListener;
-}
-
-const ipcMessageListeners: ListenerInfo[] = [];
-
-function subscribe(name: string, fn: IpcMessageListener) {
-  ipcMessageListeners.push({ name, fn });
-}
 
 export function requestAutofill() {
   ipcRenderer.send("password:autofill");
@@ -64,17 +54,4 @@ export function formFilled(data: {
   password: string;
 }) {
   ipcRenderer.send("password:form-filled", data);
-}
-
-export function initialize() {
-  const isMainWindow = process.argv.includes("--main-window");
-  if (isMainWindow) {
-    ipcRenderer.on("view:ipc-message", (event, args) => {
-      ipcMessageListeners.forEach((item) => {
-        if (item.name === args.name) {
-          item.fn(args.id, args.data, args.frameId, args.frameURL);
-        }
-      });
-    });
-  }
 }

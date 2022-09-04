@@ -4,7 +4,9 @@ export interface WorkspaceView {
   containerId: string;
   viewId?: string;
 
-  favicons?: string[];
+  isInReaderMode?: boolean;
+  isReaderModeReady?: boolean;
+
   canGoBack?: boolean;
   canGoForward?: boolean;
   title?: string;

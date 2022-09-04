@@ -7,13 +7,24 @@ import {
   saveWorkspaces,
 } from "./app-storage";
 import { Workspace, WorkspaceView } from "./workspace";
+import { Classes } from "@blueprintjs/core";
 
 export interface AppState {
   workspaces: Workspace[];
   removedWorkspaces: { workspace: Workspace; index: number }[];
   pinnedWorkspaceIds: string[];
+  currentTheme: string;
+  isSidebarVisible: boolean;
 }
-
+interface SetThemeAction {
+  type: "set-theme";
+  payload: {
+    theme: "light" | "dark";
+  };
+}
+interface ToggleSidebarAction {
+  type: "toggle-sidebar";
+}
 interface LoadWorkspaceAction {
   type: "load-workspace";
 }
@@ -49,6 +60,15 @@ interface UpdateWorkspaceViewAction {
   payload: Partial<WorkspaceView>;
 }
 
+interface SetReaderModeAction {
+  type: "set-reader-mode";
+  payload: {
+    containerId?: string;
+    viewId?: string;
+    isInReaderMode: boolean;
+  };
+}
+
 interface CreateWorkspaceViewAction {
   type: "create-workspace-view";
   payload: WorkspaceView;
@@ -79,6 +99,9 @@ interface UnpinWorkspaceAction {
 }
 
 export type AppAction =
+  | SetReaderModeAction
+  | ToggleSidebarAction
+  | SetThemeAction
   | PinWorkspaceAction
   | UnpinWorkspaceAction
   | UpdateWorkspaceViewAction
@@ -95,8 +118,14 @@ export type AppAction =
 export function reducer(state: AppState, action: AppAction): AppState {
   let newState = state;
   switch (action.type) {
+    case "set-theme":
+      newState = setTheme(state, action);
+      break;
+    case "toggle-sidebar":
+      newState = toggleSidebar(state, action);
+      break;
     case "load-workspace":
-      newState = loadWorkspace();
+      newState = loadWorkspace(state);
       break;
     case "add-workspace":
       newState = createWorkspace(state, action);
@@ -131,6 +160,9 @@ export function reducer(state: AppState, action: AppAction): AppState {
     case "update-workspace-view":
       newState = updateWorkspaceView(state, action);
       break;
+    case "set-reader-mode":
+      newState = setWorkspaceViewReaderMode(state, action);
+      break;
     case "remove-workspace-view":
       newState = removeWorkspaceView(state, action);
       break;
@@ -139,6 +171,36 @@ export function reducer(state: AppState, action: AppAction): AppState {
   saveWorkspaces(newState.workspaces);
   savePinnedWorkspaceIds(newState.pinnedWorkspaceIds);
   return newState;
+}
+
+function setTheme(state: AppState, { payload }: SetThemeAction): AppState {
+  const isDarkTheme = payload.theme === "dark";
+  document.getElementById("root")!.classList.toggle(Classes.DARK, isDarkTheme);
+  document
+    .querySelector(".mosaic-blueprint-theme")!
+    .classList.toggle(Classes.DARK, isDarkTheme);
+
+  window.neonav.window.setTheme({
+    theme: payload.theme,
+  });
+
+  getActiveViews(state)
+    .filter((v) => v.isInReaderMode)
+    .forEach((v) =>
+      window.neonav.readerModeService.showReaderView(v.viewId!, payload.theme)
+    );
+
+  return {
+    ...state,
+    currentTheme: payload.theme,
+  };
+}
+
+function toggleSidebar(state: AppState, {}: ToggleSidebarAction): AppState {
+  return {
+    ...state,
+    isSidebarVisible: !state.isSidebarVisible,
+  };
 }
 
 const getActiveViews = (state: AppState) =>
@@ -240,10 +302,49 @@ function updateWorkspaceView(
     views = views.map((v) => (v.isFocused ? { ...v, isFocused: false } : v));
   }
 
+  const view = views[index];
   views[index] = {
-    ...views[index],
+    ...view,
     ...payload,
+    isInReaderMode: payload.isLoading ? false : view.isInReaderMode,
   };
+
+  return {
+    ...state,
+    workspaces: _updateActiveWorkspace(state.workspaces, { views }),
+  };
+}
+
+function setWorkspaceViewReaderMode(
+  state: AppState,
+  { payload }: SetReaderModeAction
+): AppState {
+  const isSameView = (v: WorkspaceView) =>
+    v.containerId === payload.containerId ||
+    (payload.viewId && v.viewId === payload.viewId);
+
+  let views = getActiveViews(state);
+  const index = views.findIndex(isSameView);
+  if (index === -1) {
+    return state;
+  }
+
+  views = [...views];
+
+  const view = views[index];
+  views[index] = {
+    ...view,
+    isInReaderMode: payload.isInReaderMode,
+  };
+
+  if (payload.isInReaderMode) {
+    window.neonav.readerModeService.showReaderView(
+      view.viewId!,
+      state.currentTheme
+    );
+  } else {
+    window.neonav.view.reload(view.viewId!);
+  }
 
   return {
     ...state,
@@ -281,7 +382,7 @@ function removeWorkspaceView(
   };
 }
 
-function loadWorkspace(): AppState {
+function loadWorkspace(state: AppState): AppState {
   const workspaces = getWorkspaces();
 
   if (workspaces.length === 0) {
@@ -322,8 +423,8 @@ function loadWorkspace(): AppState {
   );
 
   return {
+    ...state,
     workspaces,
-    removedWorkspaces: [],
     pinnedWorkspaceIds,
   };
 }
@@ -439,10 +540,16 @@ function switchWorkspace(
     return w;
   });
 
-  return {
+  const newState = {
     ...state,
     workspaces,
   };
+
+  getActiveViews(newState)
+    .filter((v) => v.isInReaderMode)
+    .forEach((v) => window.neonav.readerModeService.showReaderView(v.viewId!));
+
+  return newState;
 }
 
 function updateActiveWorkspace(

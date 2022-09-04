@@ -1,12 +1,6 @@
 import { ViewInfo } from "./types";
 import { ipcRenderer } from "electron";
-import { Readability, isProbablyReaderable } from "@mozilla/readability";
-export function isDocumentReaderable(): boolean {
-  return isProbablyReaderable(document);
-}
-export function parseDocument() {
-  return new Readability(document).parse();
-}
+
 export async function hideAllViews(): Promise<void> {
   return await ipcRenderer.invoke("view:hide-all");
 }

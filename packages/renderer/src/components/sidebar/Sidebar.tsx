@@ -16,7 +16,6 @@ interface SidebarProps {
   pinnedWorkspaceIds: string[];
   workspaces: Workspace[];
   dispatch: React.Dispatch<AppAction>;
-  onClose: () => void;
 }
 
 function Sidebar(props: SidebarProps) {
@@ -133,7 +132,7 @@ function Sidebar(props: SidebarProps) {
             minimal
             icon="chevron-right"
             title="Collapse sidebar"
-            onClick={props.onClose}
+            onClick={() => dispatch({ type: "toggle-sidebar" })}
           ></Button>
         </div>
         <Divider

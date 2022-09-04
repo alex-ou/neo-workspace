@@ -37,17 +37,6 @@ export interface NeoView {
   loadViewUrl(options: { id: string; url: string }): Promise<void>;
 
   onUpdate(callback: (data: ViewInfo) => void): Promise<void>;
-  isDocumentReaderable(): boolean;
-  parseDocument(): {
-    title: string;
-    byline: string;
-    dir: string;
-    content: string;
-    textContent: string;
-    length: number;
-    excerpt: string;
-    siteName: string;
-  } | null;
 }
 
 export interface WindowState {
@@ -91,7 +80,11 @@ export interface PasswordService {
   }) => Promise<void>;
   saveCredential: (d: DomainCredential) => Promise<void>;
 }
-
+export interface ReaderModeService {
+  onReaderModeReady: (fn: IpcMessageListener) => void;
+  showReaderView(viewId: string, theme?: string): void;
+  onShowReaderView(fn: (data: any) => void): void;
+}
 export interface Application {
   updateSettings: (settings: { [key: string]: any }) => Promise<void>;
   showAppMenu: () => Promise<void>;
@@ -108,5 +101,6 @@ export interface NeoNavAPI {
   view: NeoView;
   window: NeoWindow;
   passwordService: PasswordService;
+  readerModeService: ReaderModeService;
   application: Application;
 }

@@ -1,3 +1,4 @@
+import { Classes } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
@@ -9,7 +10,9 @@ import { DndProvider } from "react-dnd-multi-backend";
 import HTML5toTouch from "react-dnd-multi-backend/dist/esm/HTML5toTouch";
 import { MosaicWithoutDragDropContext } from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
+import { ViewInfo } from "../../../preload/renderer-api/types";
 import { AppContext } from "../app-context";
+import { useReaderModeReady } from "../hooks/reader-mode";
 import { useWorkspaceCommandHandling } from "../hooks/view-command";
 import { useWindowState } from "../hooks/window-state";
 import { reducer } from "../store";
@@ -21,13 +24,18 @@ import WindowToolbar from "./WindowToolbar";
 import ZeroState from "./ZeroState";
 
 function App() {
-  const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
   const { isFullscreen } = useWindowState();
 
   const [state, dispatch] = useReducer(reducer, {
     workspaces: [],
     removedWorkspaces: [],
     pinnedWorkspaceIds: [],
+    currentTheme: document
+      .getElementById("root")!
+      .classList.contains(Classes.DARK)
+      ? "dark"
+      : "light",
+    isSidebarVisible: true,
   });
 
   const activeWorkspace = state.workspaces.find((w) => w.isActive);
@@ -35,28 +43,21 @@ function App() {
   useEffect(() => {
     dispatch({ type: "load-workspace" });
 
-    window.neonav.view.onUpdate((viewInfo) => {
-      console.log("received onUpdate", JSON.stringify(viewInfo));
-
+    defaultViewManager.onViewUpdate((viewInfo: ViewInfo) => {
       dispatch({ type: "update-workspace-view", payload: { ...viewInfo } });
-
-      if (viewInfo.error) {
-        window.neonav.view.hideView(viewInfo.viewId!);
-      } else {
-        window.neonav.view.showView(viewInfo.viewId!);
-      }
     });
   }, []);
 
   useWorkspaceCommandHandling(state.workspaces, dispatch);
+  useReaderModeReady(dispatch);
 
-  const toggleSidebar = () => setSidebarVisible((v) => !v);
   return (
     <AppContext.Provider value={{}}>
       {!isFullscreen && (
         <WindowToolbar
+          currentTheme={state.currentTheme}
           activeWorkspace={activeWorkspace}
-          onToggleSidebar={toggleSidebar}
+          dispatch={dispatch}
         />
       )}
       <div
@@ -98,12 +99,11 @@ function App() {
             });
           }}
         />
-        {sidebarVisible && !isFullscreen && (
+        {state.isSidebarVisible && !isFullscreen && (
           <Sidebar
             pinnedWorkspaceIds={state.pinnedWorkspaceIds}
             workspaces={state.workspaces}
             dispatch={dispatch}
-            onClose={toggleSidebar}
           />
         )}
       </div>
