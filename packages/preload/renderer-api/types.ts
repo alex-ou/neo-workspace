@@ -22,6 +22,7 @@ export interface NeoView {
   goBack(viewId: string): Promise<void>;
   goForward(viewId: string): Promise<void>;
   reload(viewId: string): Promise<void>;
+  stop(viewId: string): Promise<void>;
 
   destroyView(viewId: string): Promise<void>;
 

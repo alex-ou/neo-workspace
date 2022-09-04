@@ -172,14 +172,13 @@ function Toolbar(props: ToolbarProps) {
           }}
         ></Button>
         {view?.isLoading ? (
-          <Button minimal>
-            <Spinner
-              size={16}
-              className={css`
-                margin: 0 -7px;
-              `}
-            />
-          </Button>
+          <Button
+            minimal
+            icon="cross"
+            onClick={() => {
+              neonav.view.stop(view?.viewId || "");
+            }}
+          ></Button>
         ) : (
           <Button
             title="Click to reload"

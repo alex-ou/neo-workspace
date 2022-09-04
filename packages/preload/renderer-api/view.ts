@@ -49,6 +49,11 @@ export async function reload(viewId: string): Promise<void> {
     id: viewId,
   });
 }
+export async function stop(viewId: string): Promise<void> {
+  return await ipcRenderer.invoke("view:stop", {
+    id: viewId,
+  });
+}
 
 export async function createView(options: {
   url: string;
