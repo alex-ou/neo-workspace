@@ -41,7 +41,7 @@ export default function KeyboardShortcuts() {
               notes: "Open the renaming dialog in the sidebar",
             },
             {
-              name: "Restore previously closed workspace",
+              name: "Reopen previously closed workspaces in the order they were closed",
               keys: ["Ctrl", "Shift", "T"],
             },
             {

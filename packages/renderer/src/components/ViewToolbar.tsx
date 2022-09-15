@@ -13,7 +13,7 @@ import {
 } from "react-mosaic-component";
 import { useViewCommands } from "../hooks/view-command";
 import { AppAction } from "../store";
-import { WorkspaceView } from "../store/workspace";
+import { Workspace, WorkspaceView } from "../store/workspace";
 import { parseAddressBarInput } from "../utils/address-input";
 import { createMosaicNode } from "../utils/mosaic-node";
 import ReaderModeButton from "./ReaderModeButton";
@@ -21,6 +21,7 @@ import ReaderModeButton from "./ReaderModeButton";
 const { neonav } = window;
 export interface ToolbarProps {
   view?: WorkspaceView;
+  activeWorkspace?: Workspace;
   path: MosaicBranch[];
   dispatch: React.Dispatch<AppAction>;
 }
@@ -69,13 +70,23 @@ function Toolbar(props: ToolbarProps) {
   };
 
   const removeWindow = () => {
-    mosaicActions.remove(mosaicWindowActions.getPath());
-    dispatch({
-      type: "remove-workspace-view",
-      payload: {
-        containerId: view!.containerId,
-      },
-    });
+    const viewCount = props.activeWorkspace?.views.length || 0;
+    if (viewCount > 1) {
+      mosaicActions.remove(mosaicWindowActions.getPath());
+      dispatch({
+        type: "remove-workspace-view",
+        payload: {
+          containerId: view!.containerId,
+        },
+      });
+    } else {
+      dispatch({
+        type: "remove-workspace",
+        payload: {
+          workspaceId: props.activeWorkspace?.id!,
+        },
+      });
+    }
   };
 
   useEffect(() => {

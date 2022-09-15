@@ -68,15 +68,18 @@ export const createView = async ({ view, window, viewData }: ViewIpcParams) => {
     );
 
     const webContents = targetView.webContents;
-    webContents.setWindowOpenHandler(({}) => {
-      return {
-        action: "allow",
-        overrideBrowserWindowOptions: {
-          icon: logoIcon,
-          frames: false,
-          autoHideMenuBar: true,
-          webPreferences: {},
+    webContents.setWindowOpenHandler(({ url }) => {
+      window.webContents.send("app:browser-view-command", {
+        type: "openUrl",
+        commandData: {
+          url,
+          viewId: webContents.id,
+          location: "bottom",
+          inBackground: true,
         },
+      });
+      return {
+        action: "deny",
       };
     });
 

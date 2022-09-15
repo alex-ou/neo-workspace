@@ -82,7 +82,12 @@ function View({
             min-width: 270px;
           `}
         >
-          <ViewToolbar path={path} dispatch={dispatch} view={currentView} />
+          <ViewToolbar
+            path={path}
+            dispatch={dispatch}
+            view={currentView}
+            activeWorkspace={activeWorkspace}
+          />
         </div>
       )}
       onDragStart={() => viewManager.hideAllViews()}
