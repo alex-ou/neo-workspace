@@ -455,6 +455,9 @@ function createWorkspace(
     layout: containerId,
     views: [{ url: payload.url, containerId }],
   };
+  if (payload.url) {
+    defaultViewManager.createView(containerId, undefined, payload.url);
+  }
   workspaces.push(newWorkspace);
   return {
     ...state,

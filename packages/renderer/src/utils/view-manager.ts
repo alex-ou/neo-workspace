@@ -17,9 +17,13 @@ export class ViewManager {
 
   createView = async (
     containerId: string,
-    elem: HTMLElement,
+    elem?: HTMLElement,
     url?: string
   ): Promise<ViewInfo> => {
+    if (!elem) {
+      // use a dummy elem
+      elem = document.createElement("div");
+    }
     let view = this.views.find((view) => view.containerId === containerId);
     if (view) {
       console.log("found view", containerId, view.viewId);
