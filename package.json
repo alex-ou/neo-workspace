@@ -2,7 +2,7 @@
   "name": "neo-navigator",
   "productName": "Neo Navigator",
   "private": false,
-  "version": "1.5.1",
+  "version": "1.6.2",
   "files": [
     "dist"
   ],
@@ -27,8 +27,6 @@
     "update-electron-app": "^2.0.1"
   },
   "devDependencies": {
-    "mic": "^2.1.2",
-    "@mathquis/node-personal-wakeword": "^1.1.1",
     "@blueprintjs/core": "^4.6.0",
     "@blueprintjs/icons": "^4.3.1",
     "@blueprintjs/popover2": "^1.5.0",
@@ -72,7 +70,20 @@
         "name": "NeoNavigator",
         "icon": "./packages/main/public/logo.ico",
         "asar": true,
-        "ignore": "\\.vite/"
+        "ignore": [
+          "\\.vite/",
+          "scripts/",
+          "\\.vscode",
+          "packages/",
+          "deps/",
+          "\\.pdb$",
+          "\\.ilk$",
+          ".*/binding.tlog/.*",
+          ".*/README.md$",
+          ".*/darwin-x64/.*",
+          ".*/linux-x64/.*",
+          ".*/linux-arm64/.*"
+        ]
       },
       "makers": [
         {
